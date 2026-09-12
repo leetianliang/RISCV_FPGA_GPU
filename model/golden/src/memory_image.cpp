@@ -1,6 +1,5 @@
 #include "golden/memory_image.hpp"
 
-#include <algorithm>
 #include <cstring>
 
 namespace golden {
@@ -22,13 +21,16 @@ MemAccessResult MemoryImage::register_region(std::string name, u32 base, u32 byt
     if (byte_size == 0 || name.empty()) {
         return MemAccessResult{MemAccessStatus::BAD_ARGUMENT};
     }
-
+    // Reject half-open ranges extending beyond 2^32.
+    const u64 end = static_cast<u64>(base) + static_cast<u64>(byte_size);
+    if (end > (1ull << 32)) {
+        return MemAccessResult{MemAccessStatus::BAD_ARGUMENT};
+    }
     for (const auto& [reg_base, region] : regions_) {
         if (ranges_overlap(base, byte_size, reg_base, region.size)) {
             return MemAccessResult{MemAccessStatus::OVERLAP};
         }
     }
-
     Region region;
     region.name = std::move(name);
     region.base = base;
@@ -42,45 +44,55 @@ bool MemoryImage::has_region(u32 base) const {
     return regions_.find(base) != regions_.end();
 }
 
-const MemoryImage::Region* MemoryImage::find_region(u32 addr, u32 access_size) const {
+const MemoryImage::Region* MemoryImage::resolve(u32 addr, u32 access_size,
+                                                MemAccessStatus& status) const {
+    status = MemAccessStatus::OK;
     if (access_size == 0) {
+        status = MemAccessStatus::BAD_ARGUMENT;
         return nullptr;
     }
-    // Find last region with base <= addr
     auto it = regions_.upper_bound(addr);
     if (it == regions_.begin()) {
+        status = MemAccessStatus::UNMAPPED;
         return nullptr;
     }
     --it;
     const Region& region = it->second;
     const u64 rel = static_cast<u64>(addr) - static_cast<u64>(region.base);
-    const u64 end = rel + static_cast<u64>(access_size);
-    if (end > static_cast<u64>(region.size)) {
+    if (rel >= static_cast<u64>(region.size)) {
+        status = MemAccessStatus::UNMAPPED;
+        return nullptr;
+    }
+    if (rel + static_cast<u64>(access_size) > static_cast<u64>(region.size)) {
+        status = MemAccessStatus::OUT_OF_RANGE;
         return nullptr;
     }
     return &region;
 }
 
-MemoryImage::Region* MemoryImage::find_region(u32 addr, u32 access_size) {
-    return const_cast<Region*>(static_cast<const MemoryImage*>(this)->find_region(addr, access_size));
+MemoryImage::Region* MemoryImage::resolve(u32 addr, u32 access_size,
+                                          MemAccessStatus& status) {
+    return const_cast<Region*>(static_cast<const MemoryImage*>(this)->resolve(
+        addr, access_size, status));
 }
 
 MemAccessResult MemoryImage::read8(u32 addr, u8& out) const {
-    const Region* region = find_region(addr, 1);
+    MemAccessStatus st = MemAccessStatus::OK;
+    const Region* region = resolve(addr, 1, st);
     if (region == nullptr) {
-        return MemAccessResult{MemAccessStatus::UNMAPPED};
+        return MemAccessResult{st};
     }
-    const u64 rel = static_cast<u64>(addr) - static_cast<u64>(region->base);
-    out = region->storage[static_cast<std::size_t>(rel)];
+    out = region->storage[static_cast<std::size_t>(addr - region->base)];
     return MemAccessResult{MemAccessStatus::OK};
 }
 
 MemAccessResult MemoryImage::read16(u32 addr, u16& out) const {
-    const Region* region = find_region(addr, 2);
+    MemAccessStatus st = MemAccessStatus::OK;
+    const Region* region = resolve(addr, 2, st);
     if (region == nullptr) {
-        return MemAccessResult{MemAccessStatus::UNMAPPED};
+        return MemAccessResult{st};
     }
-    const u64 rel = static_cast<u64>(addr) - static_cast<u64>(region->base);
+    const u64 rel = static_cast<u64>(addr) - region->base;
     u8 bytes[2];
     std::memcpy(bytes, region->storage.data() + rel, 2);
     out = static_cast<u16>(static_cast<u16>(bytes[0]) | (static_cast<u16>(bytes[1]) << 8));
@@ -88,11 +100,12 @@ MemAccessResult MemoryImage::read16(u32 addr, u16& out) const {
 }
 
 MemAccessResult MemoryImage::read32(u32 addr, u32& out) const {
-    const Region* region = find_region(addr, 4);
+    MemAccessStatus st = MemAccessStatus::OK;
+    const Region* region = resolve(addr, 4, st);
     if (region == nullptr) {
-        return MemAccessResult{MemAccessStatus::UNMAPPED};
+        return MemAccessResult{st};
     }
-    const u64 rel = static_cast<u64>(addr) - static_cast<u64>(region->base);
+    const u64 rel = static_cast<u64>(addr) - region->base;
     u8 bytes[4];
     std::memcpy(bytes, region->storage.data() + rel, 4);
     out = static_cast<u32>(bytes[0]) | (static_cast<u32>(bytes[1]) << 8) |
@@ -101,21 +114,22 @@ MemAccessResult MemoryImage::read32(u32 addr, u32& out) const {
 }
 
 MemAccessResult MemoryImage::write8(u32 addr, u8 value) {
-    Region* region = find_region(addr, 1);
+    MemAccessStatus st = MemAccessStatus::OK;
+    Region* region = resolve(addr, 1, st);
     if (region == nullptr) {
-        return MemAccessResult{MemAccessStatus::UNMAPPED};
+        return MemAccessResult{st};
     }
-    const u64 rel = static_cast<u64>(addr) - static_cast<u64>(region->base);
-    region->storage[static_cast<std::size_t>(rel)] = value;
+    region->storage[static_cast<std::size_t>(addr - region->base)] = value;
     return MemAccessResult{MemAccessStatus::OK};
 }
 
 MemAccessResult MemoryImage::write16(u32 addr, u16 value) {
-    Region* region = find_region(addr, 2);
+    MemAccessStatus st = MemAccessStatus::OK;
+    Region* region = resolve(addr, 2, st);
     if (region == nullptr) {
-        return MemAccessResult{MemAccessStatus::UNMAPPED};
+        return MemAccessResult{st};
     }
-    const u64 rel = static_cast<u64>(addr) - static_cast<u64>(region->base);
+    const u64 rel = static_cast<u64>(addr) - region->base;
     const u8 bytes[2] = {static_cast<u8>(value & 0xFFu),
                          static_cast<u8>((value >> 8) & 0xFFu)};
     std::memcpy(region->storage.data() + rel, bytes, 2);
@@ -123,11 +137,12 @@ MemAccessResult MemoryImage::write16(u32 addr, u16 value) {
 }
 
 MemAccessResult MemoryImage::write32(u32 addr, u32 value) {
-    Region* region = find_region(addr, 4);
+    MemAccessStatus st = MemAccessStatus::OK;
+    Region* region = resolve(addr, 4, st);
     if (region == nullptr) {
-        return MemAccessResult{MemAccessStatus::UNMAPPED};
+        return MemAccessResult{st};
     }
-    const u64 rel = static_cast<u64>(addr) - static_cast<u64>(region->base);
+    const u64 rel = static_cast<u64>(addr) - region->base;
     const u8 bytes[4] = {
         static_cast<u8>(value & 0xFFu), static_cast<u8>((value >> 8) & 0xFFu),
         static_cast<u8>((value >> 16) & 0xFFu), static_cast<u8>((value >> 24) & 0xFFu)};
@@ -143,11 +158,12 @@ MemAccessResult MemoryImage::read_block(u32 addr, std::size_t size, std::vector<
     if (size > 0xFFFFFFFFu) {
         return MemAccessResult{MemAccessStatus::BAD_ARGUMENT};
     }
-    const Region* region = find_region(addr, static_cast<u32>(size));
+    MemAccessStatus st = MemAccessStatus::OK;
+    const Region* region = resolve(addr, static_cast<u32>(size), st);
     if (region == nullptr) {
-        return MemAccessResult{MemAccessStatus::UNMAPPED};
+        return MemAccessResult{st};
     }
-    const u64 rel = static_cast<u64>(addr) - static_cast<u64>(region->base);
+    const u64 rel = static_cast<u64>(addr) - region->base;
     out.assign(region->storage.begin() + static_cast<std::ptrdiff_t>(rel),
                region->storage.begin() + static_cast<std::ptrdiff_t>(rel + size));
     return MemAccessResult{MemAccessStatus::OK};
@@ -160,17 +176,34 @@ MemAccessResult MemoryImage::write_block(u32 addr, const u8* data, std::size_t s
     if (data == nullptr || size > 0xFFFFFFFFu) {
         return MemAccessResult{MemAccessStatus::BAD_ARGUMENT};
     }
-    Region* region = find_region(addr, static_cast<u32>(size));
+    MemAccessStatus st = MemAccessStatus::OK;
+    Region* region = resolve(addr, static_cast<u32>(size), st);
     if (region == nullptr) {
-        return MemAccessResult{MemAccessStatus::UNMAPPED};
+        return MemAccessResult{st};
     }
-    const u64 rel = static_cast<u64>(addr) - static_cast<u64>(region->base);
+    const u64 rel = static_cast<u64>(addr) - region->base;
     std::memcpy(region->storage.data() + rel, data, size);
     return MemAccessResult{MemAccessStatus::OK};
 }
 
-void MemoryImage::clear() {
-    regions_.clear();
+const u8* MemoryImage::peek_contiguous(u32 addr, u32 size) const {
+    MemAccessStatus st = MemAccessStatus::OK;
+    const Region* region = resolve(addr, size, st);
+    if (region == nullptr) {
+        return nullptr;
+    }
+    return region->storage.data() + (addr - region->base);
 }
+
+u8* MemoryImage::poke_contiguous(u32 addr, u32 size) {
+    MemAccessStatus st = MemAccessStatus::OK;
+    Region* region = resolve(addr, size, st);
+    if (region == nullptr) {
+        return nullptr;
+    }
+    return region->storage.data() + (addr - region->base);
+}
+
+void MemoryImage::clear() { regions_.clear(); }
 
 }  // namespace golden

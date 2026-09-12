@@ -7,7 +7,7 @@ namespace golden {
 
 struct SurfaceDesc {
     u32 base = 0;
-    u32 stride = 0;  // bytes per row
+    u32 stride = 0;
     u32 width = 0;
     u32 height = 0;
     PixelFormat format = PixelFormat::RGB565;
@@ -22,16 +22,17 @@ public:
     const SurfaceDesc& desc() const noexcept { return desc_; }
     MemoryImage* memory() const noexcept { return memory_; }
 
-    // Stage-001: RGB565 only.
+    u32 byte_size() const noexcept;
+
     ExecResult write_pixel(u32 x, u32 y, Rgba8888 color) const;
     ExecResult read_pixel(u32 x, u32 y, Rgba8888& out) const;
+    ExecResult write_raw_pixel(u32 x, u32 y, const u8* bytes, u32 bpp) const;
+    ExecResult read_raw_pixel(u32 x, u32 y, u8* bytes, u32 bpp) const;
 
-    u32 byte_size() const noexcept;
+    u64 pixel_offset(u32 x, u32 y) const noexcept;
 
 private:
     bool coords_in_bounds(u32 x, u32 y) const noexcept;
-    ExecResult write_rgb565(u32 x, u32 y, u16 px) const;
-    ExecResult read_rgb565(u32 x, u32 y, u16& px) const;
 
     MemoryImage* memory_ = nullptr;
     SurfaceDesc desc_{};

@@ -14,15 +14,16 @@ inline constexpr u32 kCmdLengthDw = 16;
 
 inline constexpr u32 kClassDraw2D = 0x1;
 inline constexpr u32 kOpcodeFillRect = 0x00;
+inline constexpr u32 kOpcodeBlit = 0x01;
+inline constexpr u32 kOpcodeBlitExt = 0x02;
+inline constexpr u32 kOpcodeTileFrame = 0x10;
 
-// HDR_FLAGS bits
 inline constexpr u32 kHIrqOnRetire = 1u << 0;
 inline constexpr u32 kHTrace = 1u << 1;
 inline constexpr u32 kHExtValid = 1u << 2;
 inline constexpr u32 kHStrict = 1u << 3;
-inline constexpr u32 kHHdrReservedMask = 0xF0u;  // HDR_FLAGS[7:4]
+inline constexpr u32 kHHdrReservedMask = 0xF0u;
 
-// DRAW_STATE field extracts
 inline constexpr u32 extract_src_format(u32 draw_state) noexcept {
     return draw_state & 0xFu;
 }
@@ -78,12 +79,12 @@ inline constexpr u32 extract_draw_state_reserved(u32 draw_state) noexcept {
     return (draw_state >> 29) & 0x7u;
 }
 
-inline constexpr u32 pack_draw_state(u32 dst_format, u32 blend_mode) noexcept {
-    return (dst_format << 4) | (blend_mode << 8);
+inline constexpr u32 pack_draw_state(u32 src_format, u32 dst_format, u32 blend_mode,
+                                     u32 filter_mode = 0) noexcept {
+    return (src_format & 0xFu) | ((dst_format & 0xFu) << 4) |
+           ((blend_mode & 0xFu) << 8) | ((filter_mode & 0x3u) << 12);
 }
 
-// Serialized 64B command: 16 little-endian DWORD words in host array order.
-// Word index matches ISA W0..W15.
 using GpuCmd64 = std::array<u32, kCommandDwCount>;
 
 static_assert(sizeof(GpuCmd64) == kCommandByteCount);
@@ -100,17 +101,6 @@ struct CmdHeader {
     u32 ext_ptr = 0;
 };
 
-struct FillPayload {
-    u32 dst_base = 0;
-    u32 dst_stride = 0;
-    i32 dst_x = 0;
-    i32 dst_y = 0;
-    u32 dst_w = 0;
-    u32 dst_h = 0;
-    u32 draw_state = 0;
-    Rgba8888 primary_color{};
-};
-
 inline constexpr u32 header_word(u32 cmd_class, u32 opcode, u32 version,
                                  u32 length_dw, u32 hdr_flags) noexcept {
     return (cmd_class << 28) | (opcode << 20) | (version << 16) |
@@ -122,28 +112,45 @@ inline constexpr u32 pack_xy_u16(u32 x, u32 y) noexcept {
 }
 
 inline constexpr u32 pack_xy_i16(i32 x, i32 y) noexcept {
-    return (pack_xy_u16(static_cast<u32>(static_cast<u16>(x)),
-                        static_cast<u32>(static_cast<u16>(y))));
+    return pack_xy_u16(static_cast<u32>(static_cast<u16>(x)),
+                       static_cast<u32>(static_cast<u16>(y)));
 }
 
-inline constexpr u32 pack_wh(u32 w, u32 h) noexcept {
-    return pack_xy_u16(w, h);
-}
+inline constexpr u32 pack_wh(u32 w, u32 h) noexcept { return pack_xy_u16(w, h); }
 
 inline constexpr i32 unpack_s16_lo(u32 word) noexcept {
     return static_cast<i32>(static_cast<i16>(word & 0xFFFFu));
 }
-
 inline constexpr i32 unpack_s16_hi(u32 word) noexcept {
     return static_cast<i32>(static_cast<i16>((word >> 16) & 0xFFFFu));
 }
+inline constexpr u32 unpack_u16_lo(u32 word) noexcept { return word & 0xFFFFu; }
+inline constexpr u32 unpack_u16_hi(u32 word) noexcept { return (word >> 16) & 0xFFFFu; }
 
-inline constexpr u32 unpack_u16_lo(u32 word) noexcept {
-    return word & 0xFFFFu;
+// Explicit little-endian 64B serialization (not host object layout).
+inline std::array<u8, kCommandByteCount> serialize_cmd_le(const GpuCmd64& cmd) noexcept {
+    std::array<u8, kCommandByteCount> out{};
+    for (u32 i = 0; i < kCommandDwCount; ++i) {
+        const u32 w = cmd[i];
+        out[i * 4 + 0] = static_cast<u8>(w & 0xFFu);
+        out[i * 4 + 1] = static_cast<u8>((w >> 8) & 0xFFu);
+        out[i * 4 + 2] = static_cast<u8>((w >> 16) & 0xFFu);
+        out[i * 4 + 3] = static_cast<u8>((w >> 24) & 0xFFu);
+    }
+    return out;
 }
 
-inline constexpr u32 unpack_u16_hi(u32 word) noexcept {
-    return (word >> 16) & 0xFFFFu;
+inline bool deserialize_cmd_le(const u8* bytes, std::size_t size, GpuCmd64& out) noexcept {
+    if (bytes == nullptr || size != kCommandByteCount) {
+        return false;
+    }
+    for (u32 i = 0; i < kCommandDwCount; ++i) {
+        out[i] = static_cast<u32>(bytes[i * 4 + 0]) |
+                 (static_cast<u32>(bytes[i * 4 + 1]) << 8) |
+                 (static_cast<u32>(bytes[i * 4 + 2]) << 16) |
+                 (static_cast<u32>(bytes[i * 4 + 3]) << 24);
+    }
+    return true;
 }
 
 }  // namespace golden

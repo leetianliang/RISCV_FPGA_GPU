@@ -1,0 +1,14 @@
+{
+  "format_version": 1,
+  "isa_version": 1,
+  "pixel_arith_version": 1,
+  "width": 16,
+  "height": 16,
+  "stride": 32,
+  "framebuffer_format": "RGB565",
+  "texture_base": 131072,
+  "texture_format": "RGB565",
+  "command_count": 1,
+  "base": 65536,
+  "description": "blit_rgb565_basic"
+}

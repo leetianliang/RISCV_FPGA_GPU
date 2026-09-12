@@ -13,7 +13,6 @@ using i16 = std::int16_t;
 using i32 = std::int32_t;
 using i64 = std::int64_t;
 
-// Canonical logical color is 0xAARRGGBB (Pixel Arithmetic V0.1).
 struct Rgba8888 {
     u32 value = 0u;
 
@@ -31,7 +30,6 @@ struct Rgba8888 {
     }
 };
 
-// Numeric values frozen by Command ISA V0.1.
 enum class PixelFormat : u32 {
     RGB565 = 0x0,
     ARGB8888 = 0x1,
@@ -58,37 +56,49 @@ enum class AddressMode : u32 {
     REPEAT = 0x1,
 };
 
+// Numeric values frozen by Register Map V0.1 FAULT_CODE.
 enum class FaultCode : u32 {
-    NONE = 0,
-    BAD_CMD_CLASS = 1,
-    BAD_OPCODE = 2,
-    BAD_VERSION = 3,
-    BAD_LENGTH = 4,
-    RESERVED_NONZERO = 5,
-    UNSUPPORTED_FEATURE = 6,
-    BAD_ALIGNMENT = 7,
-    BAD_EXT_PTR = 8,
-    BAD_EXT_TYPE = 9,
-    BAD_FORMAT = 10,
-    BAD_BLEND = 11,
-    BAD_FILTER = 12,
-    BAD_RECT = 13,
-    BAD_TILE_CONFIG = 14,
-    TILE_TARGET_MISMATCH = 15,
-    WORKLIST_BOUNDS = 16,
-    DESCRIPTOR_BOUNDS = 17,
-    MEMORY = 18,
+    NONE = 0x0000,
+    BAD_CMD_CLASS = 0x0001,
+    BAD_OPCODE = 0x0002,
+    BAD_VERSION = 0x0003,
+    BAD_LENGTH = 0x0004,
+    RESERVED_NONZERO = 0x0005,
+    UNSUPPORTED_FEATURE = 0x0006,
+    BAD_ALIGNMENT = 0x0007,
+    BAD_EXT_PTR = 0x0008,
+    BAD_EXT_TYPE = 0x0009,
+    BAD_FORMAT = 0x000A,
+    BAD_BLEND = 0x000B,
+    BAD_FILTER = 0x000C,
+    BAD_RECT = 0x000D,
+    BAD_RING_CONFIG = 0x000E,
+    BAD_TILE_CONFIG = 0x000F,
+    TILE_TARGET_MISMATCH = 0x0010,
+    WORKLIST_BOUNDS = 0x0011,
+    DESCRIPTOR_BOUNDS = 0x0012,
+    MEMORY_ERROR = 0x0013,
+    DISPLAY_UNDERFLOW = 0x0014,
+    INTERNAL_TIMEOUT = 0x0015,
+    INTERNAL_RT_COORD = 0x0016,
+    CONTEXT_MISMATCH = 0x0017,
+    TAG_MISMATCH = 0x0018,
+    RING_OVERFLOW = 0x0019,
+    BAD_BLEND_STATE = 0x001A,
+    BAD_ADDRESS = 0x001B,
 };
 
 struct ExecResult {
     bool ok = true;
     FaultCode fault = FaultCode::NONE;
     u32 fault_detail = 0;
+    u32 fault_index = 0;  // stream command index when applicable
 
     static constexpr ExecResult success() noexcept { return ExecResult{}; }
 
-    static constexpr ExecResult failure(FaultCode code, u32 detail = 0) noexcept {
-        return ExecResult{false, code, detail};
+    static constexpr ExecResult failure(FaultCode code, u32 detail = 0,
+                                        u32 index = 0) noexcept {
+        return ExecResult{false, code, detail, index};
     }
 };
 

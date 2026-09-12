@@ -9,27 +9,28 @@
 #include <map>
 #include <optional>
 #include <string>
+#include <vector>
 
 namespace golden {
 
-// Minimal Stage-001 facade. Surfaces are harness-registered (width/height are
-// not encoded in the binary command).
 class GoldenGPU {
 public:
     MemoryImage& memory() noexcept { return memory_; }
     const MemoryImage& memory() const noexcept { return memory_; }
 
-    // Registers a surface descriptor and ensures a backing memory region exists.
     ExecResult register_surface(const SurfaceDesc& desc, const std::string& name);
 
     std::optional<SurfaceDesc> surface_desc(u32 base) const;
 
     ExecResult execute_command(const GpuCmd64& cmd);
+    ExecResult execute_stream(const std::vector<GpuCmd64>& cmds);
 
     void reset();
 
 private:
-    ExecResult execute_fill(const DecodedFill& decoded);
+    ExecResult execute_draw(const DecodedDraw& decoded);
+    ExecResult write_dst_pixel(const Surface& dst, u32 x, u32 y, Rgba8888 src,
+                               const Draw2DState& st);
 
     MemoryImage memory_;
     std::map<u32, SurfaceDesc> surfaces_;
