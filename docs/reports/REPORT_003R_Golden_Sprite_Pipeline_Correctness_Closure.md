@@ -12,7 +12,7 @@ REVIEW_003R blocking findings D1–D13 addressed. CTest **53/53 PASS**.
 
 ## 3. END_COMMIT
 
-See git log after this report commit (follow-up docs commit may record SHA).
+`470d7b365343bc42a2987d874152c963840549e6`
 
 ## 4. REVIEW_003 / 003R Closure
 
