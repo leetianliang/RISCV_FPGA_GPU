@@ -89,7 +89,7 @@ ExecResult Surface::write_pixel(u32 x, u32 y, Rgba8888 color) const {
         return write_raw_pixel(x, y, bytes, 4);
     }
     if (desc_.format == PixelFormat::XRGB8888) {
-        const u8 bytes[4] = {color.b(), color.g(), color.r(), 0u};
+        const u8 bytes[4] = {color.b(), color.g(), color.r(), 0xFFu};
         return write_raw_pixel(x, y, bytes, 4);
     }
     return ExecResult::failure(FaultCode::BAD_FORMAT, static_cast<u32>(desc_.format));

@@ -6,8 +6,6 @@
   "height": 16,
   "stride": 32,
   "framebuffer_format": "RGB565",
-  "texture_base": 131072,
-  "texture_format": "RGB565",
   "command_count": 3,
   "base": 65536,
   "description": "blit_overdraw_rgb565"

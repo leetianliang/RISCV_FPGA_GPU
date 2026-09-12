@@ -7,6 +7,6 @@
   "stride": 32,
   "framebuffer_format": "RGB565",
   "command_count": 1,
-  "base": 40960,
-  "description": "Stage-001 FILL_RECT interior rectangle 3,4 7x6 color 0xFF2A55C8 COPY RGB565"
+  "base": 65536,
+  "description": "Stage-001 FILL_RECT interior rectangle 3,4 7x6"
 }

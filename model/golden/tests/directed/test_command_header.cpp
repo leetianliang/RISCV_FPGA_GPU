@@ -43,8 +43,8 @@ void test_opcode_class() {
     EXPECT_TRUE(golden::decode_cmd_header(cmd).fault == golden::FaultCode::BAD_OPCODE);
 
     cmd[0] = golden::header_word(golden::kClassDraw2D, golden::kOpcodeBlitExt, 1, 16, 0);
-    EXPECT_TRUE(golden::decode_cmd_header(cmd).fault ==
-                golden::FaultCode::UNSUPPORTED_FEATURE);
+    // BLIT_EXT is implemented; header-level classify as known opcode
+    EXPECT_TRUE(golden::decode_cmd_header(cmd).ok);
 
     cmd[0] = golden::header_word(golden::kClassDraw2D, golden::kOpcodeTileFrame, 1, 16, 0);
     EXPECT_TRUE(golden::decode_cmd_header(cmd).fault ==
