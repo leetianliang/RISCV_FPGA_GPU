@@ -35,32 +35,29 @@ i32 map_tex_coord(i32 abs_coord, i32 src_origin, i32 src_size, AddressMode mode)
     return src_origin + apply_addr(rel, src_size, mode);
 }
 
-// Validate command-defined view against registered resource before raster.
-ExecResult validate_view(const SurfaceView& view, u32 logical_w) {
+// Linear surface rule: stride covers registered resource width; view must fit allocation.
+ExecResult validate_view(const SurfaceView& view, u32 /*logical_w_hint*/) {
     if (!view.valid()) {
         return ExecResult::failure(FaultCode::MEMORY_ERROR);
     }
     const u32 bpp = bytes_per_pixel(view.format());
-    if (bpp == 0 || view.format() == PixelFormat::INDEX8) {
-        // INDEX8 only valid as source; caller checks.
-        if (view.format() == PixelFormat::INDEX8) {
-            // allowed for source views
-        } else {
-            return ExecResult::failure(FaultCode::BAD_FORMAT,
-                                       static_cast<u32>(view.format()));
-        }
+    if (bpp == 0) {
+        return ExecResult::failure(FaultCode::BAD_FORMAT,
+                                   static_cast<u32>(view.format()));
     }
-    const u32 width = logical_w ? logical_w : view.resource().width;
-    if (view.stride() < width * bpp) {
-        return ExecResult::failure(FaultCode::BAD_RECT, view.stride());
-    }
-    if (width == 0 || view.resource().height == 0) {
+    const u32 width = view.resource().width;
+    const u32 height = view.resource().height;
+    if (width == 0 || height == 0) {
         return ExecResult::failure(FaultCode::BAD_RECT);
     }
-    const u64 last =
-        static_cast<u64>(view.resource().base) +
-        static_cast<u64>(view.resource().height - 1) * view.stride() +
-        static_cast<u64>(width - 1) * bpp + bpp;
+    const u64 row_bytes = static_cast<u64>(width) * bpp;
+    if (static_cast<u64>(view.stride()) < row_bytes) {
+        return ExecResult::failure(FaultCode::BAD_RECT, view.stride());
+    }
+    // Last byte of last row: base + (h-1)*stride + width*bpp
+    const u64 last = static_cast<u64>(view.resource().base) +
+                     static_cast<u64>(height - 1) * static_cast<u64>(view.stride()) +
+                     row_bytes;
     if (last > (1ull << 32)) {
         return ExecResult::failure(FaultCode::BAD_ADDRESS);
     }

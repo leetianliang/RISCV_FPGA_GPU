@@ -45,8 +45,12 @@ golden_add_test_exec(golden_test_mutation tests/directed/test_mutation_authority
 golden_add_test_exec(golden_test_sprite_ext tests/directed/test_sprite_ext.cpp)
 golden_add_test_exec(golden_test_random_diff tests/random/test_random_diff.cpp)
 golden_add_test_exec(golden_test_premult_exact tests/directed/test_premult_exact.cpp)
+golden_add_test_exec(golden_test_premult_matrix tests/directed/test_premult_matrix.cpp)
 golden_add_test_exec(golden_test_sampler_errors tests/directed/test_sampler_errors.cpp)
 golden_add_test_exec(golden_test_ext_faults tests/directed/test_ext_faults.cpp)
+golden_add_test_exec(golden_test_semantics_pairs tests/directed/test_semantics_pairs.cpp)
+golden_add_test_exec(golden_test_oracle_exact tests/directed/test_oracle_exact.cpp)
+golden_add_test_exec(golden_test_diff_suites tests/random/test_diff_suites.cpp)
 
 add_test(
     NAME golden_test_integrity

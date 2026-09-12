@@ -271,22 +271,40 @@ DecodedDraw decode_draw_2d(const GpuCmd64& cmd, const u8* ext_bytes, u32 ext_siz
             fail_draw(out, FaultCode::UNSUPPORTED_FEATURE, out.state.draw_state);
             return out;
         }
-        // Default 1:1 UV for BLIT
-        out.state.u0 = static_cast<i32>(out.state.src_x) << 16;
-        out.state.v0 = static_cast<i32>(out.state.src_y) << 16;
+        // Wide helper: architectural origin to signed Q16.16, or fail if unrepresentable.
+auto q16_origin = [](u32 origin, i32& out) -> bool {
+    const i64 v = static_cast<i64>(origin) << 16;
+    if (v > 2147483647ll || v < -2147483648ll) {
+        return false;
+    }
+    out = static_cast<i32>(v);
+    return true;
+};
+
+        // Default 1:1 UV for BLIT (integer texel addressing via Q16)
+        if (!q16_origin(out.state.src_x, out.state.u0) ||
+            !q16_origin(out.state.src_y, out.state.v0)) {
+            fail_draw(out, FaultCode::BAD_ADDRESS, cmd[8]);
+            return out;
+        }
         out.state.du_dx = 1 << 16;
         out.state.dv_dx = 0;
         out.state.du_dy = 0;
         out.state.dv_dy = 1 << 16;
         if (extract_flip_x(out.state.draw_state)) {
-            // Last integer texel index: SRC_X + SRC_W - 1
-            out.state.u0 =
-                static_cast<i32>(out.state.src_x + out.state.src_w - 1u) << 16;
+            const u32 last = out.state.src_x + out.state.src_w - 1u;
+            if (!q16_origin(last, out.state.u0)) {
+                fail_draw(out, FaultCode::BAD_ADDRESS, cmd[8]);
+                return out;
+            }
             out.state.du_dx = -65536;
         }
         if (extract_flip_y(out.state.draw_state)) {
-            out.state.v0 =
-                static_cast<i32>(out.state.src_y + out.state.src_h - 1u) << 16;
+            const u32 last = out.state.src_y + out.state.src_h - 1u;
+            if (!q16_origin(last, out.state.v0)) {
+                fail_draw(out, FaultCode::BAD_ADDRESS, cmd[8]);
+                return out;
+            }
             out.state.dv_dy = -65536;
         }
     } else {
@@ -299,6 +317,11 @@ DecodedDraw decode_draw_2d(const GpuCmd64& cmd, const u8* ext_bytes, u32 ext_siz
             return out;
         }
         if (out.state.dv_dx != 0 || out.state.du_dy != 0) {
+            fail_draw(out, FaultCode::UNSUPPORTED_FEATURE, out.state.draw_state);
+            return out;
+        }
+        // Flip contract: encode flip in UV coefficients; explicit flags are illegal.
+        if (extract_flip_x(out.state.draw_state) || extract_flip_y(out.state.draw_state)) {
             fail_draw(out, FaultCode::UNSUPPORTED_FEATURE, out.state.draw_state);
             return out;
         }

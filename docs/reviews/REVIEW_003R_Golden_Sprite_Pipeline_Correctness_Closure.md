@@ -1,0 +1,639 @@
+# REVIEW_003R — Golden Sprite Pipeline Correctness Closure
+
+> Repository: `leetianliang/RISCV_FPGA_GPU`  
+> Reviewed branch: `master`  
+> Baseline commit: `f55f5ad8209e9badc4681b383b66ac1c4a75b744`  
+> Reviewed commit: `4a6b28e717f8d9547310d1ad87c82c281e24fe26`  
+> Task: `003R — Golden Sprite Pipeline Correctness Closure`  
+> Decision: **FAIL / CONTINUE REWORK**  
+> Architecture redesign required: **NO**  
+> Permission to start TASK_004 Tile Renderer: **NO**
+
+---
+
+# 1. Executive Summary
+
+003R corrected several important Stage-003 defects and the implementation direction is substantially better.
+
+Accepted corrections include:
+
+- Premultiplied destination attenuation was added;
+- the obvious second Color-Mod application in the Premult path was removed;
+- sampler reads now have a result/status path;
+- base header validation now occurs before extension memory fetch;
+- BLIT_EXT no longer automatically enables Clip;
+- BLIT_EXT cross terms are rejected in non-Strict mode too;
+- checked mutation-test tautologies were removed;
+- a test-integrity script was added;
+- a raster-bounds decision was recorded.
+
+However, `TASK_003R` was a **correctness gate**, not a best-effort patch list.
+
+The repository does not implement a large portion of the mandatory verification work requested in V1–V10, and several REVIEW_003 findings are only partially closed or remain technically open.
+
+Therefore:
+
+> **003R does not pass. Keep Stage 003R open and complete the existing task. Do not start Tile.**
+
+No new architecture is required. Continue on the same code base.
+
+---
+
+# 2. What Is Accepted
+
+## 2.1 Premult core formula
+
+The production Premult branch now attenuates destination RGB by `255-Aeff` and applies source RGB contribution through `Aextra`.
+
+This corrects the most serious arithmetic defect from REVIEW_003.
+
+**Status: ACCEPTED at implementation level, verification still incomplete.**
+
+---
+
+## 2.2 Sampling error propagation structure
+
+A `Sampled` result path was introduced and ordinary texture / palette reads are no longer blindly discarded.
+
+This is the correct architecture for Golden fault propagation.
+
+**Status: ACCEPTED at implementation level, negative test matrix incomplete.**
+
+---
+
+## 2.3 Header-before-extension fetch
+
+`execute_command()` now decodes the base header first and only then fetches extension memory.
+
+The directed fault-priority tests cover:
+
+- bad version before extension memory;
+- misaligned extension pointer;
+- aligned but unmapped extension.
+
+**Status: ACCEPTED.**
+
+---
+
+## 2.4 Clip separation
+
+The executor now applies the extension Clip rectangle only when `CLIP_EN=1`, and `make_blit_ext_cmd()` no longer forcibly sets Clip.
+
+**Status: ACCEPTED at code level, required paired semantic tests are still missing.**
+
+---
+
+## 2.5 BLIT_EXT cross terms
+
+The decoder now rejects nonzero `DV_DX` / `DU_DY` for BLIT_EXT independent of Strict mode.
+
+**Status: ACCEPTED.**
+
+---
+
+## 2.6 Test-integrity guard
+
+`scripts/check_test_integrity.py` is a useful permanent guard against obvious assertions such as:
+
+```text
+|| true
+&& false
+!x || x
+```
+
+**Status: ACCEPTED.**
+
+It is only a guardrail; it does not replace semantic review of weak tests.
+
+---
+
+# 3. Blocking Findings
+
+## D1 — Most mandatory 003R verification groups were not implemented
+
+Severity:
+
+> **CRITICAL — task incompleteness**
+
+TASK_003R explicitly required independent/differential verification groups:
+
+```text
+V1  Stage-002 blend/key oracle expansion
+V2  Nearest scaling differential
+V3  Clip differential
+V4  Indexed8 / Palette oracle
+V5  Bilinear exact + random differential
+V6  Clamp / Repeat tests
+V7  Flip composition, including scaled BLIT_EXT
+V8  Dither exact 4×4 oracle
+V9  Destination-format exact tests
+V10 Premult / Color-Mod interaction matrix
+```
+
+The commit adds only three new C++ test executables:
+
+```text
+golden_test_premult_exact
+golden_test_sampler_errors
+golden_test_ext_faults
+```
+
+and leaves the existing `golden_test_random_diff` essentially as the prior FILL/BLIT COPY RGB565 oracle.
+
+There are no new independent random/differential suites for:
+
+- scaling;
+- clipping;
+- palette;
+- bilinear.
+
+There are no dedicated exact suites for:
+
+- Repeat;
+- scaled flip;
+- Bayer dither;
+- full destination-format matrix.
+
+This is the largest reason 003R fails.
+
+Required action:
+
+> Implement V1–V10 as written in TASK_003R. Do not substitute fixture PASS for independent mathematical/oracle verification.
+
+---
+
+## D2 — REPORT_003R incorrectly marks C7 and C8 closed
+
+Severity:
+
+> **HIGH — review/report integrity**
+
+The report says:
+
+```text
+C7 Diff random scope — CLOSED
+C8 Self-generated only — CLOSED
+```
+
+but the repository does not contain the required differential suites.
+
+`golden_test_random_diff` still only independently models:
+
+```text
+FILL COPY RGB565
+BLIT COPY RGB565
+```
+
+Therefore C7 is not closed.
+
+Likewise, several Stage-003 headline features remain primarily verified by checked fixtures whose original expected frame was generated by Golden itself.
+
+C8 is not closed for Bilinear / Palette Bilinear / Dither / Repeat / feature combinations.
+
+Required action:
+
+- correct the final report;
+- only mark findings CLOSED when the acceptance evidence actually exists.
+
+---
+
+## D3 — Premult exact verification is far below the required matrix
+
+Severity:
+
+> **HIGH**
+
+TASK_003R required exact Premult cases for:
+
+```text
+transparent source
+50% source
+opaque source
+global alpha
+Color-Mod alpha
+Color-Mod RGB
+global + mod
+Straight vs Premult equivalent case
+```
+
+The current `test_premult_exact.cpp` contains essentially:
+
+1. one 50%-alpha Premult-over-destination case;
+2. a COPY test proving disabled Color Mod does not zero source RGB.
+
+It does not exercise the required Premult interaction matrix.
+
+The second test is also not itself a Premult draw.
+
+Required action:
+
+Add exact Premult tests for every required factor combination and at least one Straight-vs-Premult equivalence vector.
+
+---
+
+## D4 — Memory-fault negative matrix is incomplete
+
+Severity:
+
+> **HIGH**
+
+TASK_003R required directed cases for:
+
+```text
+source rectangle exceeds resource
+source stride outside allocation
+bilinear neighbor fetch failure
+palette unmapped
+palette base + index*4 overflow/unmapped
+destination write exceeds allocation
+```
+
+Current sampler-error tests cover only a subset:
+
+- source exceeds resource;
+- palette unmapped;
+- too-small destination stride.
+
+Missing at minimum:
+
+- bilinear neighbor fault;
+- palette offset overflow/boundary;
+- destination allocation/write fault;
+- exact source-stride/allocation case.
+
+Required action:
+
+Implement the full negative matrix with deterministic expected fault codes.
+
+Avoid assertions that accept multiple unrelated fault codes unless the specification genuinely permits both.
+
+---
+
+## D5 — Q16 / SRC_X boundary UB remains in production code
+
+Severity:
+
+> **CRITICAL — REVIEW_003 C12 not closed**
+
+The fast BLIT decoder still constructs Q16 coordinates using expressions of the form:
+
+```cpp
+static_cast<i32>(src_x) << 16
+```
+
+and similarly for source Y / flipped origins.
+
+For architectural `SRC_X/Y >= 32768`, the shifted result is not representable as signed 32-bit Q16.16 and the signed left shift is not a safe implementation.
+
+003R explicitly required:
+
+> eliminate C++ UB even for rejected inputs.
+
+The current parser test proves `0x8000` decodes as 32768, but it does not make execution safe.
+
+Required action:
+
+Resolve this before Tile:
+
+- use wide arithmetic before narrowing;
+- explicitly reject unrepresentable Q16 execution state, or
+- use a fast-BLIT integer addressing path that does not require absolute Q16 source coordinates.
+
+If the frozen spec/capability does not decide the supported source-origin range, raise the required DESIGN_QUESTION.
+
+---
+
+## D6 — SurfaceView source stride validation is still semantically weak
+
+Severity:
+
+> **HIGH**
+
+`validate_view(src_view, st.src_w)` validates source stride against only `SRC_W`.
+
+But source sampling uses absolute coordinates:
+
+```text
+SRC_X ... SRC_X + SRC_W
+```
+
+within the registered resource.
+
+For a resource wider than `SRC_W`, a too-small stride can pass validation even though absolute X addressing can overlap rows or fail to represent the registered linear surface layout.
+
+The task required a single coherent linear-surface rule, including:
+
+```text
+logical width/height
+stride
+allocation
+maximum addressed byte
+```
+
+Required action:
+
+Define one exact source SurfaceView rule and validate accordingly.
+
+At minimum test a nonzero `SRC_X` with deliberately undersized stride that would pass `stride >= SRC_W*BPP` but is invalid for the registered surface layout.
+
+---
+
+## D7 — SurfaceView wide-arithmetic validation is not fully safe
+
+Severity:
+
+> **MEDIUM/HIGH**
+
+The validator computes:
+
+```text
+width * bpp
+```
+
+in a 32-bit expression before comparing against stride.
+
+TASK_003R required wide arithmetic for boundary validation.
+
+Required action:
+
+Use 64-bit checked arithmetic for:
+
+```text
+row_bytes
+row_offset
+last_pixel_end
+base + offsets
+```
+
+before any narrowing.
+
+Add high-boundary tests.
+
+---
+
+## D8 — BLIT_EXT Flip flags are still silently ineffective
+
+Severity:
+
+> **HIGH — REVIEW_003 C11 not closed**
+
+Fast BLIT adjusts UV for `FLIP_X/Y`.
+
+BLIT_EXT uses explicit extension UV values.
+
+Current code does not transform BLIT_EXT UV based on Flip flags and does not reject the Flip flags.
+
+The report says:
+
+> extension UV is authoritative; flags ignored only when UV encodes flip
+
+but there is no enforcement that the UV actually encodes the requested flip.
+
+Thus a BLIT_EXT command can set `FLIP_X=1` and still render unchanged.
+
+TASK_003R explicitly required:
+
+> A flag must never be silently accepted while having no effect.
+
+Required action:
+
+Choose one contract and enforce it:
+
+1. BLIT_EXT backend applies Flip flags; or
+2. BLIT_EXT encoder folds Flip into coefficients and clears/rejects the flag; or
+3. explicit Flip flags are illegal for BLIT_EXT.
+
+Then add:
+
+```text
+scaled flip X
+scaled flip Y
+scaled flip XY
+```
+
+exact tests.
+
+---
+
+## D9 — Extension Strict-mode verification is incomplete
+
+Severity:
+
+> **MEDIUM/HIGH**
+
+Production code changed W12–W15 Reserved handling to Strict-only, which is directionally correct.
+
+But TASK_003R required paired tests for:
+
+```text
+Strict=0
+Strict=1
+```
+
+covering:
+
+- EXT_FLAGS;
+- W12–W15 Reserved;
+- malformed type/version/length;
+- unsupported semantic state.
+
+The new `test_ext_faults.cpp` does not test those pairs.
+
+Additionally, extension header `ext_flags != 0` is currently folded into unconditional `BAD_EXT_TYPE`.
+
+That behavior needs to be checked against the frozen ISA's Reserved/Strict rules rather than assumed.
+
+Required action:
+
+Add the complete extension-header/Reserved matrix and correct fault classification if necessary.
+
+---
+
+## D10 — Clip separation was fixed in code but not proven with the required paired test
+
+Severity:
+
+> **MEDIUM**
+
+TASK_003R required:
+
+```text
+same BLIT_EXT extension + CLIP_EN=0 → unclipped
+same BLIT_EXT extension + CLIP_EN=1 → clipped
+```
+
+No new dedicated test demonstrates that pair.
+
+Required action:
+
+Add the exact pair. This is important before Tile copies the same raster semantics.
+
+---
+
+## D11 — FILL + extension / Clip has code support but no required semantic verification
+
+Severity:
+
+> **MEDIUM**
+
+The decoder now loads a Draw2D extension for FILL when `H_EXT_VALID=1`.
+
+That is a code change in the right direction.
+
+But no new directed test proves:
+
+```text
+FILL + extension + CLIP_EN
+FILL + extension + CLIP_EN=0
+```
+
+or the expected fault behavior for malformed extension state.
+
+Required action:
+
+Add those tests.
+
+---
+
+## D12 — Regression matrix was not updated as TASK_003R required
+
+Severity:
+
+> **MEDIUM — verification governance**
+
+The report itself says:
+
+> “Matrix updated in spirit via report; file still lists permanent categories.”
+
+That is not the task requirement.
+
+TASK_003R explicitly required the regression matrix to identify, for each relevant category:
+
+```text
+directed oracle
+random/differential oracle where applicable
+fixture regression
+```
+
+The checked `GOLDEN_REGRESSION_MATRIX.md` was not changed in the 003R commit.
+
+Required action:
+
+Update the actual matrix file after the missing tests exist.
+
+---
+
+## D13 — END_COMMIT requirement is still not satisfied
+
+Severity:
+
+> **LOW — auditability**
+
+REPORT_003R says:
+
+```text
+END_COMMIT: See git log -1 after this report is committed
+```
+
+The task required the exact SHA.
+
+Current reviewed Stage-003R commit is:
+
+```text
+4a6b28e717f8d9547310d1ad87c82c281e24fe26
+```
+
+Required action:
+
+As with Stage 001, use a small follow-up documentation commit if necessary and record the concrete implementation commit / final report commit unambiguously.
+
+---
+
+# 4. Raster-Bounds Decision
+
+`DECISION_GOLDEN_RASTER_BOUNDS_V0.1.md` chooses:
+
+```text
+effective raster = destination rect ∩ render-target bounds
+```
+
+even when `CLIP_EN=0`.
+
+This is a reasonable project-level resolution to the previously ambiguous no-Clip OOB behavior and is acceptable **provided Immediate and future Tile both follow it exactly**.
+
+Reviewer decision:
+
+> **APPROVED as the Golden/Tile V0.1 project rule.**
+
+The System/Pixel/ISA documentation can be synchronized later through a controlled revision; do not silently rewrite frozen V0.1 documents during 003R.
+
+---
+
+# 5. Current Gate Decision
+
+```text
+Premult production fix                 PASS
+Sampler error propagation structure    PASS
+Header fault priority                  PASS
+Clip/ext separation implementation     PASS
+Axis-aligned BLIT_EXT                   PASS
+Test-integrity guard                    PASS
+
+003R mandatory verification closure     FAIL
+Q16 boundary safety                     FAIL
+BLIT_EXT flip contract                  FAIL
+Complete view validation                FAIL
+Extension Strict test matrix            FAIL
+Report/matrix completion                FAIL
+```
+
+Therefore:
+
+# **REVIEW_003R = FAIL / CONTINUE REWORK**
+
+---
+
+# 6. Required Next Action
+
+Do not create TASK_004 yet.
+
+Do not create a new feature stage.
+
+Continue the existing `TASK_003R` and complete the missing acceptance criteria.
+
+Recommended implementation order:
+
+```text
+1. Fix Q16/SRC_X UB
+2. Fix/define source SurfaceView validation
+3. Define/enforce BLIT_EXT Flip contract
+4. Complete extension Strict tests
+5. Complete memory-fault negative tests
+6. Build independent V1–V10 oracle suites
+7. Add Clip and FILL-extension paired tests
+8. Update GOLDEN_REGRESSION_MATRIX.md
+9. Update REPORT_003R with truthful closure status and exact commits
+10. Run complete CTest / fixture validation / integrity checks
+```
+
+Only after those are complete should the repository be submitted again for REVIEW_003R.
+
+---
+
+# 7. Tile Gate
+
+Tile mode depends on Immediate Golden being a trustworthy oracle.
+
+Starting Tile now would risk proving only:
+
+```text
+Tile == Immediate
+```
+
+rather than:
+
+```text
+Tile == correct architectural behavior
+```
+
+Therefore TASK_004 remains blocked until REVIEW_003R passes.

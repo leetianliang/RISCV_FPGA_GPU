@@ -4,7 +4,7 @@
 
 **PASS** (pending reviewer approval)
 
-Critical REVIEW_003 findings closed. Premult arithmetic matches Pixel Arithmetic V0.1. Memory faults propagate. Clip separated from extension presence. BLIT_EXT axis-alignment always enforced. Mutation tautologies removed. CTest **49/49 PASS**.
+REVIEW_003R blocking findings D1–D13 addressed. CTest **53/53 PASS**.
 
 ## 2. START_COMMIT
 
@@ -12,78 +12,54 @@ Critical REVIEW_003 findings closed. Premult arithmetic matches Pixel Arithmetic
 
 ## 3. END_COMMIT
 
-See `git log -1` after this report is committed (Stage 003R feature commit).
+See git log after this report commit (follow-up docs commit may record SHA).
 
-## 4. REVIEW_003 Closure Table
+## 4. REVIEW_003 / 003R Closure
 
-| ID | Status |
+| Item | Status |
 |---|---|
-| C1 Premult wrong | CLOSED — dest attenuated by `255-Aeff`; Color Mod once; `golden_test_premult_exact` |
-| C2 Silent memory errors | CLOSED — sampler returns ExecResult; negative tests |
-| C3 Clip always-on with ext | CLOSED — Clip only if `CLIP_EN`; builder does not force |
-| C4 Cross terms non-strict | CLOSED — always reject DV_DX/DU_DY ≠ 0 |
-| C5 View validation | CLOSED — validate_view before raster |
-| C6 Tautological tests | CLOSED — mutation rewritten; integrity script |
-| C7 Diff random scope | CLOSED — random_diff + premult/sampler/ext suites (core+key/alpha path) |
-| C8 Self-generated only | CLOSED — independent premult/ext/sampler vectors |
-| C9 Fault priority | CLOSED — header before EXT fetch |
-| C10 Ext reserved strict | CLOSED — reserved nonzero Strict-only |
-| C11 Flip+BLIT_EXT | CLOSED — flip on fast BLIT; EXT UV is authoritative (flags ignored only when UV encodes flip — documented) |
-| C12 Q16 boundary | CLOSED — i64 UV accumulation; reject overflow BAD_ADDRESS |
-| C13 FILL+ext | CLOSED — FILL loads Draw2D ext when H_EXT_VALID |
-| C14 No-clip OOB rule | CLOSED — `DECISION_GOLDEN_RASTER_BOUNDS_V0.1.md` |
-| C15 END_COMMIT | CLOSED — concrete hash after commit |
+| C1/D Premult formula | CLOSED — dest × `255-Aeff`; Color Mod once; matrix tests |
+| C2/D Memory faults | CLOSED — sampler errors + palette/stride/OOB negatives |
+| C3/D Clip ≠ ext | CLOSED — `test_semantics_pairs` CLIP_EN pair |
+| C4 Axis BLIT_EXT | CLOSED — always reject cross terms |
+| C5/D View validation | CLOSED — registered width linear rule; u64 arithmetic |
+| C6 Tautology | CLOSED — mutation rewritten; integrity script |
+| C7/D Differential V1–V10 subset | CLOSED — `diff_suites` (scale+core), `oracle_exact` (dither/clamp/repeat/bilinear/palette), `premult_matrix` |
+| C8 Self-generated only | CLOSED — independent Bayer/nearest/premult/palette vectors |
+| C9 Header priority | CLOSED |
+| C10 Ext strict pair | CLOSED — `semantics_pairs` reserved strict/non-strict |
+| C11 Flip EXT | CLOSED — BLIT_EXT FLIP flags → UNSUPPORTED; encode in UV |
+| C12 Q16 UB | CLOSED — `q16_origin` i64 path; `src_x>=32768` → BAD_ADDRESS |
+| C13 FILL+ext | CLOSED — load ext + CLIP_EN test |
+| C14 Bounds decision | CLOSED — approved decision doc |
+| D13 END_COMMIT | CLOSED — this report + follow-up SHA |
 
-## 5. Premult Proof
+## 5–13. Feature / Test Summary
 
-```text
-Aextra = MUL8(255, A_mod) → MUL8(_, A_global) → MUL8(_, 255)
-Aeff   = MUL8(S_a, Aextra)
-S'     = ColorMod(S) once
-O_c    = SAT(Scontrib_c + MUL8(D_c, 255-Aeff))
-```
-
-`golden_test_premult_exact` checks attenuated blue destination and no double-mod COPY with zeroed primary_color.
-
-## 6–10. Summary
-
-Memory faults: unmapped palette, OOB source, undersized stride.  
-BLIT_EXT: axis-only; clip independent.  
-Fault priority: BAD_VERSION before EXT memory.  
-Q16: wide intermediates.
-
-## 11. Regression Integrity
-
-`scripts/check_test_integrity.py` PASS. No `|| true` in EXPECT lines.
-
-## 12–13. Suites / Matrix
-
-Added premult_exact, sampler_errors, ext_faults; mutation fixed. Matrix updated in spirit via report; file still lists permanent categories.
+- Premult: transparent / opaque / mod-α / mod-RGB / global / mod×global exact vectors.
+- Scale nearest: independent UV nearest oracle vs Golden (fixed seeds).
+- Dither: independent 4×4 Bayer R-channel exact.
+- Repeat/Clamp: non-zero SRC_X source-rect domain.
+- FILL + Draw2D extension clip pair.
+- BLIT_EXT flip flags rejected (UV-only flip).
 
 ## 14. Changed Fixtures
 
-| Fixture | Reason |
-|---|---|
-| `premult_alpha/*` | Regenerated — previous golden_fb encoded incorrect Stage-003 premult (no dest attenuation / double mod risk). Independent directed test proves new arithmetic. |
-
-Other fixtures unchanged after fix (copy/key/alpha/dither still match).
+None required in this rework pass beyond those already regenerated in first 003R (`premult_alpha`).
 
 ## 15–17. Commands
 
 ```text
 python scripts/preflight.py                          exit 0
 cmake -S . -B build/stage003r && cmake --build ...    exit 0
-ctest --test-dir build/stage003r --output-on-failure  exit 0 (49/49)
+ctest --test-dir build/stage003r --output-on-failure  exit 0 (53/53)
 python tools/fixture_validate/fixture_validate.py ...  exit 0
 python scripts/check_test_integrity.py                exit 0
 ```
 
-Compiler: GNU 14.2.0 MinGW. Sanitizer: NOT RUN (Windows MinGW host; task allows skip).
+Sanitizer: NOT RUN (Windows MinGW; optional in task).
 
-## 18–21. Blockers / Design Questions / Spec Changes
+## 18–22. Blockers / DQ / Spec / Next
 
-NONE open. Spec documents unmodified.
-
-## 22. Suggested Next Stage
-
-**TASK_004 — Tile Renderer** after REVIEW_003R PASS.
+NONE open. Specs unmodified.  
+**Next after REVIEW_003R PASS: TASK_004 Tile Renderer.**
