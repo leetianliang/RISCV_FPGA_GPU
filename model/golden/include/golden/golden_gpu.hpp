@@ -37,9 +37,14 @@ public:
     void reset();
 
 private:
+    struct Sampled {
+        ExecResult status{};
+        Rgba8888 color{};
+    };
     ExecResult execute_draw(const DecodedDraw& d);
     ExecResult sample_and_blend(const DecodedDraw& d, SurfaceView& src_view,
                                 SurfaceView& dst_view, i32 dx, i32 dy, i32 sx, i32 sy);
+    Sampled sample_color(const DecodedDraw& d, SurfaceView& src_view, i32 sx, i32 sy);
 
     MemoryImage memory_;
     std::map<u32, RegisteredResource> resources_;

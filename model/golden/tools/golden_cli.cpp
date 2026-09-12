@@ -570,6 +570,7 @@ bool generate_stage003_fixtures(const fs::path& root) {
         d.w = 8;
         d.h = 8;
         d.blit_ext = true;
+        d.clip_en = true;
         d.clip_xmin = 2;
         d.clip_ymin = 2;
         d.clip_xmax = 6;

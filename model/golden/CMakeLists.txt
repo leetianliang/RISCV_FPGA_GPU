@@ -44,6 +44,14 @@ golden_add_test_exec(golden_test_pixel_pipeline tests/unit/test_pixel_pipeline.c
 golden_add_test_exec(golden_test_mutation tests/directed/test_mutation_authority.cpp)
 golden_add_test_exec(golden_test_sprite_ext tests/directed/test_sprite_ext.cpp)
 golden_add_test_exec(golden_test_random_diff tests/random/test_random_diff.cpp)
+golden_add_test_exec(golden_test_premult_exact tests/directed/test_premult_exact.cpp)
+golden_add_test_exec(golden_test_sampler_errors tests/directed/test_sampler_errors.cpp)
+golden_add_test_exec(golden_test_ext_faults tests/directed/test_ext_faults.cpp)
+
+add_test(
+    NAME golden_test_integrity
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../../scripts/check_test_integrity.py
+)
 
 add_executable(golden_cli tools/golden_cli.cpp)
 target_link_libraries(golden_cli PRIVATE golden_core)

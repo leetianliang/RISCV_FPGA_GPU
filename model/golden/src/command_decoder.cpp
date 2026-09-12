@@ -213,7 +213,7 @@ bool load_extension(const Draw2DState& st, const u8* ext_bytes, u32 ext_size,
     out.state.du_dy = static_cast<i32>(rdw(7));
     out.state.dv_dy = static_cast<i32>(rdw(8));
     for (int i = 12; i < 16; ++i) {
-        if (rdw(i) != 0) {
+        if (rdw(i) != 0 && out.state.strict) {
             fail_draw(out, FaultCode::RESERVED_NONZERO, static_cast<u32>(i));
             return false;
         }
@@ -243,6 +243,12 @@ DecodedDraw decode_draw_2d(const GpuCmd64& cmd, const u8* ext_bytes, u32 ext_siz
         out.state.src_y = 0;
         out.state.src_w = out.state.dst_w;
         out.state.src_h = out.state.dst_h;
+        // FILL may use Draw2D extension for Clip when H_EXT_VALID=1.
+        if (out.state.has_ext) {
+            if (!load_extension(out.state, ext_bytes, ext_size, out)) {
+                return out;
+            }
+        }
         return out;
     }
 
@@ -289,8 +295,10 @@ DecodedDraw decode_draw_2d(const GpuCmd64& cmd, const u8* ext_bytes, u32 ext_siz
             fail_draw(out, FaultCode::BAD_EXT_PTR, 0);
             return out;
         }
-        if (out.state.strict &&
-            (out.state.dv_dx != 0 || out.state.du_dy != 0)) {
+        if (!load_extension(out.state, ext_bytes, ext_size, out)) {
+            return out;
+        }
+        if (out.state.dv_dx != 0 || out.state.du_dy != 0) {
             fail_draw(out, FaultCode::UNSUPPORTED_FEATURE, out.state.draw_state);
             return out;
         }
@@ -413,7 +421,7 @@ GpuCmd64 make_blit_cmd(const BlitCmdDesc& d) noexcept {
 GpuCmd64 make_blit_ext_cmd(const BlitCmdDesc& d) noexcept {
     BlitCmdDesc c = d;
     c.blit_ext = true;
-    c.clip_en = true;
+    // Do not force Clip; preserve caller intent.
     c.ext_ptr = d.ext_ptr ? d.ext_ptr : 0x30000;
     return make_blit_cmd(c);
 }
