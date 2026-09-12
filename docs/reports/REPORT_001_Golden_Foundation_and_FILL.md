@@ -9,7 +9,7 @@ SPEC PREFLIGHT remains PASS. Frozen specifications unmodified. No third-party de
 ## 2. START_COMMIT / END_COMMIT
 
 - START_COMMIT: `610b0fb87a97d77243f480c00a9eaf498de2f717` (TASK_000 baseline / REVIEW_000)
-- END_COMMIT: recorded after Stage 001 commit (see git log; message `feat(golden): Stage 001 foundation and FILL_RECT`)
+- END_COMMIT: `0a22fe8b1dae67bb6a5f04a9bc53e58c0070f5cd`
 
 ## 3. Subtasks Implemented
 
