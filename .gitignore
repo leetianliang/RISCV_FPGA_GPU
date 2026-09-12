@@ -1,0 +1,78 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*~
+
+# C/C++ / CMake
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.exe
+*.out
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# Simulation (generated)
+*.vcd
+*.fst
+*.fsdb
+*.wlf
+*.vpd
+simv
+simv.daidir/
+ucli.key
+xsim.dir/
+xsim.jou
+xsim.log
+transcript
+work/
+*.log
+coverage.dat
+urgReport/
+# Note: do not ignore checked-in golden/reference vectors under results/ or model/
+
+# FPGA vendor generated (conservative; do not ignore RTL sources or board constraints)
+*.rpt.html
+*.rpt.txt
+*_out/
+*_compile/
+*_syn/
+*_impl/
+*.bit.stream
+*.bit.gz
+db/
+incremental_db/
+output_files/
+simulation/
+timing/
+*.qws
+*.jdi
+*.smsg
+*.ala
+*.done
+*.pin
+*.sld
+# Efinix (conservative placeholders when project format is frozen later)
+# .tcl project temp dirs will be refined in a later task
+
+# Results: transient local runs only; keep curated reports
+results/local/
+results/tmp/
