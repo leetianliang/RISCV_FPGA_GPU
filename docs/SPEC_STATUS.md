@@ -28,9 +28,10 @@ This note is recorded only. No revision is performed in TASK_000.
 ## 3. Gate A State
 
 ```text
-Gate A: READY FOR IMPLEMENTATION
+Gate A: PASSED (REVIEW_000 = PASS)
 ```
 
-All nine required specification files are present in `docs/`. Formal Gate A acceptance remains with the reviewer per the project development flow.
+See `docs/reviews/REVIEW_000_Project_Initialization.md`.  
+All nine required specification files are present in `docs/`.
 
 Repository state: `SPEC_COMPLETE` (all required specs found).

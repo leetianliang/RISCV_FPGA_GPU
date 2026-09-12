@@ -7,6 +7,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(BUILD_GOLDEN "Build the PC Golden GPU model" ON)
 
+enable_testing()
+
 if(BUILD_GOLDEN)
     add_subdirectory(model/golden)
 endif()

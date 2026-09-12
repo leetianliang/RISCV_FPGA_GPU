@@ -1,0 +1,12 @@
+{
+  "format_version": 1,
+  "isa_version": 1,
+  "pixel_arith_version": 1,
+  "width": 16,
+  "height": 16,
+  "stride": 32,
+  "framebuffer_format": "RGB565",
+  "command_count": 1,
+  "base": 40960,
+  "description": "Stage-001 FILL_RECT interior rectangle 3,4 7x6 color 0xFF2A55C8 COPY RGB565"
+}
