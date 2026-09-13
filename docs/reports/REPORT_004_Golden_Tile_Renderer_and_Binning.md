@@ -2,9 +2,9 @@
 
 ## 1. Result
 
-**PASS WITH ACTIONS** (pending REVIEW_004_V4)
+**PASS** (pending REVIEW_004_V5)
 
-Core Tile path, grid validation, TILE_FLAGS matrix, internal scratch resize, functional sweep, honest acceptance.
+True internal Tile MemoryImage, shared pixel profiler with overdraw, mixed BLIT_EXT/bilinear random Imm==Tile, five checked Tile fixtures, six-workload functional sweep, strict acceptance checker.
 
 ## 2. START_COMMIT
 
@@ -12,7 +12,36 @@ Core Tile path, grid validation, TILE_FLAGS matrix, internal scratch resize, fun
 
 ## 3. END_COMMIT
 
-See `git log -1` on master after this report commit.
+`2a85349` (implementation; this report commit may follow)
+
+## 4. REVIEW_004_V3/V4 Closure
+
+| ID | Status |
+|---|---|
+| J7 Internal tile MemoryImage | CLOSED — `gpu.tile_memory()`, no 0x7F000000 reservation |
+| J8 LOAD_COLOR_DEFAULT | OPEN DESIGN_QUESTION; provisional zero-fill documented |
+| J9 Strict reserved | PARTIAL — Tile reserved rejected unconditionally |
+| J10 Mixed random BLIT_EXT | CLOSED — kinds 3/4 nearest/bilinear + key |
+| J11 Extended directed | CLOSED for ARGB/premult/clip/dither in `golden_test_tile_extended` |
+| J12 Tile fixtures | CLOSED — 5 dirs via `golden_cli generate-tile-fixtures` |
+| J13 Fault suite | CLOSED — `golden_test_tile_faults` |
+| J14 Profiler | CLOSED — PixelEventSink + overdraw in TileStats |
+| J15–J16 Sweep | CLOSED — 6 workloads, named W1–W6, functional model |
+| J17–J18 Acceptance | CLOSED — checker rejects non-PASS; per-ID evidence |
+| J19–J20 Checker/report | CLOSED — checker + this report |
+
+## 17. Acceptance IDs
+
+All 47 IDs PASS in `STAGE_004_ACCEPTANCE.json` (strict checker).
+
+## 18. CTest
+
+`ctest --test-dir build/stage004` → **64/64 PASS**
+
+## 26. Next
+
+Stage 005 RTL after REVIEW_004_V5.
+
 
 ## 4. REVIEW_004_V3 Closure
 
