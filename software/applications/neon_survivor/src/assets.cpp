@@ -589,7 +589,12 @@ void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
         std::snprintf(buf, sizeof(buf), "TILE %u/%u MAXREF %u MAXOD %u", t.tiles_active,
                       t.tiles_total, t.max_workrefs_per_tile, t.max_overdraw);
         draw_text_pal(api, a, 4, y + 12, buf, Color::rgb(120, 255, 160));
-        std::snprintf(buf, sizeof(buf), "PC GOLDEN HOST FPS %.1f", opts.host_fps);
+        // Headless/capture: omit live FPS so framebuffer bytes are deterministic.
+        if (opts.host_fps > 0.0) {
+            std::snprintf(buf, sizeof(buf), "PC GOLDEN HOST FPS %.1f", opts.host_fps);
+        } else {
+            std::snprintf(buf, sizeof(buf), "PC GOLDEN HOST FPS N/A");
+        }
         draw_text_pal(api, a, 4, y + 24, buf, Color::rgb(255, 120, 120));
         std::snprintf(buf, sizeof(buf), "GRID %ux%u TILE %u", t.grid_w, t.grid_h, t.tile_size);
         draw_text_pal(api, a, 4, y + 36, buf, Color::rgb(160, 160, 255));

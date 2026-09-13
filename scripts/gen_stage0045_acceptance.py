@@ -76,24 +76,24 @@ rows = [
     ("FX-02", "Additive glow/explosion",
      ["software/applications/neon_survivor/src/assets.cpp"], ["gpu2d_test_system", "gpu2d_test_backend"], "gpu2d_test_backend"),
     ("FX-03", "Scaling and bilinear effect",
-     ["software/applications/neon_survivor/src/assets.cpp"], ["gpu2d_test_backend"], "gpu2d_test_backend"),
+     ["software/applications/neon_survivor/src/assets.cpp"], ["gpu2d_test_features", "gpu2d_test_system"], "gpu2d_test_features"),
     ("FX-04", "Color Mod / Palette damage or variant",
-     ["software/applications/neon_survivor/src/assets.cpp"], ["gpu2d_test_backend"], "gpu2d_test_backend"),
+     ["software/applications/neon_survivor/src/assets.cpp"], ["gpu2d_test_features", "gpu2d_test_system"], "gpu2d_test_features"),
     ("FX-05", "Color Key + Indexed8/Palette paths exercised",
-     ["software/applications/neon_survivor/src/assets.cpp", "model/pc_demo/tests/test_system.cpp"], ["gpu2d_test_system"], "gpu2d_test_system"),
+     ["software/applications/neon_survivor/src/assets.cpp", "model/pc_demo/tests/test_features.cpp"], ["gpu2d_test_features"], "gpu2d_test_features"),
     ("FX-06", "GPU-rendered HUD with telemetry",
      ["software/applications/neon_survivor/src/assets.cpp"], ["gpu2d_test_system", "gpu2d_demo_headless_imm"], "gpu2d_test_system"),
     # XR
     ("XR-01", "Tile grid visualization",
-     ["software/applications/neon_survivor/src/assets.cpp"], ["gpu2d_test_system"], "gpu2d_test_system"),
+     ["software/applications/neon_survivor/src/assets.cpp", "model/pc_demo/tests/test_system.cpp"], ["gpu2d_test_system"], "gpu2d_test_system"),
     ("XR-02", "Per-Tile WorkRef visualization",
-     ["software/applications/neon_survivor/src/assets.cpp"], ["gpu2d_test_system"], "gpu2d_test_system"),
+     ["software/applications/neon_survivor/src/assets.cpp", "model/pc_demo/tests/test_system.cpp"], ["gpu2d_test_system"], "gpu2d_test_system"),
     ("XR-03", "Active Tile visualization",
-     ["software/applications/neon_survivor/src/assets.cpp"], ["gpu2d_test_system"], "gpu2d_test_system"),
+     ["software/applications/neon_survivor/src/assets.cpp", "model/pc_demo/tests/test_system.cpp"], ["gpu2d_test_system"], "gpu2d_test_system"),
     ("XR-04", "Overdraw visualization when available",
-     ["software/applications/neon_survivor/src/assets.cpp"], ["gpu2d_test_system"], "gpu2d_test_system"),
+     ["software/applications/neon_survivor/src/assets.cpp", "model/pc_demo/tests/test_system.cpp"], ["gpu2d_test_system"], "gpu2d_test_system"),
     ("XR-05", "Normal/X-Ray switch does not affect simulation",
-     ["model/pc_demo/app/main.cpp"], ["gpu2d_test_system"], "gpu2d_test_system"),
+     ["model/pc_demo/app/main.cpp", "model/pc_demo/tests/test_system.cpp"], ["gpu2d_test_system"], "gpu2d_test_system"),
     # STR
     ("STR-01", "Sprite Storm",
      ["software/applications/neon_survivor/src/sim.cpp"], ["gpu2d_test_system", "gpu2d_test_sim"], "gpu2d_test_system"),
@@ -106,16 +106,16 @@ rows = [
     ("STR-05", "Overdraw Storm",
      ["software/applications/neon_survivor/src/sim.cpp"], ["gpu2d_test_system"], "gpu2d_test_system"),
     ("STR-06", "Stress telemetry labeled PC Golden workload stats",
-     ["results/stage0045/stress/stress_stats.md"], ["gpu2d_test_system"], "gpu2d_test_system"),
+     ["results/stage0045/stress/stress_stats.md", "model/pc_demo/tests/test_system.cpp"], ["gpu2d_test_system", "gpu2d_test_cli_scenes"], "gpu2d_test_system"),
     # SYS
-    ("SYS-01", "100 frames Immediate==Tile exact",
+    ("SYS-01", "100 frames Immediate==Tile + feature coverage",
      ["model/pc_demo/tests/test_system.cpp"], ["gpu2d_test_system"], "gpu2d_test_system"),
-    ("SYS-02", "1000-frame headless stability",
-     ["model/pc_demo/tests/test_sim.cpp"], ["gpu2d_test_sim"], "gpu2d_test_sim"),
+    ("SYS-02", "1000-frame rendered headless stability",
+     ["model/pc_demo/tests/test_system.cpp"], ["gpu2d_test_system"], "gpu2d_test_system"),
     ("SYS-03", "Immediate→Tile→Immediate switch stability",
      ["model/pc_demo/tests/test_system.cpp"], ["gpu2d_test_system"], "gpu2d_test_system"),
     ("SYS-04", "Deterministic frame capture/hash",
-     ["model/pc_demo/tests/test_system.cpp", "results/stage0045/captures/"], ["gpu2d_test_system"], "gpu2d_test_system"),
+     ["model/pc_demo/tests/test_system.cpp", "scripts/verify_stage0045_captures.py"], ["gpu2d_test_system", "gpu2d_test_capture_verify"], "gpu2d_test_capture_verify"),
     ("SYS-05", "Game code independent of Golden internals",
      ["scripts/check_app_boundary.py"], ["gpu2d_test_boundary"], "gpu2d_test_boundary"),
     ("SYS-06", "Presenter does not host-render game content",
@@ -130,15 +130,31 @@ rows = [
     ("AUD-03", "REPORT_0045 exact commits and 56-row matrix",
      ["docs/reports/REPORT_0045_PC_Golden_Interactive_Application.md"], ["gpu2d_test_boundary"], "gpu2d_test_boundary"),
     ("AUD-04", "Captures and stress outputs checked/generated",
-     ["results/stage0045/captures/", "results/stage0045/stress/stress_stats.md"], ["gpu2d_test_system", "gpu2d_demo_headless_tile"], "gpu2d_test_system"),
+     ["results/stage0045/captures/", "scripts/verify_stage0045_captures.py", "results/stage0045/stress/stress_stats.md"], ["gpu2d_test_capture_verify", "gpu2d_test_cli_scenes", "gpu2d_test_system"], "gpu2d_test_capture_verify"),
 ]
+
+# B15: explicit audited PASS set. Generator does NOT auto-promote.
+# Only IDs with exact implementation + verification evidence may be listed.
+REVIEWED_PASS = {
+    "HOST-01", "HOST-02", "HOST-03", "HOST-04", "HOST-05",
+    "API-01", "API-02", "API-03", "API-04", "API-05", "API-06",
+    "BACK-01", "BACK-02", "BACK-03", "BACK-04", "BACK-05", "BACK-06",
+    "SIM-01", "SIM-02", "SIM-03", "SIM-04", "SIM-05",
+    "GAME-01", "GAME-02", "GAME-03", "GAME-04", "GAME-05", "GAME-06",
+    "FX-01", "FX-02", "FX-03", "FX-04", "FX-05", "FX-06",
+    "XR-01", "XR-02", "XR-03", "XR-04", "XR-05",
+    "STR-01", "STR-02", "STR-03", "STR-04", "STR-05", "STR-06",
+    "SYS-01", "SYS-02", "SYS-03", "SYS-04", "SYS-05", "SYS-06", "SYS-07",
+    "AUD-01", "AUD-02", "AUD-03", "AUD-04",
+}
 
 acc = []
 for iid, req, impl, ver, tn in rows:
+    status = "PASS" if iid in REVIEWED_PASS else "NOT_DONE"
     acc.append({
         "id": iid,
         "mandatory": True,
-        "status": "PASS",
+        "status": status,
         "requirement": req,
         "implementation_evidence": impl,
         "verification_evidence": ver,

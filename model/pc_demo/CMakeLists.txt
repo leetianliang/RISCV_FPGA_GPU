@@ -85,6 +85,18 @@ add_test(NAME gpu2d_test_boundary
 )
 
 # Headless demo smoke via CLI
+add_executable(gpu2d_test_mutation tests/test_mutation.cpp)
+target_link_libraries(gpu2d_test_mutation PRIVATE golden_backend_lib neon_game)
+target_compile_options(gpu2d_test_mutation PRIVATE ${GOLDEN_WARN_FLAGS})
+add_test(NAME gpu2d_test_mutation COMMAND gpu2d_test_mutation)
+
+add_test(NAME gpu2d_test_cli_scenes
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/check_cli_scenes0045.py
+)
+add_test(NAME gpu2d_test_capture_verify
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/verify_stage0045_captures.py
+)
+
 add_test(NAME gpu2d_demo_headless_imm
     COMMAND gpu2d_demo --headless --frames 30 --seed 1234 --backend immediate --scene game
 )

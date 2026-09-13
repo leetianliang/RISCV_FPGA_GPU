@@ -448,9 +448,10 @@
         "software/applications/neon_survivor/src/assets.cpp"
       ],
       "verification_evidence": [
-        "gpu2d_test_backend"
+        "gpu2d_test_features",
+        "gpu2d_test_system"
       ],
-      "test_name": "gpu2d_test_backend",
+      "test_name": "gpu2d_test_features",
       "notes": "See REPORT_0045"
     },
     {
@@ -462,9 +463,10 @@
         "software/applications/neon_survivor/src/assets.cpp"
       ],
       "verification_evidence": [
-        "gpu2d_test_backend"
+        "gpu2d_test_features",
+        "gpu2d_test_system"
       ],
-      "test_name": "gpu2d_test_backend",
+      "test_name": "gpu2d_test_features",
       "notes": "See REPORT_0045"
     },
     {
@@ -474,12 +476,12 @@
       "requirement": "Color Key + Indexed8/Palette paths exercised",
       "implementation_evidence": [
         "software/applications/neon_survivor/src/assets.cpp",
-        "model/pc_demo/tests/test_system.cpp"
+        "model/pc_demo/tests/test_features.cpp"
       ],
       "verification_evidence": [
-        "gpu2d_test_system"
+        "gpu2d_test_features"
       ],
-      "test_name": "gpu2d_test_system",
+      "test_name": "gpu2d_test_features",
       "notes": "See REPORT_0045"
     },
     {
@@ -503,7 +505,8 @@
       "status": "PASS",
       "requirement": "Tile grid visualization",
       "implementation_evidence": [
-        "software/applications/neon_survivor/src/assets.cpp"
+        "software/applications/neon_survivor/src/assets.cpp",
+        "model/pc_demo/tests/test_system.cpp"
       ],
       "verification_evidence": [
         "gpu2d_test_system"
@@ -517,7 +520,8 @@
       "status": "PASS",
       "requirement": "Per-Tile WorkRef visualization",
       "implementation_evidence": [
-        "software/applications/neon_survivor/src/assets.cpp"
+        "software/applications/neon_survivor/src/assets.cpp",
+        "model/pc_demo/tests/test_system.cpp"
       ],
       "verification_evidence": [
         "gpu2d_test_system"
@@ -531,7 +535,8 @@
       "status": "PASS",
       "requirement": "Active Tile visualization",
       "implementation_evidence": [
-        "software/applications/neon_survivor/src/assets.cpp"
+        "software/applications/neon_survivor/src/assets.cpp",
+        "model/pc_demo/tests/test_system.cpp"
       ],
       "verification_evidence": [
         "gpu2d_test_system"
@@ -545,7 +550,8 @@
       "status": "PASS",
       "requirement": "Overdraw visualization when available",
       "implementation_evidence": [
-        "software/applications/neon_survivor/src/assets.cpp"
+        "software/applications/neon_survivor/src/assets.cpp",
+        "model/pc_demo/tests/test_system.cpp"
       ],
       "verification_evidence": [
         "gpu2d_test_system"
@@ -559,7 +565,8 @@
       "status": "PASS",
       "requirement": "Normal/X-Ray switch does not affect simulation",
       "implementation_evidence": [
-        "model/pc_demo/app/main.cpp"
+        "model/pc_demo/app/main.cpp",
+        "model/pc_demo/tests/test_system.cpp"
       ],
       "verification_evidence": [
         "gpu2d_test_system"
@@ -647,10 +654,12 @@
       "status": "PASS",
       "requirement": "Stress telemetry labeled PC Golden workload stats",
       "implementation_evidence": [
-        "results/stage0045/stress/stress_stats.md"
+        "results/stage0045/stress/stress_stats.md",
+        "model/pc_demo/tests/test_system.cpp"
       ],
       "verification_evidence": [
-        "gpu2d_test_system"
+        "gpu2d_test_system",
+        "gpu2d_test_cli_scenes"
       ],
       "test_name": "gpu2d_test_system",
       "notes": "See REPORT_0045"
@@ -659,7 +668,7 @@
       "id": "SYS-01",
       "mandatory": true,
       "status": "PASS",
-      "requirement": "100 frames Immediate==Tile exact",
+      "requirement": "100 frames Immediate==Tile + feature coverage",
       "implementation_evidence": [
         "model/pc_demo/tests/test_system.cpp"
       ],
@@ -673,14 +682,14 @@
       "id": "SYS-02",
       "mandatory": true,
       "status": "PASS",
-      "requirement": "1000-frame headless stability",
+      "requirement": "1000-frame rendered headless stability",
       "implementation_evidence": [
-        "model/pc_demo/tests/test_sim.cpp"
+        "model/pc_demo/tests/test_system.cpp"
       ],
       "verification_evidence": [
-        "gpu2d_test_sim"
+        "gpu2d_test_system"
       ],
-      "test_name": "gpu2d_test_sim",
+      "test_name": "gpu2d_test_system",
       "notes": "See REPORT_0045"
     },
     {
@@ -704,12 +713,13 @@
       "requirement": "Deterministic frame capture/hash",
       "implementation_evidence": [
         "model/pc_demo/tests/test_system.cpp",
-        "results/stage0045/captures/"
+        "scripts/verify_stage0045_captures.py"
       ],
       "verification_evidence": [
-        "gpu2d_test_system"
+        "gpu2d_test_system",
+        "gpu2d_test_capture_verify"
       ],
-      "test_name": "gpu2d_test_system",
+      "test_name": "gpu2d_test_capture_verify",
       "notes": "See REPORT_0045"
     },
     {
@@ -803,13 +813,15 @@
       "requirement": "Captures and stress outputs checked/generated",
       "implementation_evidence": [
         "results/stage0045/captures/",
+        "scripts/verify_stage0045_captures.py",
         "results/stage0045/stress/stress_stats.md"
       ],
       "verification_evidence": [
-        "gpu2d_test_system",
-        "gpu2d_demo_headless_tile"
+        "gpu2d_test_capture_verify",
+        "gpu2d_test_cli_scenes",
+        "gpu2d_test_system"
       ],
-      "test_name": "gpu2d_test_system",
+      "test_name": "gpu2d_test_capture_verify",
       "notes": "See REPORT_0045"
     }
   ]

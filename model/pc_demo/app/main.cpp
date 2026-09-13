@@ -441,7 +441,8 @@ int main(int argc, char** argv) {
         opts.xray = xray;
         opts.tile_mode = gpu.backend() != BackendKind::Immediate;
         opts.tile_size = cli.profile.tile_size ? cli.profile.tile_size : 32;
-        opts.host_fps = host_fps;
+        // Headless/capture must not bake live FPS into the framebuffer.
+        opts.host_fps = cli.headless ? 0.0 : host_fps;
         // Telemetry from previous frame (1-frame lag). Single execute only —
         // a second full re-render made X-Ray/tech HUD extremely slow.
         const auto tel_view = gpu.telemetry().view();

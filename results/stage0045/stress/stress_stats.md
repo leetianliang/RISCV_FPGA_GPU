@@ -2,23 +2,20 @@
 
 > **Functional PC Golden workload statistics — NOT FPGA performance evidence**
 
-Source: `gpu2d_demo --headless --backend tile` on Agent-local Windows.
+Source: `gpu2d_test_system` frozen thresholds + `gpu2d_demo --headless` (tile backend).
 
-| Scene | Frames | Seed | Cmds | Sprites | WorkRefs | Tiles Active | Max OD |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Sprite Storm | 90 | 9 | 557 | 520 | 990 | 240 | 8 |
-| Alpha Storm | 150 | 9 | 230 | 183 | 1696 | 920 | 4 |
-| Bullet Hell | 90 | 9 | 415 | 378 | 968 | 240 | 6 |
-| Scale Storm | 90 | 9 | 256 | 219 | 706 | 240 | 5 |
-| Overdraw Storm | 120 | 9 | 285 | 238 | 1940 | 920 | 44 |
+| Scene | Frames | Seed | Sprites | Alpha | Scaled | Bilinear | Live Bullets | Max OD | Threshold |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| Sprite Storm | 80 | 9 | 872 | — | — | — | — | 14 | ≥500 sprites PASS |
+| Alpha Storm | 80 | 9 | 502 | 432 | — | — | — | 6 | ≥300 alpha PASS |
+| Bullet Hell | 80 | 9 | 1083 | — | — | — | 1016 | 29 | ≥1000 bullets PASS |
+| Scale Storm | 80 | 9 | 548 | — | 480 | 480 | — | 17 | ≥200 scaled PASS |
+| Overdraw Storm | 80 | 9 | 358 | — | 288 | 288 | — | 284 | max_od≥8 PASS |
 
-Capture SHA256 (RGB565 1280×720):
+Immediate==Tile byte equality holds for every stress mode (H-T4).
+
+Capture SHA256 (RGB565 1280×720, headless, no live FPS baked in):
 
 ```text
-73cde40f0e9557e90f9926aeb49481a06d8c5c9f6cc91e3c0e682649496001c0  v1_game_showcase.raw
-9cdcd3c05f6b91433caca511687371512eece8597b217906c31357d6782d6480  v2_effects.raw
-0a2db70763aa200d253b4c549b766e86e7a6d69449f8c7b8483dcc776fa54c5a  v3_xray.raw
-d2c00c2a2f8feb2eabdf0962621d91566c493409df888e0c505b228201efb0b7  v4_overdraw_stress.raw
+(see gpu2d_test_capture_verify / results/stage0045/captures/*.raw)
 ```
-
-PC Golden Host FPS is host timing only.
