@@ -48,6 +48,9 @@ struct TileStats {
     u64 bilinear_samples = 0;
     u32 max_overdraw = 0;
     double avg_overdraw_touched = 0.0;
+    std::vector<u32> overdraw_matrix;  // surface_h * surface_w, row-major
+    u32 overdraw_w = 0;
+    u32 overdraw_h = 0;
     u64 logical_pixel_writes = 0;  // alias pixels_written
     u64 estimated_external_load_bytes = 0;
     u64 estimated_external_store_bytes = 0;

@@ -207,7 +207,7 @@ int main(int argc, char** argv) {
     }
     const auto s = last_tile_stats();
     const char* names[] = {"W1_sprite_grid", "W3_alpha_storm", "W2_high_overdraw",
-                           "W4_blit_mix", "W5_edge_scatter", "W6_mixed_scene"};
+                           "W4_scaled_sprites", "W5_edge_scatter", "W6_mixed_scene"};
     std::printf(
         "workload=%s kind=%d tile=%u tiles=%u active=%u refs=%u maxrefs=%u load_px=%u "
         "store_px=%u load_b=%u store_b=%u blend=%llu written=%llu key=%llu samples=%llu "

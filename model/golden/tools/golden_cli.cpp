@@ -1011,7 +1011,12 @@ int main(int argc, char** argv) {
             gpu.register_resource(RegisteredResource{0x40000, 1024, 256, 1, "p"});
             gpu.memory().write_block(0x40000, pal.data(), pal.size());
         }
-        const u32 desc_b = 0x38000, hdr_b = 0x3A000, work_b = 0x3C000;
+        GpuCmd64 tfcmd{};
+        deserialize_cmd_le(cmd_b.data(), 64, tfcmd);
+        // M5: do not mutate TILE_FRAME pointers — register at encoded addresses.
+        const u32 desc_b = tfcmd[4];
+        const u32 hdr_b = tfcmd[5];
+        const u32 work_b = tfcmd[6];
         gpu.register_resource(RegisteredResource{
             desc_b, static_cast<u32>(descs.size() ? descs.size() : 64), 1, 1, "d"});
         gpu.register_resource(RegisteredResource{
@@ -1023,12 +1028,6 @@ int main(int argc, char** argv) {
         if (!work.empty()) {
             gpu.memory().write_block(work_b, work.data(), work.size());
         }
-        GpuCmd64 tfcmd{};
-        deserialize_cmd_le(cmd_b.data(), 64, tfcmd);
-        // Force bases to replay addresses used above
-        tfcmd[4] = desc_b;
-        tfcmd[5] = hdr_b;
-        tfcmd[6] = work_b;
         const auto st = execute_tile_frame(gpu, tfcmd);
         if (!st.ok) {
             std::fprintf(stderr, "tile fixture exec fail fault=%u\n",

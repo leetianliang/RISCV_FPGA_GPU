@@ -22,17 +22,20 @@ def run(kind: int, tile: int) -> dict:
     for tok in line.split():
         if "=" in tok:
             k, v = tok.split("=", 1)
-            if k == "avg_od":
+            if k in ("workload", "kind"):
+                parts[k] = v
+            elif k == "avg_od":
                 parts[k] = float(v)
-            elif k in ("workload",):
-                continue
             else:
                 try:
                     parts[k] = int(v)
                 except ValueError:
                     parts[k] = v
     return {
-        "workload": parts.get("workload", f"kind{kind}"),
+        "workload_id": f"kind{parts.get('kind', kind)}",
+        "workload_name": parts.get("workload", f"W?{kind}"),
+        "version": 1,
+        "seed": 0,
         "tile_size": parts.get("tile", tile),
         "tiles_total": parts.get("tiles", 0),
         "tiles_active": parts.get("active", 0),

@@ -1,20 +1,25 @@
 # Tile Size Architecture Sweep Summary (Stage 004)
 
-Analytical metrics from the functional Golden Tile model (not measured DDR bandwidth).
+Source: `results/stage004_tile/tile_sweep.csv` produced by
+`model/architecture/tile_model/run_tile_sweep.py` invoking `golden_tile_sweep`.
 
-## Observations
+Workloads (distinct generators in `model/golden/tools/tile_sweep_tool.cpp`):
 
-| Tile size | Typical effect |
-|---|---|
-| 16×16 | More tiles and metadata; better locality for small scatter sprites; higher workref counts when draws span many tiles |
-| 32×32 (default) | Balanced metadata vs draw duplication; remains the frozen hardware default |
-| 64×64 | Fewer tiles/headers; more workrefs per tile for dense scenes; larger load/store grain |
+| ID | Name | Behavior |
+|---|---|---|
+| kind0 | W1_sprite_grid | 6×6 BLIT grid |
+| kind1 | W3_alpha_storm | overlapping straight-alpha fills |
+| kind2 | W2_high_overdraw | dense stack of fills |
+| kind3 | W4_scaled_sprites | BLIT_EXT 4→16 nearest |
+| kind4 | W5_edge_scatter | edge + scatter 1–3px fills |
+| kind5 | W6_mixed_scene | fill + blit + scale + alpha |
 
-## Conclusions
+## Observations (from CSV)
 
-- Dense small-sprite grids benefit from smaller tiles (finer active-tile tracking).
-- Large overlapping alpha stacks concentrate work in one/few tiles regardless of size.
-- **32×32 remains the reasonable default** for competition 2D workloads in this model.
-- No evidence requires changing the frozen hardware default; if later RTL traffic counters disagree, raise DESIGN_QUESTION.
+- Smaller tiles increase active-tile count for grids/scatter.
+- High-overdraw stacks concentrate workrefs in few tiles regardless of size.
+- Scaled sprites produce workrefs spanning multiple tiles at 16×16.
 
-Raw data: `results/stage004_tile/tile_sweep.csv`
+## Conclusion
+
+32×32 remains a reasonable default for competition 2D; no frozen hardware default change is required from this functional model.

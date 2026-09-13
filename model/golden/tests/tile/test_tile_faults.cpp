@@ -139,6 +139,39 @@ void test_dont_load_requires_default() {
     EXPECT_TRUE(execute_tile_frame(g, make_tile_frame_cmd(tf)).ok);
 }
 
+void test_strict_reserved_pair() {
+    // RT_STATE reserved: non-strict ignore, strict fault
+    {
+        GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        auto fill = make_fill_rect_cmd(0x10000, 64, 0, 0, 4, 4,
+                                       Rgba8888::pack(255, 1, 2, 3));
+        setup_tile(g, {fill}, 32, 32, 32, 64, 0x30000, 0x31000, 0x32000);
+        auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
+        tf.rt_state |= (1u << 9);
+        EXPECT_TRUE(execute_tile_frame(g, make_tile_frame_cmd(tf)).ok);
+        GpuCmd64 c = make_tile_frame_cmd(tf);
+        c[0] |= kHStrict;
+        const auto st = execute_tile_frame(g, c);
+        EXPECT_TRUE(!st.ok);
+        EXPECT_TRUE(st.fault == FaultCode::RESERVED_NONZERO);
+    }
+    // Header W3 reserved + strict
+    {
+        GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        auto fill = make_fill_rect_cmd(0x10000, 64, 0, 0, 4, 4,
+                                       Rgba8888::pack(255, 1, 2, 3));
+        setup_tile(g, {fill}, 32, 32, 32, 64, 0x30000, 0x31000, 0x32000);
+        u8 w3[4] = {1, 0, 0, 0};
+        g.memory().write_block(0x31000 + 12, w3, 4);
+        auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
+        GpuCmd64 c = make_tile_frame_cmd(tf);
+        c[0] |= kHStrict;
+        const auto st = execute_tile_frame(g, c);
+        EXPECT_TRUE(!st.ok);
+        EXPECT_TRUE(st.fault == FaultCode::RESERVED_NONZERO);
+    }
+}
+
 }  // namespace
 
 int main() {
@@ -146,6 +179,7 @@ int main() {
     test_grid_mismatch();
     test_depth_flag_rejected();
     test_dont_load_requires_default();
+    test_strict_reserved_pair();
     if (g_failures) {
         std::printf("golden_test_tile_faults FAIL %d\n", g_failures);
         return 1;

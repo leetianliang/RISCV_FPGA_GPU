@@ -513,6 +513,9 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
     g_last_stats.bilinear_samples = sink.bilinear_samples;
     g_last_stats.max_overdraw = sink.max_overdraw;
     g_last_stats.avg_overdraw_touched = sink.avg_overdraw_touched();
+    g_last_stats.overdraw_matrix = sink.overdraw;
+    g_last_stats.overdraw_w = sink.od_w;
+    g_last_stats.overdraw_h = sink.od_h;
     g_last_stats.estimated_external_load_bytes = g_last_stats.tile_load_bytes;
     g_last_stats.estimated_external_store_bytes = g_last_stats.tile_store_bytes;
     return ExecResult::success();
