@@ -15,8 +15,9 @@ TileBinResult bin_draws(const std::vector<GpuCmd64>& draws, const MemoryImage& m
 std::vector<u8> serialize_workrefs(const std::vector<WorkRef>& refs);
 
 // Execute TILE_FRAME through GoldenGPU memory model (shared pixel backend).
+// desc_count_hint=0: derive descriptor bounds from registered resource at draw_desc_base.
 ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd,
-                              u32 desc_count_hint);
+                              u32 desc_count_hint = 0);
 
 struct TileStats {
     u32 tiles_total = 0;
@@ -25,9 +26,18 @@ struct TileStats {
     u32 workref_count = 0;
     u32 max_workrefs_per_tile = 0;
     u32 sum_workrefs = 0;
+    u32 tile_load_pixels = 0;
+    u32 tile_store_pixels = 0;
     u32 tile_load_bytes = 0;
     u32 tile_store_bytes = 0;
+    u32 blend_ops = 0;
+    u32 pixels_written = 0;
 };
+
+// Average workrefs per active tile.
+inline double avg_workrefs_per_active_tile(const TileStats& s) {
+    return s.tiles_active ? static_cast<double>(s.workref_count) / s.tiles_active : 0.0;
+}
 
 TileStats last_tile_stats();
 

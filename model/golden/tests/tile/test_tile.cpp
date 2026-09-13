@@ -26,8 +26,10 @@ void test_header_roundtrip() {
     h.flags = kTileDontLoadColor;
     const auto bytes = serialize_tile_header(h);
     TileHeader o;
-    EXPECT_TRUE(parse_tile_header(bytes.data(), o));
+    u32 r3 = 0xFFFFFFFFu;
+    EXPECT_TRUE(parse_tile_header(bytes.data(), o, r3));
     EXPECT_TRUE(o.work_offset == 7 && o.work_count == 3 && o.flags == 1);
+    EXPECT_TRUE(r3 == 0);
 }
 
 void test_workref_range() {
@@ -165,6 +167,10 @@ void test_tile_frame_exec() {
             std::printf("tile frame fail fault=%u detail=%u\n",
                         static_cast<u32>(st.fault), st.fault_detail);
         }
+        const auto ts = last_tile_stats();
+        std::printf("tile stats active=%u refs=%u blend=%u store_px=%u\n",
+                    ts.tiles_active, ts.workref_count, ts.blend_ops,
+                    ts.tile_store_pixels);
         EXPECT_TRUE(st.ok);
         gpu.memory().read_block(0x10000, stride * 64, fb);
     };

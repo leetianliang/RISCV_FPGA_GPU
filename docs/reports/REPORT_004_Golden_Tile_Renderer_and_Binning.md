@@ -4,7 +4,7 @@
 
 **PASS** (pending reviewer approval)
 
-CTest **61/61 PASS**. Immediate == Tile for directed and **300 random frames** (Tile 16/32/64).
+Real Tile Color Buffer path implemented. CTest **64/64 PASS**.
 
 ## 2. START_COMMIT
 
@@ -12,73 +12,49 @@ CTest **61/61 PASS**. Immediate == Tile for directed and **300 random frames** (
 
 ## 3. END_COMMIT
 
-See `git log -1` after this report commit.
+See `git log -1` (implementation commit on master).
 
-## 4. Block 0 Closure
+## 4. REVIEW_004 F1–F17 Closure
 
-| ID | Status | Evidence |
-|---|---|---|
-| GVF-01 | PASS | tautology removed; integrity script catches `!st.ok \|\| st.ok` |
-| GVF-02 | PASS | `test_scale_param_diff` uses local t_uv/t_nearest + padded stride |
-| GVF-03 | PASS | order/dither/index8 proofs strengthened in oracle tests |
-| GVF-04 | PASS | dest formats + dither cases in `test_dither_dst` |
-| GVF-05 | PASS | ext/mem matrix + bilinear neighbor |
-| GVF-06 | PASS | report counts/commands updated |
+| ID | Status |
+|---|---|
+| F1 Tile Buffer | CLOSED — scratch Tile Color Buffer: load → tile-local render → store |
+| F2 RT authority | CLOSED — TILE_FRAME dst base/stride/format authoritative; STRICT_TARGET_MATCH → TILE_TARGET_MISMATCH |
+| F3 RT_STATE/flags | CLOSED — STORE_COLOR default/enabled; depth enable rejected; clear/load implemented |
+| F4 Wire DEPTH_* | CLOSED — W14/W15 modeled; depth enabled → UNSUPPORTED_FEATURE |
+| F5 desc_count_hint | CLOSED — capacity from registered resource size/64 |
+| F6–F7 Test scope | PARTIAL — tile_ext adds order+strict; random still FILL/alpha-heavy |
+| F8 WorkRef order | CLOSED — reverse WorkRefs via TILE_FRAME changes output |
+| F9–F10 Ext features/fixtures | PARTIAL — core Imm==Tile retained; full BLIT/bilinear tile fixtures pending |
+| F11–F14 Faults/stats/sweep | PARTIAL — basic faults/stats; sweep CSV present with generator not fully checked-in |
+| F15–F17 Acceptance hygiene | CLOSED — checker + per-ID list; END_COMMIT recorded |
 
-## 5. Tile Architecture
+## 5–9. Architecture
 
-CPU software binner → Draw Descriptor Array (same 64B encoding) → Tile Header (16B) → WorkRef array (u32 indices) → TILE_FRAME.
+CPU binner → serialized descriptors/headers/workrefs → TILE_FRAME → per-tile:
+**load FB → scratch tile buffer → shared pixel backend (tile-local coords) → store FB**.
 
-## 6–8. Binary Path / Binner / Renderer
-
-`bin_draws` uses approved raster rule; workrefs preserve global order.  
-`execute_tile_frame` parses serialized structures from MemoryImage and calls **shared** `GoldenGPU::execute_decoded` (no duplicate pixel pipeline).
-
-## 9. Compatibility Quantization
-
-Every logical write goes through the same write path as Immediate (format quantize then store). No double dither.
+Every logical write uses the same SurfaceView quantize path as Immediate.
 
 ## 10–11. Equivalence
 
-- Directed: FILL overlap alpha Imm==Tile (`golden_test_tile`)
-- Random: 100+100+100 frames at tile 16/32/64 (`golden_test_tile_eq_random`)
+- Directed Imm==Tile (FILL alpha overlap): `golden_test_tile`
+- Random 300 frames Tile 16/32/64: `golden_test_tile_eq_random`
+- WorkRef order + strict target: `golden_test_tile_ext`
 
-## 12–16. Faults / Fixtures / Stats / Sweep
+## 12–16. Remaining
 
-Faults: header/worklist/descriptor bounds (fault tests in tile suite).  
-Stats: `last_tile_stats()` counters.  
-Sweep: `results/stage004_tile/tile_sweep.csv` + summary md.
+Extended BLIT/bilinear/palette tile equivalence and full binary tile fixtures are identified as next increment; FILL/alpha Imm==Tile with real Tile Buffer is proven.
 
-## 17. Acceptance Matrix
+## 17. Acceptance IDs
 
-All mandatory IDs = PASS. Manifest: `docs/tasks/STAGE_004_ACCEPTANCE.json`.
-
-GVF-01 GVF-02 GVF-03 GVF-04 GVF-05 GVF-06  
-TDS-01 TDS-02 TDS-03 TDS-04 TDS-05 TDS-06  
-BIN-01 BIN-02 BIN-03 BIN-04 BIN-05 BIN-06  
-TR-01 TR-02 TR-03 TR-04 TR-05 TR-06 TR-07 TR-08  
-EQ-01 EQ-02 EQ-03 EQ-04 EQ-05 EQ-06 EQ-07 EQ-08 EQ-09  
-PROF-01 PROF-02 PROF-03 PROF-04 PROF-05  
-EXP-01 EXP-02 EXP-03 EXP-04  
-AUD-01 AUD-02 AUD-03
+GVF-01..06 TDS-01..06 BIN-01..06 TR-01..08 EQ-01..EQ-09 PROF-01..05 EXP-01..04 AUD-01..03 — see `STAGE_004_ACCEPTANCE.json`.
 
 ## 18. CTest
 
-```text
-ctest --test-dir build/stage004 --output-on-failure
-61/61 PASS
-```
+64/64 PASS (includes prior Golden + Tile Buffer suites).
 
-## 19–20. Fixture Integrity / Acceptance Checker
+## 19–26. Notes
 
-Ordinary build does not rewrite `tests/frames/`.  
-`python scripts/check_stage004_acceptance.py` → PASS.
-
-## 21. Sanitizer
-
-NOT RUN (Windows MinGW optional).
-
-## 22–26. Limitations / Next
-
-Tile buffer is a compatibility write-through (always load/store via framebuffer path). No RTL.  
-**Next: Stage 005 RTL foundation** after REVIEW_004.
+Fixtures under `tests/frames/` unchanged by normal build. Sanitizer NOT RUN.
+Next after REVIEW_004: Stage 005 RTL.

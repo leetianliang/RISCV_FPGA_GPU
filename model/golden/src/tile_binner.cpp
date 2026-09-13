@@ -132,6 +132,7 @@ std::vector<u8> serialize_workrefs(const std::vector<WorkRef>& refs) {
 
 ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd,
                               u32 desc_count_hint) {
+    g_last_stats = TileStats{};
     const DecodedHeader hdr = decode_cmd_header(tile_cmd);
     if (!hdr.ok) {
         return ExecResult::failure(hdr.fault, hdr.fault_detail);
@@ -140,49 +141,119 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd,
         return ExecResult::failure(FaultCode::BAD_OPCODE, hdr.header.opcode);
     }
     const TileFrameCmd tf = decode_tile_frame_cmd(tile_cmd);
-    const u32 bpp = bytes_per_pixel(static_cast<PixelFormat>(tf.rt_state & 0xFu));
-    if (bpp == 0) {
+    const TileFrameState rt = decode_rt_state(tf.rt_state);
+    const auto tile_fmt = static_cast<PixelFormat>(rt.dst_format);
+    const u32 bpp = bytes_per_pixel(tile_fmt);
+    if (bpp == 0 || tile_fmt == PixelFormat::INDEX8) {
         return ExecResult::failure(FaultCode::BAD_FORMAT, tf.rt_state);
     }
     if (tf.tile_w == 0 || tf.tile_h == 0 || tf.grid_w == 0 || tf.grid_h == 0) {
         return ExecResult::failure(FaultCode::BAD_TILE_CONFIG, tf.rt_state);
     }
+    if (rt.depth_enable || rt.store_depth) {
+        return ExecResult::failure(FaultCode::UNSUPPORTED_FEATURE, tf.rt_state);
+    }
+
+    // Descriptor bounds from registered resource (no host-only count).
+    u32 desc_capacity = desc_count_hint;
+    if (desc_capacity == 0) {
+        auto dres = gpu.resource(tf.draw_desc_base);
+        if (!dres) {
+            return ExecResult::failure(FaultCode::MEMORY_ERROR, tf.draw_desc_base);
+        }
+        desc_capacity = dres->size / 64;
+        if (desc_capacity == 0) {
+            return ExecResult::failure(FaultCode::DESCRIPTOR_BOUNDS, dres->size);
+        }
+    }
 
     const u32 tiles = tf.grid_w * tf.grid_h;
+    g_last_stats.tiles_total = tiles;
+    g_last_stats.draw_descriptor_count = desc_capacity;
+
+    // Scratch tile buffer region (one tile at a time).
+    const u32 scratch_base = 0x800000;
+    const u32 scratch_size = tf.tile_w * tf.tile_h * bpp;
+    {
+        const auto rs = gpu.memory().register_region("tile_scratch", scratch_base,
+                                                     scratch_size);
+        if (rs.status != MemAccessStatus::OK) {
+            return ExecResult::failure(FaultCode::MEMORY_ERROR, scratch_base);
+        }
+    }
+    RegisteredResource scratch_res{scratch_base, scratch_size, tf.tile_w, tf.tile_h,
+                                   "tile_scratch"};
+    gpu.register_resource(scratch_res);
+
     for (u32 ty = 0; ty < tf.grid_h; ++ty) {
         for (u32 tx = 0; tx < tf.grid_w; ++tx) {
             const u32 tid = tile_id(tx, ty, tf.grid_w);
-            const u32 header_addr =
-                tf.tile_header_base + tid * kTileHeaderBytes;
+            const u32 header_addr = tf.tile_header_base + tid * kTileHeaderBytes;
             std::vector<u8> hbytes;
             if (gpu.memory().read_block(header_addr, kTileHeaderBytes, hbytes).status !=
                 MemAccessStatus::OK) {
                 return ExecResult::failure(FaultCode::MEMORY_ERROR, header_addr);
             }
             TileHeader th;
-            if (!parse_tile_header(hbytes.data(), th)) {
+            u32 reserved_w3 = 0;
+            if (!parse_tile_header(hbytes.data(), th, reserved_w3)) {
                 return ExecResult::failure(FaultCode::BAD_TILE_CONFIG, header_addr);
             }
-            if (th.work_count == 0) {
+            if (reserved_w3 != 0) {
+                return ExecResult::failure(FaultCode::RESERVED_NONZERO, header_addr);
+            }
+            if (th.work_count == 0 && (th.flags & kTileClearColor) == 0) {
                 continue;
             }
-            const u64 woff_bytes =
-                static_cast<u64>(tf.work_list_base) +
-                static_cast<u64>(th.work_offset) * kWorkRefBytes;
-            if (woff_bytes > 0xFFFFFFFFull) {
-                return ExecResult::failure(FaultCode::WORKLIST_BOUNDS, th.work_offset);
-            }
-            const u64 wbytes = static_cast<u64>(th.work_count) * kWorkRefBytes;
-            if (wbytes > 0xFFFFFFFFull) {
-                return ExecResult::failure(FaultCode::WORKLIST_BOUNDS, th.work_count);
-            }
+
+            // Pre-read workrefs (and validate strict target match before load).
             std::vector<u8> wraw;
-            if (gpu.memory()
-                    .read_block(static_cast<u32>(woff_bytes), static_cast<size_t>(wbytes),
-                                wraw)
-                    .status != MemAccessStatus::OK) {
-                return ExecResult::failure(FaultCode::WORKLIST_BOUNDS,
-                                           static_cast<u32>(woff_bytes));
+            std::vector<WorkRef> work_idx;
+            if (th.work_count > 0) {
+                const u64 woff_bytes = static_cast<u64>(tf.work_list_base) +
+                                       static_cast<u64>(th.work_offset) * kWorkRefBytes;
+                if (woff_bytes > 0xFFFFFFFFull) {
+                    return ExecResult::failure(FaultCode::WORKLIST_BOUNDS,
+                                               th.work_offset);
+                }
+                const u64 wbytes = static_cast<u64>(th.work_count) * kWorkRefBytes;
+                if (gpu.memory()
+                        .read_block(static_cast<u32>(woff_bytes),
+                                    static_cast<size_t>(wbytes), wraw)
+                        .status != MemAccessStatus::OK) {
+                    return ExecResult::failure(FaultCode::WORKLIST_BOUNDS,
+                                               static_cast<u32>(woff_bytes));
+                }
+                work_idx.resize(th.work_count);
+                for (u32 wi = 0; wi < th.work_count; ++wi) {
+                    work_idx[wi] = static_cast<WorkRef>(wraw[wi * 4 + 0]) |
+                                   (static_cast<WorkRef>(wraw[wi * 4 + 1]) << 8) |
+                                   (static_cast<WorkRef>(wraw[wi * 4 + 2]) << 16) |
+                                   (static_cast<WorkRef>(wraw[wi * 4 + 3]) << 24);
+                    if (work_idx[wi] >= desc_capacity) {
+                        return ExecResult::failure(FaultCode::DESCRIPTOR_BOUNDS,
+                                                   work_idx[wi]);
+                    }
+                    std::vector<u8> db;
+                    const u64 daddr = static_cast<u64>(tf.draw_desc_base) +
+                                      static_cast<u64>(work_idx[wi]) * 64ull;
+                    if (daddr > 0xFFFFFFFFull ||
+                        gpu.memory()
+                                .read_block(static_cast<u32>(daddr), 64, db)
+                                .status != MemAccessStatus::OK) {
+                        return ExecResult::failure(FaultCode::DESCRIPTOR_BOUNDS,
+                                                   work_idx[wi]);
+                    }
+                    GpuCmd64 desc{};
+                    deserialize_cmd_le(db.data(), 64, desc);
+                    if (rt.strict_target_match) {
+                        if (desc[5] != tf.dst_base || desc[7] != tf.dst_stride ||
+                            extract_dst_format(desc[12]) != rt.dst_format) {
+                            return ExecResult::failure(FaultCode::TILE_TARGET_MISMATCH,
+                                                       desc[12]);
+                        }
+                    }
+                }
             }
 
             u32 x0, y0, vw, vh;
@@ -191,13 +262,89 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd,
             if (vw == 0 || vh == 0) {
                 continue;
             }
+            ++g_last_stats.tiles_active;
+            if (th.work_count > g_last_stats.max_workrefs_per_tile) {
+                g_last_stats.max_workrefs_per_tile = th.work_count;
+            }
+
+            // LOAD tile from framebuffer into scratch (or clear).
+            if ((th.flags & kTileClearColor) != 0) {
+                SurfaceView tile_sv(&gpu.memory(), scratch_res, tf.tile_w * bpp,
+                                    tile_fmt);
+                const Rgba8888 cc = Rgba8888::from_u32(tf.clear_color);
+                for (u32 ly = 0; ly < vh; ++ly) {
+                    for (u32 lx = 0; lx < vw; ++lx) {
+                        tile_sv.write_rgba(static_cast<i32>(lx), static_cast<i32>(ly),
+                                           cc, false, x0 + lx, y0 + ly);
+                    }
+                }
+            } else {
+                // Copy valid FB pixels into scratch (raw bytes, tile format).
+                auto fb_res = gpu.resource(tf.dst_base);
+                if (!fb_res) {
+                    return ExecResult::failure(FaultCode::MEMORY_ERROR, tf.dst_base);
+                }
+                for (u32 ly = 0; ly < vh; ++ly) {
+                    std::vector<u8> row(bpp);
+                    for (u32 lx = 0; lx < vw; ++lx) {
+                        const u64 fb_addr =
+                            static_cast<u64>(tf.dst_base) +
+                            static_cast<u64>(y0 + ly) * tf.dst_stride +
+                            static_cast<u64>(x0 + lx) * bpp;
+                        const u64 tb_addr =
+                            static_cast<u64>(scratch_base) +
+                            static_cast<u64>(ly) * tf.tile_w * bpp +
+                            static_cast<u64>(lx) * bpp;
+                        if (fb_addr > 0xFFFFFFFFull || tb_addr > 0xFFFFFFFFull) {
+                            return ExecResult::failure(FaultCode::BAD_ADDRESS);
+                        }
+                        std::vector<u8> tmp;
+                        if (gpu.memory()
+                                .read_block(static_cast<u32>(fb_addr), bpp, tmp)
+                                .status != MemAccessStatus::OK) {
+                            return ExecResult::failure(FaultCode::MEMORY_ERROR,
+                                                       static_cast<u32>(fb_addr));
+                        }
+                        if (gpu.memory()
+                                .write_block(static_cast<u32>(tb_addr), tmp.data(),
+                                             bpp)
+                                .status != MemAccessStatus::OK) {
+                            return ExecResult::failure(FaultCode::MEMORY_ERROR,
+                                                       static_cast<u32>(tb_addr));
+                        }
+                    }
+                    (void)row;
+                }
+            }
+            g_last_stats.tile_load_bytes += vw * vh * bpp;
+            g_last_stats.tile_load_pixels += vw * vh;
+
+            if (th.work_count == 0) {
+                // store clear-only tile
+                if (rt.store_color) {
+                    for (u32 ly = 0; ly < vh; ++ly) {
+                        for (u32 lx = 0; lx < vw; ++lx) {
+                            std::vector<u8> px(bpp);
+                            const u64 tb = static_cast<u64>(scratch_base) +
+                                           static_cast<u64>(ly) * tf.tile_w * bpp +
+                                           static_cast<u64>(lx) * bpp;
+                            gpu.memory().read_block(static_cast<u32>(tb), bpp, px);
+                            const u64 fb = static_cast<u64>(tf.dst_base) +
+                                           static_cast<u64>(y0 + ly) * tf.dst_stride +
+                                           static_cast<u64>(x0 + lx) * bpp;
+                            gpu.memory().write_block(static_cast<u32>(fb), px.data(),
+                                                     bpp);
+                        }
+                    }
+                    g_last_stats.tile_store_bytes += vw * vh * bpp;
+                    g_last_stats.tile_store_pixels += vw * vh;
+                }
+                continue;
+            }
 
             for (u32 wi = 0; wi < th.work_count; ++wi) {
-                const WorkRef idx = static_cast<WorkRef>(wraw[wi * 4 + 0]) |
-                                    (static_cast<WorkRef>(wraw[wi * 4 + 1]) << 8) |
-                                    (static_cast<WorkRef>(wraw[wi * 4 + 2]) << 16) |
-                                    (static_cast<WorkRef>(wraw[wi * 4 + 3]) << 24);
-                if (desc_count_hint != 0 && idx >= desc_count_hint) {
+                const WorkRef idx = work_idx[wi];
+                if (idx >= desc_capacity) {
                     return ExecResult::failure(FaultCode::DESCRIPTOR_BOUNDS, idx);
                 }
                 const u64 daddr = static_cast<u64>(tf.draw_desc_base) +
@@ -215,7 +362,6 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd,
                 if (!deserialize_cmd_le(db.data(), 64, desc)) {
                     return ExecResult::failure(FaultCode::DESCRIPTOR_BOUNDS, idx);
                 }
-                // Load extension for draw descriptors when present.
                 std::array<u8, 64> ext{};
                 const u8* ext_ptr = nullptr;
                 const DecodedHeader dh = decode_cmd_header(desc);
@@ -224,38 +370,91 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd,
                 }
                 if ((dh.header.hdr_flags & kHExtValid) != 0) {
                     std::vector<u8> eb;
-                    if (gpu.memory()
-                            .read_block(dh.header.ext_ptr, 64, eb)
-                            .status != MemAccessStatus::OK) {
+                    if (gpu.memory().read_block(dh.header.ext_ptr, 64, eb).status !=
+                        MemAccessStatus::OK) {
                         return ExecResult::failure(FaultCode::MEMORY_ERROR,
                                                    dh.header.ext_ptr);
                     }
                     std::copy(eb.begin(), eb.end(), ext.begin());
                     ext_ptr = ext.data();
                 }
-                const DecodedDraw dd =
-                    decode_draw_2d(desc, ext_ptr, ext_ptr ? 64u : 0u);
+                DecodedDraw dd = decode_draw_2d(desc, ext_ptr, ext_ptr ? 64u : 0u);
                 if (!dd.ok) {
                     return ExecResult::failure(dd.fault, dd.fault_detail);
                 }
-                // Override dest to TILE_FRAME target (compatibility mode).
-                DecodedDraw dd2 = dd;
-                dd2.state.dst_base = tf.dst_base;
-                dd2.state.dst_stride = tf.dst_stride;
-                // Keep original dst format from draw; TILE RT_STATE format is authority
-                // when STRICT_TARGET_MATCH — Stage 004 uses matching formats in tests.
+
+                // TILE_FRAME target is authoritative.
+                const u32 desc_dst_fmt =
+                    extract_dst_format(dd.state.draw_state);
+                if (rt.strict_target_match) {
+                    if (dd.state.dst_base != tf.dst_base ||
+                        dd.state.dst_stride != tf.dst_stride ||
+                        desc_dst_fmt != rt.dst_format) {
+                        return ExecResult::failure(FaultCode::TILE_TARGET_MISMATCH,
+                                                   desc_dst_fmt);
+                    }
+                }
+
+                // Translate draw into tile-local coordinates targeting scratch buffer.
+                DecodedDraw local = dd;
+                local.state.dst_base = scratch_base;
+                local.state.dst_stride = tf.tile_w * bpp;
+                // Force destination format to TILE format (authoritative).
+                local.state.draw_state =
+                    (local.state.draw_state & ~(0xFu << 4)) | (rt.dst_format << 4);
+                local.state.dst_x = dd.state.dst_x - static_cast<i32>(x0);
+                local.state.dst_y = dd.state.dst_y - static_cast<i32>(y0);
+                if (extract_clip_en(dd.state.draw_state)) {
+                    local.state.clip_xmin = dd.state.clip_xmin - static_cast<i32>(x0);
+                    local.state.clip_xmax = dd.state.clip_xmax - static_cast<i32>(x0);
+                    local.state.clip_ymin = dd.state.clip_ymin - static_cast<i32>(y0);
+                    local.state.clip_ymax = dd.state.clip_ymax - static_cast<i32>(y0);
+                }
+                // Render only the valid tile region in local coords.
                 const auto st = gpu.execute_decoded(
-                    dd2, true, static_cast<i32>(x0), static_cast<i32>(y0),
-                    static_cast<i32>(x0 + vw), static_cast<i32>(y0 + vh));
+                    local, true, 0, 0, static_cast<i32>(vw), static_cast<i32>(vh));
                 if (!st.ok) {
                     return st;
                 }
+                ++g_last_stats.blend_ops;
+                g_last_stats.pixels_written += vw * vh;
+                ++g_last_stats.workref_count;
             }
-            g_last_stats.tile_store_bytes += vw * vh * bpp;
-            g_last_stats.tile_load_bytes += vw * vh * bpp;
+            g_last_stats.sum_workrefs += th.work_count;
+
+            // STORE valid tile region back to framebuffer.
+            if (rt.store_color) {
+                for (u32 ly = 0; ly < vh; ++ly) {
+                    for (u32 lx = 0; lx < vw; ++lx) {
+                        std::vector<u8> px(bpp);
+                        const u64 tb = static_cast<u64>(scratch_base) +
+                                       static_cast<u64>(ly) * tf.tile_w * bpp +
+                                       static_cast<u64>(lx) * bpp;
+                        if (gpu.memory()
+                                .read_block(static_cast<u32>(tb), bpp, px)
+                                .status != MemAccessStatus::OK) {
+                            return ExecResult::failure(FaultCode::MEMORY_ERROR,
+                                                       static_cast<u32>(tb));
+                        }
+                        const u64 fb = static_cast<u64>(tf.dst_base) +
+                                       static_cast<u64>(y0 + ly) * tf.dst_stride +
+                                       static_cast<u64>(x0 + lx) * bpp;
+                        if (fb > 0xFFFFFFFFull) {
+                            return ExecResult::failure(FaultCode::BAD_ADDRESS);
+                        }
+                        if (gpu.memory()
+                                .write_block(static_cast<u32>(fb), px.data(), bpp)
+                                .status != MemAccessStatus::OK) {
+                            return ExecResult::failure(FaultCode::MEMORY_ERROR,
+                                                       static_cast<u32>(fb));
+                        }
+                    }
+                }
+                g_last_stats.tile_store_bytes += vw * vh * bpp;
+                g_last_stats.tile_store_pixels += vw * vh;
+            }
         }
     }
-    (void)tiles;
     return ExecResult::success();
 }
 

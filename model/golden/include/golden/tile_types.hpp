@@ -20,13 +20,36 @@ struct TileHeader {
 
 inline constexpr u32 kTileDontLoadColor = 1u << 0;
 inline constexpr u32 kTileClearColor = 1u << 1;
+inline constexpr u32 kTileLoadDepth = 1u << 2;
+inline constexpr u32 kTileClearDepth = 1u << 3;
+
+// RT_STATE bits
+inline constexpr u32 kRtFormatMask = 0xFu;
+inline constexpr u32 kRtLoadColorDefault = 1u << 4;
+inline constexpr u32 kRtStoreColor = 1u << 5;
+inline constexpr u32 kRtDepthEnable = 1u << 6;
+inline constexpr u32 kRtStoreDepth = 1u << 7;
+inline constexpr u32 kRtStrictTargetMatch = 1u << 8;
 
 struct TileFrameState {
     u32 dst_format = 0;
     bool load_color_default = false;
     bool store_color = true;
     bool strict_target_match = false;
+    bool depth_enable = false;
+    bool store_depth = false;
 };
+
+inline TileFrameState decode_rt_state(u32 rt) noexcept {
+    TileFrameState s;
+    s.dst_format = rt & kRtFormatMask;
+    s.load_color_default = (rt & kRtLoadColorDefault) != 0;
+    s.store_color = (rt & kRtStoreColor) != 0;
+    s.strict_target_match = (rt & kRtStrictTargetMatch) != 0;
+    s.depth_enable = (rt & kRtDepthEnable) != 0;
+    s.store_depth = (rt & kRtStoreDepth) != 0;
+    return s;
+}
 
 struct TileFrameCmd {
     u32 draw_desc_base = 0;
@@ -42,7 +65,8 @@ struct TileFrameCmd {
     u32 tile_h = 0;
     u32 rt_state = 0;
     u32 clear_color = 0;
-    u32 desc_count = 0;  // not on wire; set by harness for bounds
+    u32 depth_base = 0;
+    u32 depth_stride = 0;
 };
 
 inline GpuCmd64 make_tile_frame_cmd(const TileFrameCmd& t) noexcept {
@@ -57,8 +81,15 @@ inline GpuCmd64 make_tile_frame_cmd(const TileFrameCmd& t) noexcept {
     cmd[9] = pack_wh(t.surface_w, t.surface_h);
     cmd[10] = pack_wh(t.grid_w, t.grid_h);
     cmd[11] = pack_wh(t.tile_w, t.tile_h);
-    cmd[12] = t.rt_state;
+    u32 rt = t.rt_state;
+    // Default: STORE_COLOR enabled when caller did not specify bits 31:4.
+    if ((rt & 0xF0u) == 0) {
+        rt |= kRtStoreColor;
+    }
+    cmd[12] = rt;
     cmd[13] = t.clear_color;
+    cmd[14] = t.depth_base;
+    cmd[15] = t.depth_stride;
     return cmd;
 }
 
@@ -77,10 +108,12 @@ inline TileFrameCmd decode_tile_frame_cmd(const GpuCmd64& cmd) noexcept {
     t.tile_h = unpack_u16_hi(cmd[11]);
     t.rt_state = cmd[12];
     t.clear_color = cmd[13];
+    t.depth_base = cmd[14];
+    t.depth_stride = cmd[15];
     return t;
 }
 
-inline bool parse_tile_header(const u8* bytes, TileHeader& out) noexcept {
+inline bool parse_tile_header(const u8* bytes, TileHeader& out, u32& reserved_w3) noexcept {
     if (bytes == nullptr) {
         return false;
     }
@@ -93,6 +126,7 @@ inline bool parse_tile_header(const u8* bytes, TileHeader& out) noexcept {
     out.work_offset = rd(0);
     out.work_count = rd(1);
     out.flags = rd(2);
+    reserved_w3 = rd(3);
     return true;
 }
 
