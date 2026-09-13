@@ -75,7 +75,7 @@ int main() {
         CHECK(s.kills > kills0);
     }
 
-    // E-T3: projectile/enemy counts checkpoints for fixed seed
+    // E-T3 / B16: exact checkpoints for fixed seed (protect against regressions)
     {
         SimState s;
         Rng rng(1234);
@@ -90,8 +90,28 @@ int main() {
         for (const auto& b : s.bullets) {
             bl += b.alive ? 1 : 0;
         }
-        // game scene should have spawned some enemies and bullets
-        CHECK(en + bl > 0);
+        const u32 h = hash_sim(s);
+        std::printf("ckpt60 seed=1234 en=%u bl=%u kills=%u score=%u hash=%08X frame=%llu\n",
+                    en, bl, s.kills, s.score, h,
+                    static_cast<unsigned long long>(s.frame));
+        CHECK(s.frame == 60);
+        // Locked values from calibrated seed=1234 / frame=60 run.
+        CHECK(en == 2);
+        CHECK(bl == 3);
+        CHECK(s.kills == 0);
+        CHECK(s.score == 0);
+        CHECK(h == 0x239D270Du);
+        CHECK(h == s.entity_hash);
+        // second identical run must match exactly
+        SimState s2;
+        Rng rng2(1234);
+        sim_reset(s2, cfg, 1234);
+        for (int i = 0; i < 60; ++i) {
+            sim_step(s2, cfg, rng2, nullptr, true);
+        }
+        CHECK(hash_sim(s2) == h);
+        CHECK(s2.kills == s.kills);
+        CHECK(s2.score == s.score);
     }
 
     // stress scenes produce entities
