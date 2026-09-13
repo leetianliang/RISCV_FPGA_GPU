@@ -20,10 +20,9 @@ def ctest_names(build: Path) -> set[str]:
     names = set()
     for line in r.stdout.splitlines():
         line = line.strip()
-        if line.startswith("Test #"):
-            # "Test #1: name"
-            if ":" in line:
-                names.add(line.split(":", 1)[1].strip())
+        # "Test  #N: name" or "Test #N: name"
+        if line.startswith("Test") and ":" in line and "#" in line:
+            names.add(line.split(":", 1)[1].strip())
     return names
 
 AUTHORITATIVE_IDS = [

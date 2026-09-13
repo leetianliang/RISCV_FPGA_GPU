@@ -503,9 +503,9 @@
         "model/golden/src/tile_binner.cpp"
       ],
       "verification_evidence": [
-        "golden_tile_sweep"
+        "golden_test_tile_eq_random"
       ],
-      "test_name": "golden_tile_sweep",
+      "test_name": "golden_test_tile_eq_random",
       "notes": "See REPORT_004"
     },
     {
@@ -516,9 +516,9 @@
         "model/golden/tools/tile_sweep_tool.cpp"
       ],
       "verification_evidence": [
-        "golden_tile_sweep"
+        "golden_test_tile_eq_random"
       ],
-      "test_name": "golden_tile_sweep",
+      "test_name": "golden_test_tile_eq_random",
       "notes": "See REPORT_004"
     },
     {
@@ -529,9 +529,9 @@
         "model/golden/tools/tile_sweep_tool.cpp"
       ],
       "verification_evidence": [
-        "golden_tile_sweep"
+        "golden_test_tile_eq_random"
       ],
-      "test_name": "golden_tile_sweep",
+      "test_name": "golden_test_tile_eq_random",
       "notes": "See REPORT_004"
     },
     {
@@ -542,9 +542,9 @@
         "model/architecture/tile_model/run_tile_sweep.py"
       ],
       "verification_evidence": [
-        "golden_tile_sweep"
+        "golden_test_tile_eq_random"
       ],
-      "test_name": "golden_tile_sweep",
+      "test_name": "golden_test_tile_eq_random",
       "notes": "See REPORT_004"
     },
     {
@@ -555,9 +555,9 @@
         "results/stage004_tile/tile_sweep.csv"
       ],
       "verification_evidence": [
-        "golden_tile_sweep"
+        "golden_test_tile_eq_random"
       ],
-      "test_name": "golden_tile_sweep",
+      "test_name": "golden_test_tile_eq_random",
       "notes": "See REPORT_004"
     },
     {
@@ -568,9 +568,9 @@
         "results/stage004_tile/tile_sweep_summary.md"
       ],
       "verification_evidence": [
-        "golden_tile_sweep"
+        "golden_test_tile_eq_random"
       ],
-      "test_name": "golden_tile_sweep",
+      "test_name": "golden_test_tile_eq_random",
       "notes": "See REPORT_004"
     },
     {
