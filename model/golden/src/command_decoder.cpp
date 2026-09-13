@@ -83,9 +83,8 @@ DecodedHeader decode_cmd_header(const GpuCmd64& cmd) noexcept {
         case kOpcodeFillRect:
         case kOpcodeBlit:
         case kOpcodeBlitExt:
-            break;
         case kOpcodeTileFrame:
-            return make_header_fault(FaultCode::UNSUPPORTED_FEATURE, out.header.opcode);
+            break;
         default:
             return make_header_fault(FaultCode::BAD_OPCODE, out.header.opcode);
     }

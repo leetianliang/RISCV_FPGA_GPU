@@ -47,8 +47,8 @@ void test_opcode_class() {
     EXPECT_TRUE(golden::decode_cmd_header(cmd).ok);
 
     cmd[0] = golden::header_word(golden::kClassDraw2D, golden::kOpcodeTileFrame, 1, 16, 0);
-    EXPECT_TRUE(golden::decode_cmd_header(cmd).fault ==
-                golden::FaultCode::UNSUPPORTED_FEATURE);
+    // TILE_FRAME is implemented in Stage 004
+    EXPECT_TRUE(golden::decode_cmd_header(cmd).ok);
 
     cmd[0] = golden::header_word(golden::kClassDraw2D, golden::kOpcodeBlit, 1, 16, 0);
     EXPECT_TRUE(golden::decode_cmd_header(cmd).ok);

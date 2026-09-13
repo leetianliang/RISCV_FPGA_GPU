@@ -122,6 +122,12 @@ ExecResult GoldenGPU::execute_command(const GpuCmd64& cmd) {
     if (!hdr.ok) {
         return ExecResult::failure(hdr.fault, hdr.fault_detail);
     }
+    if (hdr.header.opcode == kOpcodeTileFrame) {
+        // Handled by tile renderer helper (shares this GoldenGPU).
+        return ExecResult::failure(FaultCode::UNSUPPORTED_FEATURE,
+                                   kOpcodeTileFrame);
+    }
+
     std::array<u8, 64> ext{};
     const u8* ext_ptr = nullptr;
     if ((hdr.header.hdr_flags & kHExtValid) != 0) {
@@ -388,7 +394,17 @@ ExecResult GoldenGPU::sample_and_blend(const DecodedDraw& d, SurfaceView& src_vi
                                static_cast<u32>(dy));
 }
 
+ExecResult GoldenGPU::execute_decoded(const DecodedDraw& d, bool extra_clip, i32 x0,
+                                      i32 y0, i32 x1, i32 y1) {
+    return execute_draw_clipped(d, extra_clip, x0, y0, x1, y1);
+}
+
 ExecResult GoldenGPU::execute_draw(const DecodedDraw& d) {
+    return execute_draw_clipped(d, false, 0, 0, 0, 0);
+}
+
+ExecResult GoldenGPU::execute_draw_clipped(const DecodedDraw& d, bool extra_clip,
+                                           i32 ex0, i32 ey0, i32 ex1, i32 ey1) {
     const Draw2DState& st = d.state;
 
     auto src_res = resource(st.src_base);
@@ -444,6 +460,12 @@ ExecResult GoldenGPU::execute_draw(const DecodedDraw& d) {
     ry0 = std::max(ry0, 0);
     rx1 = std::min(rx1, static_cast<i32>(dst_res->width));
     ry1 = std::min(ry1, static_cast<i32>(dst_res->height));
+    if (extra_clip) {
+        rx0 = std::max(rx0, ex0);
+        ry0 = std::max(ry0, ey0);
+        rx1 = std::min(rx1, ex1);
+        ry1 = std::min(ry1, ey1);
+    }
     if (rx0 >= rx1 || ry0 >= ry1) {
         return ExecResult::success();
     }

@@ -1,0 +1,435 @@
+{
+  "stage": "004",
+  "title": "Golden Tile Renderer, Software Binning, WorkList & Immediate-vs-Tile Pixel-Exact",
+  "baseline_commit": "105c23c0989c74fcd6273b33181c6079e40f5d5e",
+  "rules": {
+    "pass_requires_all_mandatory": true,
+    "no_evidence_means_not_done": true,
+    "ordinary_build_must_not_modify_reference_fixtures": true
+  },
+  "acceptance": [
+    {
+      "id": "GVF-01",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "GVF-02",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "GVF-03",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "GVF-04",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "GVF-05",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "GVF-06",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "TDS-01",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "TDS-02",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "TDS-03",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "TDS-04",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "TDS-05",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "TDS-06",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "BIN-01",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "BIN-02",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "BIN-03",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "BIN-04",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "BIN-05",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "BIN-06",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "TR-01",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "TR-02",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "TR-03",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "TR-04",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "TR-05",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "TR-06",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "TR-07",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "TR-08",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "EQ-01",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "EQ-02",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "EQ-03",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "EQ-04",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "EQ-05",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "EQ-06",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "EQ-07",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "EQ-08",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "EQ-09",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "PROF-01",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "PROF-02",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "PROF-03",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "PROF-04",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "PROF-05",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "EXP-01",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "EXP-02",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "EXP-03",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "EXP-04",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "AUD-01",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "AUD-02",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    },
+    {
+      "id": "AUD-03",
+      "mandatory": true,
+      "status": "TODO",
+      "implementation_evidence": [],
+      "verification_evidence": [],
+      "test_name": "",
+      "notes": ""
+    }
+  ]
+}

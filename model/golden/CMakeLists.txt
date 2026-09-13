@@ -7,6 +7,7 @@ add_library(golden_core STATIC
     src/surface_view.cpp
     src/command_decoder.cpp
     src/golden_gpu.cpp
+    src/tile_binner.cpp
 )
 
 target_include_directories(golden_core PUBLIC
@@ -57,6 +58,8 @@ golden_add_test_exec(golden_test_clip_diff tests/random/test_clip_diff.cpp)
 golden_add_test_exec(golden_test_oracle_v2 tests/directed/test_oracle_v2.cpp)
 golden_add_test_exec(golden_test_dither_dst tests/directed/test_dither_dst.cpp)
 golden_add_test_exec(golden_test_ext_mem_matrix tests/directed/test_ext_mem_matrix.cpp)
+golden_add_test_exec(golden_test_tile tests/tile/test_tile.cpp)
+golden_add_test_exec(golden_test_tile_eq_random tests/tile/test_tile_eq_random.cpp)
 
 add_test(
     NAME golden_test_integrity

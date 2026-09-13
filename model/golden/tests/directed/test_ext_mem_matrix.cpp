@@ -132,24 +132,54 @@ void test_memory_negatives() {
         d.filter = static_cast<u32>(FilterMode::BILINEAR);
         d.w = 1;
         d.h = 1;
-        // sample at u that needs neighbor x+1
-        d.u0 = 0x8000;
-        d.v0 = 0;
+        d.u0 = 0;
         d.du_dx = 0;
         d.dv_dy = 0;
-        auto ext = make_draw2d_ext_v1(d);
+        auto ext0 = make_draw2d_ext_v1(d);
         gpu.register_resource(RegisteredResource{0x30000, 64, 1, 1, "e"});
-        gpu.memory().write_block(0x30000, ext.data(), ext.size());
+        gpu.memory().write_block(0x30000, ext0.data(), ext0.size());
         auto cmd = make_blit_ext_cmd(d);
         cmd[10] = pack_wh(1, 1);
         cmd[11] = pack_wh(1, 1);
-        // src_w=1 so address mode clamps neighbor into rect — may succeed
-        // Change to larger rect size but tiny resource:
-        cmd[10] = pack_wh(2, 1);
-        const auto st = gpu.execute_command(cmd);
-        EXPECT_TRUE(!st.ok || st.ok);  // if clamp into 1-wide, ok
-        // Force resource so x+1 is unmapped: width 1, src_w 2 without clamp covering
-        // Use CLAMP and src_w=2 on 1-wide resource → validate_view stride may fail
+        // src_w=1 CLAMP, bilinear neighbor clamps to same texel — must succeed
+        const auto st_ok = gpu.execute_command(cmd);
+        if (!st_ok.ok) {
+            std::printf("bilinear 1x1 fail fault=%u detail=%u\n",
+                        static_cast<u32>(st_ok.fault), st_ok.fault_detail);
+        }
+        EXPECT_TRUE(st_ok.ok);
+
+        // Resource 1x1, SRC_W=2 without valid neighbor storage: validate_view
+        // uses resource width, so stride/size must cover resource. Register 1x1
+        // RGB565 stride 2; command SRC_W=2 will validate against resource width 1.
+        GoldenGPU gpu2;
+        gpu2.register_surface(SurfaceDesc{0x10000, 16, 1, 1, PixelFormat::RGB565},
+                              "d");
+        gpu2.register_resource(RegisteredResource{0x20000, 2, 1, 1, "s"});
+        std::vector<u8> t1 = {0, 0xF8};
+        gpu2.memory().write_block(0x20000, t1.data(), 2);
+        BlitCmdDesc d2;
+        d2.src_base = 0x20000;
+        d2.dst_base = 0x10000;
+        d2.src_stride = 2;
+        d2.dst_stride = 16;
+        d2.blit_ext = true;
+        d2.ext_ptr = 0x30000;
+        d2.filter = static_cast<u32>(FilterMode::BILINEAR);
+        d2.w = 1;
+        d2.h = 1;
+        d2.u0 = 0x8000;
+        auto ext2 = make_draw2d_ext_v1(d2);
+        gpu2.register_resource(RegisteredResource{0x30000, 64, 1, 1, "e"});
+        gpu2.memory().write_block(0x30000, ext2.data(), ext2.size());
+        auto cmd2 = make_blit_ext_cmd(d2);
+        cmd2[10] = pack_wh(2, 1);  // request 2-wide source rect on 1-wide resource
+        const auto st2 = gpu2.execute_command(cmd2);
+        // Resource width is 1 so last-byte check uses width 1; bilinear clamps
+        // neighbor into source rect [0,2) then map_tex_coord uses src_w=2 on
+        // width-1 resource → neighbor x=1 is out of resource → MEMORY_ERROR or
+        // BAD_RECT from validate/texture read. Deterministic: must fail.
+        EXPECT_TRUE(!st2.ok);
     }
 
     // palette index*4 near overflow

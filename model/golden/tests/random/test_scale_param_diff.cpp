@@ -3,6 +3,7 @@
 #include "golden/gpu_math.hpp"
 
 #include <cstdio>
+#include <limits>
 #include <vector>
 
 namespace {
@@ -21,14 +22,52 @@ struct Rng {
     u32 range(u32 n) { return n ? next() % n : 0; }
 };
 
+// Test-local formulas from Pixel Arithmetic V0.1 (do not call production helpers).
+i64 t_round_div(i64 num, i64 den) {
+    const bool neg = num < 0;
+    u64 unneg;
+    if (num == std::numeric_limits<i64>::min()) {
+        unneg = static_cast<u64>(std::numeric_limits<i64>::max()) + 1ull;
+    } else {
+        unneg = static_cast<u64>(neg ? -num : num);
+    }
+    const u64 uden = static_cast<u64>(den);
+    u64 q = unneg / uden;
+    const u64 r = unneg % uden;
+    if (r * 2ull >= uden) {
+        q += 1ull;
+    }
+    if (!neg) {
+        return static_cast<i64>(q);
+    }
+    if (q > static_cast<u64>(std::numeric_limits<i64>::max())) {
+        return std::numeric_limits<i64>::min();
+    }
+    return -static_cast<i64>(q);
+}
+
+void t_uv(u32 src, u32 src_size, u32 dst_size, i32& u0, i32& du) {
+    du = static_cast<i32>(t_round_div(static_cast<i64>(src_size) * 65536, dst_size));
+    u0 = static_cast<i32>((static_cast<i64>(src) << 16) +
+                          t_round_div(static_cast<i64>(src_size - dst_size) * 32768,
+                                      dst_size));
+}
+
+i32 t_nearest(i32 q) {
+    const i64 t = static_cast<i64>(q) + 32768;
+    if (t >= 0) {
+        return static_cast<i32>(t / 65536);
+    }
+    return -static_cast<i32>(((-t) + 65535) / 65536);
+}
+
 void run_scale(u32 seed, u32 sw, u32 sh, u32 dw, u32 dh, u32 src_x, u32 src_y,
-               u32 /*sstride_hint*/, u32 dstride) {
-    Rng rng(seed);
+               u32 sstride_pad, u32 dstride) {
     const u32 base_d = 0x10000;
     const u32 base_s = 0x20000;
     const u32 tex_w = src_x + sw + 4;
     const u32 tex_h = src_y + sh + 4;
-    const u32 sstride = tex_w * 2;
+    const u32 sstride = tex_w * 2 + sstride_pad;  // may pad
     GoldenGPU gpu;
     gpu.register_surface(
         SurfaceDesc{base_d, dstride, dw, dh, PixelFormat::RGB565}, "d");
@@ -51,6 +90,10 @@ void run_scale(u32 seed, u32 sw, u32 sh, u32 dw, u32 dh, u32 src_x, u32 src_y,
     std::vector<u8> dinit(static_cast<size_t>(dstride) * dh, 0);
     gpu.memory().write_block(base_d, dinit.data(), dinit.size());
 
+    i32 u0 = 0, du = 0, v0 = 0, dv = 0;
+    t_uv(src_x, sw, dw, u0, du);
+    t_uv(src_y, sh, dh, v0, dv);
+
     BlitCmdDesc d;
     d.src_base = base_s;
     d.dst_base = base_d;
@@ -62,8 +105,10 @@ void run_scale(u32 seed, u32 sw, u32 sh, u32 dw, u32 dh, u32 src_x, u32 src_y,
     d.ext_ptr = 0x30000;
     d.w = dw;
     d.h = dh;
-    compute_axis_aligned_uv(src_x, sw, dw, d.u0, d.du_dx);
-    compute_axis_aligned_uv_v(src_y, sh, dh, d.v0, d.dv_dy);
+    d.u0 = u0;
+    d.du_dx = du;
+    d.v0 = v0;
+    d.dv_dy = dv;
     auto ext = make_draw2d_ext_v1(d);
     gpu.register_resource(RegisteredResource{0x30000, 64, 1, 1, "e"});
     gpu.memory().write_block(0x30000, ext.data(), ext.size());
@@ -82,11 +127,10 @@ void run_scale(u32 seed, u32 sw, u32 sh, u32 dw, u32 dh, u32 src_x, u32 src_y,
     std::vector<u8> exp(static_cast<size_t>(dstride) * dh, 0);
     for (u32 y = 0; y < dh; ++y) {
         for (u32 x = 0; x < dw; ++x) {
-            const i64 u = d.u0 + static_cast<i64>(x) * d.du_dx;
-            const i64 v = d.v0 + static_cast<i64>(y) * d.dv_dy;
-            i32 nx = nearest_index_q16(static_cast<i32>(u));
-            i32 ny = nearest_index_q16(static_cast<i32>(v));
-            // address domain: source rect [src_x, src_x+sw)
+            const i64 u = u0 + static_cast<i64>(x) * du;
+            const i64 v = v0 + static_cast<i64>(y) * dv;
+            i32 nx = t_nearest(static_cast<i32>(u));
+            i32 ny = t_nearest(static_cast<i32>(v));
             auto map1 = [](i32 abs, i32 origin, i32 sz) -> i32 {
                 i32 rel = abs - origin;
                 if (rel < 0) rel = 0;
@@ -106,8 +150,8 @@ void run_scale(u32 seed, u32 sw, u32 sh, u32 dw, u32 dh, u32 src_x, u32 src_y,
     std::vector<u8> got;
     gpu.memory().read_block(base_d, static_cast<size_t>(dstride) * dh, got);
     if (got != exp) {
-        std::printf("scale pixel mismatch seed=%u sw=%u dw=%u src=%u,%u\n", seed, sw,
-                    dw, src_x, src_y);
+        std::printf("scale pixel mismatch seed=%u sw=%u dw=%u src=%u,%u pad=%u\n", seed,
+                    sw, dw, src_x, src_y, sstride_pad);
         ++g_failures;
     }
 }
@@ -131,9 +175,8 @@ int main() {
         const u32 dh = 1 + ((i + 1) % 6);
         const u32 src_x = i % 3;
         const u32 src_y = i % 2;
-        const u32 tex_w = src_x + sw + 2;
-        const u32 sstride = tex_w * 2;
-        run_scale(100 + i * 17, sw, sh, dw, dh, src_x, src_y, sstride,
+        const u32 pad = (i % 2) ? 4 : 0;  // padded source stride
+        run_scale(100 + i * 17, sw, sh, dw, dh, src_x, src_y, pad,
                   16 + 4 * (i % 4));
     }
     if (g_failures) {

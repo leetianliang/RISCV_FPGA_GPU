@@ -34,6 +34,9 @@ public:
 
     ExecResult execute_command(const GpuCmd64& cmd);
     ExecResult execute_stream(const std::vector<GpuCmd64>& cmds);
+    // Execute already-decoded draw, optionally intersecting an extra tile rect.
+    ExecResult execute_decoded(const DecodedDraw& d, bool extra_clip, i32 x0, i32 y0,
+                               i32 x1, i32 y1);
     void reset();
 
 private:
@@ -42,6 +45,8 @@ private:
         Rgba8888 color{};
     };
     ExecResult execute_draw(const DecodedDraw& d);
+    ExecResult execute_draw_clipped(const DecodedDraw& d, bool extra_clip, i32 ex0,
+                                    i32 ey0, i32 ex1, i32 ey1);
     ExecResult sample_and_blend(const DecodedDraw& d, SurfaceView& src_view,
                                 SurfaceView& dst_view, i32 dx, i32 dy, i32 sx, i32 sy);
     Sampled sample_color(const DecodedDraw& d, SurfaceView& src_view, i32 sx, i32 sy);
