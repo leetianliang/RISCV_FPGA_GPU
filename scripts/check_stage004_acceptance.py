@@ -13,6 +13,19 @@ MANIFEST = ROOT / "docs" / "tasks" / "STAGE_004_ACCEPTANCE.json"
 REPORT = ROOT / "docs" / "reports" / "REPORT_004_Golden_Tile_Renderer_and_Binning.md"
 BUILD = ROOT / "build" / "stage004"
 
+
+def ctest_names(build: Path) -> set[str]:
+    import subprocess
+    r = subprocess.run(["ctest", "--test-dir", str(build), "-N"], capture_output=True, text=True)
+    names = set()
+    for line in r.stdout.splitlines():
+        line = line.strip()
+        if line.startswith("Test #"):
+            # "Test #1: name"
+            if ":" in line:
+                names.add(line.split(":", 1)[1].strip())
+    return names
+
 AUTHORITATIVE_IDS = [
     f"{p}-{i:02d}"
     for p, n in [
@@ -46,6 +59,9 @@ def main() -> int:
         return 1
     data = json.loads(MANIFEST.read_text(encoding="utf-8"))
     acc = data.get("acceptance", [])
+    ctests = ctest_names(BUILD) if BUILD.is_dir() else set()
+    if not ctests:
+        print("[WARN] ctest -N unavailable; skip test-name existence checks")
     bad = 0
     ids: list[str] = []
     for item in acc:
@@ -82,6 +98,16 @@ def main() -> int:
         if item.get("mandatory", True) and not item.get("test_name"):
             print(f"[FAIL] {iid} empty test_name")
             bad += 1
+        # N9: declared test names must exist in ctest -N
+        tn = item.get("test_name", "")
+        if item.get("mandatory", True) and tn and "*" not in tn:
+            if not tn.startswith("ctest") and BUILD.exists():
+                if "ctest" in (item.get("verification_evidence") or [""])[0:]:
+                    pass
+            # only validate if it looks like a CTest test name
+            if tn.startswith("golden_") and "*" not in tn and ctests and tn not in ctests:
+                print(f"[FAIL] {iid} test_name not in ctest -N: {tn}")
+                bad += 1
 
     # exact 47-ID set
     if ids != AUTHORITATIVE_IDS:

@@ -9,7 +9,7 @@
         "scripts/check_test_integrity.py"
       ],
       "verification_evidence": [
-        "scripts/check_test_integrity.py"
+        "golden_test_integrity"
       ],
       "test_name": "golden_test_integrity",
       "notes": "See REPORT_004"
@@ -74,7 +74,7 @@
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
       "verification_evidence": [
-        "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
+        "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
       "notes": "See REPORT_004"
@@ -331,12 +331,12 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden/src/tile_binner.cpp"
+        "model/golden/tests/tile/test_tile_faults.cpp"
       ],
       "verification_evidence": [
-        "golden_tile_fixture_tile_fill_basic"
+        "golden_test_tile_faults"
       ],
-      "test_name": "golden_tile_fixture_tile_fill_basic",
+      "test_name": "golden_test_tile_faults",
       "notes": "See REPORT_004"
     },
     {
@@ -448,12 +448,12 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden/tests/frames/tile"
+        "tools/fixture_validate/validate_tile_fixtures.py"
       ],
       "verification_evidence": [
-        "golden_tile_fixture_tile_fill_basic"
+        "golden_tile_fixture_validate"
       ],
-      "test_name": "golden_tile_fixture_tile_fill_basic",
+      "test_name": "golden_tile_fixture_validate",
       "notes": "See REPORT_004"
     },
     {
@@ -542,7 +542,7 @@
         "model/architecture/tile_model/run_tile_sweep.py"
       ],
       "verification_evidence": [
-        "model/architecture/tile_model/run_tile_sweep.py"
+        "golden_tile_sweep"
       ],
       "test_name": "golden_tile_sweep",
       "notes": "See REPORT_004"
@@ -555,7 +555,7 @@
         "results/stage004_tile/tile_sweep.csv"
       ],
       "verification_evidence": [
-        "results/stage004_tile/tile_sweep.csv"
+        "golden_tile_sweep"
       ],
       "test_name": "golden_tile_sweep",
       "notes": "See REPORT_004"
@@ -568,7 +568,7 @@
         "results/stage004_tile/tile_sweep_summary.md"
       ],
       "verification_evidence": [
-        "results/stage004_tile/tile_sweep_summary.md"
+        "golden_tile_sweep"
       ],
       "test_name": "golden_tile_sweep",
       "notes": "See REPORT_004"
@@ -581,9 +581,9 @@
         "docs/tasks/STAGE_004_ACCEPTANCE.json"
       ],
       "verification_evidence": [
-        "scripts/check_stage004_acceptance.py"
+        "golden_test_integrity"
       ],
-      "test_name": "golden_test_stage004_acceptance",
+      "test_name": "golden_test_integrity",
       "notes": "See REPORT_004"
     },
     {
@@ -594,7 +594,7 @@
         "scripts/check_stage004_acceptance.py"
       ],
       "verification_evidence": [
-        "scripts/check_stage004_acceptance.py"
+        "golden_test_integrity"
       ],
       "test_name": "golden_test_integrity",
       "notes": "See REPORT_004"
@@ -607,7 +607,7 @@
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
       "verification_evidence": [
-        "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
+        "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
       "notes": "See REPORT_004"

@@ -190,6 +190,10 @@ add_test(
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../../tools/fixture_validate/fixture_validate.py
         ${FRAMES_ROOT}
 )
+add_test(
+    NAME golden_tile_fixture_validate
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../../tools/fixture_validate/validate_tile_fixtures.py
+)
 
 foreach(tf tile_fill_basic tile_alpha_overlap tile_bilinear_cross_boundary tile_palette tile_dither_cross_boundary)
     add_test(

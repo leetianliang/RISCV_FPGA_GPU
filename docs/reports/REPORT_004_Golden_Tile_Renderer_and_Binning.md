@@ -2,7 +2,7 @@
 
 ## 1. Result
 
-**PASS** (pending REVIEW_004_V7)
+**PASS** (pending REVIEW_004_V8)
 
 ## 2. START_COMMIT
 
@@ -10,48 +10,75 @@
 
 ## 3. END_COMMIT
 
-`cea792c` (implementation); this report commit follows on master.
+See `git log -1` after this report commit.
 
-## 4. Reviewed Implementation HEAD
-
-`2f1fdc718902adf72ca381b3941e6c24dc9a87fa` plus V6 closure commit.
-
-## 5. CTest Result (this HEAD)
+## 4. Final Verification
 
 ```text
 ctest --test-dir build/stage004 --output-on-failure
-Total Tests: 69
-100% tests passed, 0 tests failed out of 69
+70/70 PASS (Agent-reported local; not CI-reproduced)
+python scripts/check_stage004_acceptance.py → PASS
+python tools/fixture_validate/validate_tile_fixtures.py → PASS
 ```
 
-Agent-reported local result (not independently reproduced CI).
+## 5. Architecture (accepted)
 
-## 6. Tile Architecture
+CPU binner → serialized descriptors/headers/workrefs → TILE_FRAME → internal tile_mem → shared pixel backend → store.
 
-```text
-CPU binner → descriptors/headers/workrefs → TILE_FRAME
-→ internal tile_mem (MemoryImage, no GPU phys addr)
-→ load / shared pixel backend / store
-```
+LOAD_COLOR_DEFAULT: FROZEN (see decisions file).
 
-LOAD_COLOR_DEFAULT rule: FROZEN in `docs/decisions/DESIGN_QUESTION_TILE_LOAD_COLOR_DEFAULT.md`.
+## 6. 47-Row Evidence Matrix
 
-## 7. Verification Evidence (representative)
+| ID | Result | Implementation | Verification |
+|---|---|---|---|
+| GVF-01 | PASS | scripts/check_test_integrity.py | golden_test_integrity |
+| GVF-02 | PASS | model/golden/tests/random/test_scale_param_diff.cpp | golden_test_scale_param_diff |
+| GVF-03 | PASS | model/golden/tests/directed/test_oracle_v2.cpp | golden_test_oracle_v2 |
+| GVF-04 | PASS | model/golden/tests/directed/test_dither_dst.cpp | golden_test_dither_dst |
+| GVF-05 | PASS | model/golden/tests/directed/test_ext_mem_matrix.cpp | golden_test_ext_mem_matrix |
+| GVF-06 | PASS | docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md | golden_test_tile |
+| TDS-01 | PASS | model/golden/src/command_decoder.cpp | golden_test_command_header |
+| TDS-02 | PASS | model/golden/include/golden/tile_types.hpp | golden_test_tile |
+| TDS-03 | PASS | model/golden/include/golden/tile_types.hpp | golden_test_tile |
+| TDS-04 | PASS | model/golden/src/tile_binner.cpp | golden_test_tile |
+| TDS-05 | PASS | model/golden/include/golden/tile_types.hpp | golden_test_tile |
+| TDS-06 | PASS | model/golden/tests/tile/test_tile_faults.cpp | golden_test_tile_faults |
+| BIN-01 | PASS | model/golden/src/tile_binner.cpp | golden_test_tile |
+| BIN-02 | PASS | model/golden/src/tile_binner.cpp | golden_test_tile |
+| BIN-03 | PASS | model/golden/tests/tile/test_tile_ext.cpp | golden_test_tile_ext |
+| BIN-04 | PASS | model/golden/tests/tile/test_tile.cpp | golden_test_tile |
+| BIN-05 | PASS | model/golden/src/tile_binner.cpp | golden_test_tile |
+| BIN-06 | PASS | model/golden/src/tile_binner.cpp | golden_test_tile |
+| TR-01 | PASS | model/golden/src/tile_binner.cpp | golden_test_tile |
+| TR-02 | PASS | model/golden/src/golden_gpu.cpp | golden_test_tile_eq_random |
+| TR-03 | PASS | model/golden/src/tile_binner.cpp | golden_test_tile |
+| TR-04 | PASS | model/golden/src/tile_binner.cpp | golden_test_tile |
+| TR-05 | PASS | model/golden/src/golden_gpu.cpp | golden_test_tile_extended |
+| TR-06 | PASS | model/golden/src/tile_binner.cpp | golden_test_tile_ext |
+| TR-07 | PASS | model/golden/src/tile_binner.cpp | golden_test_tile |
+| TR-08 | PASS | model/golden/tests/tile/test_tile_faults.cpp | golden_test_tile_faults |
+| EQ-01 | PASS | model/golden/tests/tile/test_tile.cpp | golden_test_tile |
+| EQ-02 | PASS | model/golden/tests/tile/test_tile_extended.cpp | golden_test_tile_extended |
+| EQ-03 | PASS | model/golden/tests/tile/test_tile.cpp | golden_test_tile |
+| EQ-04 | PASS | model/golden/tests/tile/test_tile_extended.cpp | golden_test_tile_extended |
+| EQ-05 | PASS | model/golden/tests/tile/test_tile_extended.cpp | golden_test_tile_extended |
+| EQ-06 | PASS | model/golden/tests/tile/test_tile_eq_random.cpp | golden_test_tile_eq_random |
+| EQ-07 | PASS | model/golden/tests/tile/test_tile_eq_random.cpp | golden_test_tile_eq_random |
+| EQ-08 | PASS | model/golden/tests/tile/test_tile_faults.cpp | golden_test_tile_faults |
+| EQ-09 | PASS | tools/fixture_validate/validate_tile_fixtures.py | golden_tile_fixture_validate |
+| PROF-01 | PASS | model/golden/include/golden/tile_binner.hpp | golden_test_tile |
+| PROF-02 | PASS | model/golden/include/golden/golden_gpu.hpp | golden_test_tile |
+| PROF-03 | PASS | model/golden/include/golden/tile_binner.hpp | golden_test_tile |
+| PROF-04 | PASS | model/golden/src/tile_binner.cpp | golden_tile_sweep |
+| PROF-05 | PASS | model/golden/tools/tile_sweep_tool.cpp | golden_tile_sweep |
+| EXP-01 | PASS | model/golden/tools/tile_sweep_tool.cpp | golden_tile_sweep |
+| EXP-02 | PASS | model/architecture/tile_model/run_tile_sweep.py | golden_tile_sweep |
+| EXP-03 | PASS | results/stage004_tile/tile_sweep.csv | golden_tile_sweep |
+| EXP-04 | PASS | results/stage004_tile/tile_sweep_summary.md | golden_tile_sweep |
+| AUD-01 | PASS | docs/tasks/STAGE_004_ACCEPTANCE.json | golden_test_integrity |
+| AUD-02 | PASS | scripts/check_stage004_acceptance.py | golden_test_integrity |
+| AUD-03 | PASS | docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md | golden_test_tile |
 
-| Area | Implementation | Test |
-|---|---|---|
-| Pixel path | `model/golden/src/golden_gpu.cpp` | `golden_test_tile*` |
-| Binner/TILE_FRAME | `model/golden/src/tile_binner.cpp` | `golden_test_tile_faults` |
-| Imm==Tile random | `model/golden/tests/tile/test_tile_eq_random.cpp` | `golden_test_tile_eq_random` |
-| Directed extended | `model/golden/tests/tile/test_tile_extended.cpp` | `golden_test_tile_extended` |
-| Tile fixtures | `model/golden/tests/frames/tile/*` | `golden_tile_fixture_*` |
-| Profiler | `model/golden/include/golden/golden_gpu.hpp` PixelEventSink | `golden_test_tile` |
-| Sweep | `model/golden/tools/tile_sweep_tool.cpp` | `run_tile_sweep.py` |
+## 7. Next
 
-## 8. Acceptance IDs
-
-GVF-01 GVF-02 GVF-03 GVF-04 GVF-05 GVF-06 TDS-01 TDS-02 TDS-03 TDS-04 TDS-05 TDS-06 BIN-01 BIN-02 BIN-03 BIN-04 BIN-05 BIN-06 TR-01 TR-02 TR-03 TR-04 TR-05 TR-06 TR-07 TR-08 EQ-01 EQ-02 EQ-03 EQ-04 EQ-05 EQ-06 EQ-07 EQ-08 EQ-09 PROF-01 PROF-02 PROF-03 PROF-04 PROF-05 EXP-01 EXP-02 EXP-03 EXP-04 AUD-01 AUD-02 AUD-03
-
-## 9. Next
-
-Stage 005 RTL after REVIEW_004_V7.
+Stage 005 RTL after REVIEW_004_V8.

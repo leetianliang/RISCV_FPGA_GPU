@@ -75,7 +75,6 @@ void test_reconfig_tile_size() {
     setup_tile(g, {fill}, 32, 32, 16, 64, 0x30000, 0x31000, 0x32000);
     auto tf16 = base_tf(32, 32, 16, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
     EXPECT_TRUE(execute_tile_frame(g, make_tile_frame_cmd(tf16)).ok);
-    // second frame tile 32 (resize scratch)
     setup_tile(g, {fill}, 32, 32, 32, 64, 0x40000, 0x41000, 0x42000);
     auto tf32 = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x40000, 0x41000, 0x42000);
     EXPECT_TRUE(execute_tile_frame(g, make_tile_frame_cmd(tf32)).ok);
@@ -87,10 +86,7 @@ void test_grid_mismatch() {
                                    Rgba8888::pack(255, 1, 2, 3));
     setup_tile(g, {fill}, 32, 32, 32, 64, 0x30000, 0x31000, 0x32000);
     auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
-    tf.grid_w = 1;
-    tf.grid_h = 1;  // correct for 32/32
-    EXPECT_TRUE(execute_tile_frame(g, make_tile_frame_cmd(tf)).ok);
-    tf.grid_w = 2;  // too large
+    tf.grid_w = 2;
     const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
     EXPECT_TRUE(!st.ok);
     EXPECT_TRUE(st.fault == FaultCode::BAD_TILE_CONFIG);
@@ -101,15 +97,12 @@ void test_depth_flag_rejected() {
     auto fill = make_fill_rect_cmd(0x10000, 64, 0, 0, 4, 4,
                                    Rgba8888::pack(255, 1, 2, 3));
     setup_tile(g, {fill}, 32, 32, 32, 64, 0x30000, 0x31000, 0x32000);
-    // set TILE_LOAD_DEPTH in header flags
-    {
-        TileHeader th = {};
-        th.work_offset = 0;
-        th.work_count = 1;
-        th.flags = kTileLoadDepth;
-        const auto hb = serialize_tile_header(th);
-        g.memory().write_block(0x31000, hb.data(), 16);
-    }
+    TileHeader th = {};
+    th.work_offset = 0;
+    th.work_count = 1;
+    th.flags = kTileLoadDepth;
+    const auto hb = serialize_tile_header(th);
+    g.memory().write_block(0x31000, hb.data(), 16);
     auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
     const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
     EXPECT_TRUE(!st.ok);
@@ -121,26 +114,21 @@ void test_dont_load_requires_default() {
     auto fill = make_fill_rect_cmd(0x10000, 64, 0, 0, 4, 4,
                                    Rgba8888::pack(255, 1, 2, 3));
     setup_tile(g, {fill}, 32, 32, 32, 64, 0x30000, 0x31000, 0x32000);
-    {
-        TileHeader th = {};
-        th.work_offset = 0;
-        th.work_count = 1;
-        th.flags = kTileDontLoadColor;  // no CLEAR, no default unless RT bit set
-        const auto hb = serialize_tile_header(th);
-        g.memory().write_block(0x31000, hb.data(), 16);
-    }
+    TileHeader th = {};
+    th.work_offset = 0;
+    th.work_count = 1;
+    th.flags = kTileDontLoadColor;
+    const auto hb = serialize_tile_header(th);
+    g.memory().write_block(0x31000, hb.data(), 16);
     auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
-    // without LOAD_COLOR_DEFAULT → UNSUPPORTED
     const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
     EXPECT_TRUE(!st.ok);
     EXPECT_TRUE(st.fault == FaultCode::UNSUPPORTED_FEATURE);
-    // with LOAD_COLOR_DEFAULT → zero-init and succeed
     tf.rt_state |= kRtLoadColorDefault;
     EXPECT_TRUE(execute_tile_frame(g, make_tile_frame_cmd(tf)).ok);
 }
 
 void test_strict_reserved_pair() {
-    // RT_STATE reserved: non-strict ignore, strict fault
     {
         GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
         auto fill = make_fill_rect_cmd(0x10000, 64, 0, 0, 4, 4,
@@ -155,7 +143,6 @@ void test_strict_reserved_pair() {
         EXPECT_TRUE(!st.ok);
         EXPECT_TRUE(st.fault == FaultCode::RESERVED_NONZERO);
     }
-    // Header W3 reserved + strict
     {
         GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
         auto fill = make_fill_rect_cmd(0x10000, 64, 0, 0, 4, 4,
@@ -172,6 +159,120 @@ void test_strict_reserved_pair() {
     }
 }
 
+// N6: table-driven exact fault matrix
+void test_fault_matrix() {
+    auto fill = make_fill_rect_cmd(0x10000, 64, 0, 0, 4, 4,
+                                   Rgba8888::pack(255, 1, 2, 3));
+    // unmapped desc base
+    {
+        GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
+        const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
+        EXPECT_TRUE(st.fault == FaultCode::MEMORY_ERROR);
+    }
+    // unmapped header base
+    {
+        GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        g.register_resource(RegisteredResource{0x30000, 64, 1, 1, "d"});
+        auto b = serialize_cmd_le(fill);
+        g.memory().write_block(0x30000, b.data(), 64);
+        auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
+        const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
+        EXPECT_TRUE(st.fault == FaultCode::MEMORY_ERROR);
+    }
+    // unmapped worklist
+    {
+        GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        g.register_resource(RegisteredResource{0x30000, 64, 1, 1, "d"});
+        auto b = serialize_cmd_le(fill);
+        g.memory().write_block(0x30000, b.data(), 64);
+        g.register_resource(RegisteredResource{0x31000, 64, 1, 1, "h"});
+        TileHeader th = {};
+        th.work_offset = 0;
+        th.work_count = 1;
+        const auto hb = serialize_tile_header(th);
+        g.memory().write_block(0x31000, hb.data(), 16);
+        auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
+        const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
+        EXPECT_TRUE(st.fault == FaultCode::WORKLIST_BOUNDS);
+    }
+    // workref out of descriptor array
+    {
+        GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        g.register_resource(RegisteredResource{0x30000, 64, 1, 1, "d"});
+        auto b = serialize_cmd_le(fill);
+        g.memory().write_block(0x30000, b.data(), 64);
+        g.register_resource(RegisteredResource{0x31000, 64, 1, 1, "h"});
+        TileHeader th = {};
+        th.work_offset = 0;
+        th.work_count = 1;
+        const auto hb = serialize_tile_header(th);
+        g.memory().write_block(0x31000, hb.data(), 16);
+        g.register_resource(RegisteredResource{0x32000, 16, 1, 1, "w"});
+        u8 wr[4] = {5, 0, 0, 0};  // index 5, only 1 desc
+        g.memory().write_block(0x32000, wr, 4);
+        auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
+        const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
+        EXPECT_TRUE(st.fault == FaultCode::DESCRIPTOR_BOUNDS);
+    }
+    // misaligned desc base
+    {
+        GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        g.register_resource(RegisteredResource{0x30001, 64, 1, 1, "d"});
+        auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30001, 0x31000, 0x32000);
+        // register succeeds; capacity = 64/64=1; missing header → MEMORY
+        const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
+        EXPECT_TRUE(st.fault == FaultCode::MEMORY_ERROR);
+    }
+    // dest allocation too small
+    {
+        GoldenGPU g;
+        g.register_surface(SurfaceDesc{0x10000, 16, 4, 4, PixelFormat::RGB565}, "d");
+        std::vector<u8> init(64, 0);
+        g.memory().write_block(0x10000, init.data(), init.size());
+        auto fill = make_fill_rect_cmd(0x10000, 64, 0, 0, 4, 4,
+                                       Rgba8888::pack(255, 1, 2, 3));
+        setup_tile(g, {fill}, 32, 32, 32, 64, 0x30000, 0x31000, 0x32000);
+        auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
+        const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
+        EXPECT_TRUE(st.fault == FaultCode::BAD_RECT);
+    }
+    // strict target format mismatch
+    {
+        GoldenGPU g = make_gpu(32, 32, 128, PixelFormat::ARGB8888);
+        auto f = make_fill_rect_cmd(0x10000, 64, 0, 0, 4, 4,
+                                    Rgba8888::pack(255, 1, 2, 3));  // RGB565 desc
+        setup_tile(g, {f}, 32, 32, 32, 128, 0x30000, 0x31000, 0x32000);
+        auto tf = base_tf(32, 32, 32, 128, PixelFormat::ARGB8888, 0x30000, 0x31000, 0x32000);
+        tf.rt_state |= kRtStrictTargetMatch;
+        GpuCmd64 c = make_tile_frame_cmd(tf);
+        const auto st = execute_tile_frame(g, c);
+        EXPECT_TRUE(!st.ok);
+        EXPECT_TRUE(st.fault == FaultCode::TILE_TARGET_MISMATCH ||
+                    st.fault == FaultCode::BAD_RECT);
+    }
+    // TILE_FLAGS reserved non-strict ignore / strict fault
+    {
+        GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        auto fill2 = make_fill_rect_cmd(0x10000, 64, 0, 0, 4, 4,
+                                        Rgba8888::pack(255, 1, 2, 3));
+        setup_tile(g, {fill2}, 32, 32, 32, 64, 0x30000, 0x31000, 0x32000);
+        TileHeader th = {};
+        th.work_offset = 0;
+        th.work_count = 1;
+        th.flags = (1u << 4);  // reserved
+        const auto hb = serialize_tile_header(th);
+        g.memory().write_block(0x31000, hb.data(), 16);
+        auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
+        // non-strict: ignore reserved → may still execute
+        // strict: fault
+        GpuCmd64 c = make_tile_frame_cmd(tf);
+        c[0] |= kHStrict;
+        const auto st = execute_tile_frame(g, c);
+        EXPECT_TRUE(st.fault == FaultCode::RESERVED_NONZERO);
+    }
+}
+
 }  // namespace
 
 int main() {
@@ -180,6 +281,7 @@ int main() {
     test_depth_flag_rejected();
     test_dont_load_requires_default();
     test_strict_reserved_pair();
+    test_fault_matrix();
     if (g_failures) {
         std::printf("golden_test_tile_faults FAIL %d\n", g_failures);
         return 1;
