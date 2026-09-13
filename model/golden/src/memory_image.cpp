@@ -44,6 +44,10 @@ bool MemoryImage::has_region(u32 base) const {
     return regions_.find(base) != regions_.end();
 }
 
+bool MemoryImage::forget_region(u32 base) {
+    return regions_.erase(base) > 0;
+}
+
 const MemoryImage::Region* MemoryImage::resolve(u32 addr, u32 access_size,
                                                 MemAccessStatus& status) const {
     status = MemAccessStatus::OK;

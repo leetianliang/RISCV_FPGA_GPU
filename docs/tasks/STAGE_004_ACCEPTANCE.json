@@ -6,13 +6,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "scripts/check_test_integrity.py"
+        "model/golden implementation GVF-01"
       ],
       "verification_evidence": [
-        "check_test_integrity",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "check_test_integrity",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -20,13 +20,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "test_scale_param_diff.cpp"
+        "model/golden implementation GVF-02"
       ],
       "verification_evidence": [
-        "golden_test_scale_param_diff",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "golden_test_scale_param_diff",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -34,13 +34,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation GVF-03"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -48,13 +48,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation GVF-04"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -62,13 +62,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation GVF-05"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -76,13 +76,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation GVF-06"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -90,13 +90,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation TDS-01"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -104,13 +104,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation TDS-02"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -118,13 +118,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation TDS-03"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -132,13 +132,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation TDS-04"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -146,13 +146,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation TDS-05"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -160,13 +160,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation TDS-06"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -174,13 +174,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation BIN-01"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -188,13 +188,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation BIN-02"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -202,13 +202,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "golden_test_tile_ext reverse workrefs"
+        "model/golden implementation BIN-03"
       ],
       "verification_evidence": [
-        "golden_test_tile_ext",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "golden_test_tile_ext",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -216,13 +216,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation BIN-04"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -230,13 +230,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation BIN-05"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -244,13 +244,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation BIN-06"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -258,13 +258,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "tile_binner.cpp execute_tile_frame"
+        "model/golden implementation TR-01"
       ],
       "verification_evidence": [
-        "golden_test_tile",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "golden_test_tile",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -272,13 +272,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "shared GoldenGPU backend"
+        "model/golden implementation TR-02"
       ],
       "verification_evidence": [
-        "golden_test_tile_eq_random",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "golden_test_tile_eq_random",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -286,13 +286,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation TR-03"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -300,13 +300,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "scratch tile buffer load/store"
+        "model/golden implementation TR-04"
       ],
       "verification_evidence": [
-        "golden_test_tile",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "golden_test_tile",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -314,13 +314,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation TR-05"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -328,13 +328,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation TR-06"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -342,13 +342,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation TR-07"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -356,13 +356,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation TR-08"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -370,69 +370,69 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation EQ-01"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
       "id": "EQ-02",
       "mandatory": true,
-      "status": "PASS",
+      "status": "PARTIAL",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation EQ-02"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
       "id": "EQ-03",
       "mandatory": true,
-      "status": "PASS",
+      "status": "PARTIAL",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation EQ-03"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
       "id": "EQ-04",
       "mandatory": true,
-      "status": "PASS",
+      "status": "PARTIAL",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation EQ-04"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
       "id": "EQ-05",
       "mandatory": true,
-      "status": "PASS",
+      "status": "PARTIAL",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation EQ-05"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -440,27 +440,27 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation EQ-06"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
       "id": "EQ-07",
       "mandatory": true,
-      "status": "PASS",
+      "status": "PARTIAL",
       "implementation_evidence": [
-        "golden_test_tile_eq_random 300 frames"
+        "model/golden implementation EQ-07"
       ],
       "verification_evidence": [
-        "golden_test_tile_eq_random",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "golden_test_tile_eq_random",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -468,27 +468,27 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation EQ-08"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
       "id": "EQ-09",
       "mandatory": true,
-      "status": "PASS",
+      "status": "PARTIAL",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation EQ-09"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -496,55 +496,55 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation PROF-01"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
       "id": "PROF-02",
       "mandatory": true,
-      "status": "PASS",
+      "status": "PARTIAL",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation PROF-02"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
       "id": "PROF-03",
       "mandatory": true,
-      "status": "PASS",
+      "status": "PARTIAL",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation PROF-03"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
       "id": "PROF-04",
       "mandatory": true,
-      "status": "PASS",
+      "status": "PARTIAL",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation PROF-04"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -552,13 +552,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation PROF-05"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -566,13 +566,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation EXP-01"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -580,13 +580,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation EXP-02"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -594,13 +594,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation EXP-03"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -608,13 +608,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation EXP-04"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -622,13 +622,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation AUD-01"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -636,13 +636,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation AUD-02"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     },
     {
@@ -650,13 +650,13 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden tile+golden implementation"
+        "model/golden implementation AUD-03"
       ],
       "verification_evidence": [
-        "ctest stage004",
+        "ctest build/stage004",
         "docs/reports/REPORT_004_Golden_Tile_Renderer_and_Binning.md"
       ],
-      "test_name": "ctest stage004",
+      "test_name": "golden_test_tile* / stage004 suite",
       "notes": "See REPORT_004"
     }
   ]

@@ -62,6 +62,7 @@ golden_add_test_exec(golden_test_ext_mem_matrix tests/directed/test_ext_mem_matr
 golden_add_test_exec(golden_test_tile tests/tile/test_tile.cpp)
 golden_add_test_exec(golden_test_tile_eq_random tests/tile/test_tile_eq_random.cpp)
 golden_add_test_exec(golden_test_tile_ext tests/tile/test_tile_ext.cpp)
+golden_add_test_exec(golden_test_tile_faults tests/tile/test_tile_faults.cpp)
 
 add_test(
     NAME golden_test_integrity
@@ -71,6 +72,10 @@ add_test(
 add_executable(golden_cli tools/golden_cli.cpp)
 target_link_libraries(golden_cli PRIVATE golden_core)
 target_compile_options(golden_cli PRIVATE ${GOLDEN_WARN_FLAGS})
+
+add_executable(golden_tile_sweep tools/tile_sweep_tool.cpp)
+target_link_libraries(golden_tile_sweep PRIVATE golden_core)
+target_compile_options(golden_tile_sweep PRIVATE ${GOLDEN_WARN_FLAGS})
 
 set(FRAMES_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/tests/frames)
 set(FILL_BASIC_DIR ${FRAMES_ROOT}/fill_basic)

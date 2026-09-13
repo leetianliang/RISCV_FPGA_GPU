@@ -24,6 +24,8 @@ struct MemAccessResult {
 class MemoryImage {
 public:
     MemAccessResult register_region(std::string name, u32 base, u32 byte_size);
+    // Remove an exact-base region (for internal scratch resize). Does not affect other regions.
+    bool forget_region(u32 base);
 
     bool has_region(u32 base) const;
 

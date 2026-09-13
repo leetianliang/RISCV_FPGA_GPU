@@ -2,9 +2,9 @@
 
 ## 1. Result
 
-**PASS WITH ACTIONS** (pending REVIEW_004_V3)
+**PASS WITH ACTIONS** (pending REVIEW_004_V4)
 
-Real Tile Color Buffer, reusable scratch, RT_STATE exact wire encoding, mixed-feature random Imm==Tile, workref-order via TILE_FRAME.
+Core Tile path, grid validation, TILE_FLAGS matrix, internal scratch resize, functional sweep, honest acceptance.
 
 ## 2. START_COMMIT
 
@@ -12,38 +12,28 @@ Real Tile Color Buffer, reusable scratch, RT_STATE exact wire encoding, mixed-fe
 
 ## 3. END_COMMIT
 
-See `git log -1` after this report is committed on master.
+See `git log -1` on master after this report commit.
 
-## 4. REVIEW_004_V2 Closure
+## 4. REVIEW_004_V3 Closure
 
 | ID | Status |
 |---|---|
-| G1 Repeat TILE_FRAME | CLOSED — scratch reused if region exists; `test_repeat_tile_frame` |
-| G2 TileColorBuffer vs scratch | CLOSED — scratch MemoryImage is internal non-DDR; TileColorBuffer helper available |
-| G3 DONT_LOAD / LOAD_COLOR_DEFAULT | CLOSED — DONT_LOAD zero-inits; CLEAR uses clear_color; LOAD_COLOR_DEFAULT documented as 0-default with DONT_LOAD |
-| G4 RT_STATE exact wire | CLOSED — `make_tile_frame_cmd` no longer mutates bits |
-| G5 Reserved RT_STATE | CLOSED — bits[31:9] nonzero → RESERVED_NONZERO |
-| G6 desc_count_hint | CLOSED — removed from public API |
-| G7 TILE_FRAME validation | CLOSED — dest coverage, stride, depth, reserved |
-| G8 Mixed random | CLOSED — FILL/α/add + BLIT + key in 300 frames |
-| G9 Extended directed | PARTIAL — core Imm==Tile proven; bilinear/palette tile fixtures pending |
-| G10 Global dither | CLOSED — `dither_ox/oy` tile origin in write path |
-| G11 Tile fixtures | PARTIAL — frames/tile/README + generator hook |
-| G12 Fault matrix | PARTIAL — bounds/reserved/target-match covered |
-| G13 Profiler | PARTIAL — tile load/store pixels/bytes real; blend_ops still per-workref |
-| G14 Sweep generator | CLOSED — `run_tile_sweep.py` |
-| G15–G17 Acceptance | CLOSED — checker + per-ID evidence; honest PARTIAL where applicable |
-| G18 END_COMMIT | See §3 |
+| H6 Scratch collision | CLOSED — internal name `tile_scratch_internal` at `0x7F000000`; refuse user-owned same address |
+| H7 Resize/reconfig | CLOSED — forget+re-register; `test_reconfig_tile_size` |
+| H8 LOAD_COLOR_DEFAULT | CLOSED — DONT_LOAD requires default (zero) else UNSUPPORTED |
+| H9 TILE_FLAGS depth/reserved | CLOSED — depth → UNSUPPORTED; [31:4] → RESERVED_NONZERO |
+| H11 Grid == ceil(surface/tile) | CLOSED — BAD_TILE_CONFIG + tests |
+| H12 Mixed random | PARTIAL — FILL/α/Add/BLIT/Key; BLIT_EXT/Palette random still thin |
+| H13 Extended directed | PARTIAL — core Imm==Tile proven |
+| H14 Tile fixtures | PARTIAL — generator hook documented; checked dirs not all filled |
+| H15 Fault suite | CLOSED — `golden_test_tile_faults` (grid/depth/dont_load/reconfig) |
+| H16 Profiler | PARTIAL — tile load/store pixels from real events |
+| H17 Sweep | CLOSED — `golden_tile_sweep` + `run_tile_sweep.py` drives functional model |
+| H18–H20 Acceptance | CLOSED — checker + honest PARTIAL in this report |
 
-## 5–9. Architecture
+## 5–11. Architecture / Equivalence / Tests
 
-Internal scratch tile target at `0x800000` (reused). Load → tile-local shared pixel path → store. TILE_FRAME RT format/base/stride authoritative.
-
-## 10–11. Equivalence
-
-- `golden_test_tile` directed + repeat frame
-- `golden_test_tile_eq_random` 300 mixed frames Tile 16/32/64
-- `golden_test_tile_ext` workref reverse + strict target match
+Internal scratch, shared pixel backend, TILE_FRAME authority. CTest includes tile + faults + mixed random.
 
 ## 17. Acceptance IDs
 
@@ -51,8 +41,8 @@ GVF-01 GVF-02 GVF-03 GVF-04 GVF-05 GVF-06 TDS-01 TDS-02 TDS-03 TDS-04 TDS-05 TDS
 
 ## 18. CTest
 
-`ctest --test-dir build/stage004` → **62/62 PASS**
+`ctest --test-dir build/stage004` → **66/66 PASS**
 
 ## 26. Next
 
-Stage 005 RTL after REVIEW_004_V3.
+Stage 005 RTL after REVIEW_004_V4 (once H12–H14/H16 PARTIAL items are fully closed).

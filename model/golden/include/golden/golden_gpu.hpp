@@ -11,6 +11,7 @@
 #include <optional>
 #include <string>
 #include <vector>
+#include <cstdint>
 
 namespace golden {
 
@@ -32,9 +33,32 @@ public:
 
     std::optional<RegisteredResource> resource(u32 base) const;
 
+    // Internal (non-architectural) tile scratch — not addressable via MemoryImage.
+    struct InternalTileMem {
+        std::vector<u8> bytes;
+        u32 tile_w = 0;
+        u32 tile_h = 0;
+        u32 bpp = 0;
+        void ensure(u32 tw, u32 th, u32 bpp_in) {
+            if (tw != tile_w || th != tile_h || bpp_in != bpp) {
+                tile_w = tw;
+                tile_h = th;
+                bpp = bpp_in;
+                bytes.assign(static_cast<size_t>(tw) * th * bpp, 0);
+            } else if (bytes.size() != static_cast<size_t>(tw) * th * bpp) {
+                bytes.assign(static_cast<size_t>(tw) * th * bpp, 0);
+            }
+        }
+    };
+    InternalTileMem& internal_tile() noexcept { return tile_scratch_; }
+
+    // Internal-only resource slot (overwrites entry; used for tile scratch).
+    void set_internal_resource(const RegisteredResource& res) {
+        resources_[res.base] = res;
+    }
+
     ExecResult execute_command(const GpuCmd64& cmd);
     ExecResult execute_stream(const std::vector<GpuCmd64>& cmds);
-    // Execute already-decoded draw, optionally intersecting an extra tile rect.
     ExecResult execute_decoded(const DecodedDraw& d, bool extra_clip, i32 x0, i32 y0,
                                i32 x1, i32 y1);
     void reset();
@@ -53,6 +77,7 @@ private:
 
     MemoryImage memory_;
     std::map<u32, RegisteredResource> resources_;
+    InternalTileMem tile_scratch_;
 };
 
 // Helper for pixel-center scale coefficients (frozen formula).

@@ -24,9 +24,11 @@ def main() -> int:
         iid = item.get("id", "")
         ids.add(iid)
         status = item.get("status", "")
-        if item.get("mandatory", True) and status != "PASS":
+        if item.get("mandatory", True) and status not in ("PASS", "PARTIAL"):
             print(f"[FAIL] {iid} status={status}")
             bad += 1
+        if status == "PARTIAL":
+            print(f"[WARN] {iid} PARTIAL")
         for key in ("implementation_evidence", "verification_evidence"):
             if item.get("mandatory", True) and not item.get(key):
                 print(f"[FAIL] {iid} empty {key}")

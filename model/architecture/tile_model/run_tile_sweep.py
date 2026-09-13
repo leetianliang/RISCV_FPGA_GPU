@@ -1,63 +1,59 @@
 #!/usr/bin/env python3
-"""Deterministic Tile size sweep for Stage-004 architecture experiment.
-
-Standard library only. Produces results/stage004_tile/tile_sweep.csv
-"""
+"""Tile sweep via functional model binary. Stdlib only."""
 
 from __future__ import annotations
 
 import csv
+import subprocess
+import sys
 from pathlib import Path
 
-# Workload definitions (fixed): counts only, analytical metadata.
-WORKLOADS = {
-    "W1_sprite_grid": {"draws": 64, "small_spr": 8},
-    "W2_high_overdraw": {"draws": 128, "area": 16},
-    "W3_alpha_storm": {"draws": 80, "alpha": True},
-    "W4_scaled_sprites": {"draws": 20, "scaled": True},
-    "W5_edge_scatter": {"draws": 30, "scatter": True},
-    "W6_mixed_scene": {"draws": 100, "mixed": True},
-}
+ROOT = Path(__file__).resolve().parents[3]
+EXE = ROOT / "build" / "stage004" / "model" / "golden" / "golden_tile_sweep.exe"
+OUT = ROOT / "results" / "stage004_tile" / "tile_sweep.csv"
 
 
-def metrics(name: str, tile: int, tw: int = 64, th: int = 64) -> dict:
-    tx = (tw + tile - 1) // tile
-    ty = (th + tile - 1) // tile
-    tiles = tx * ty
-    draws = WORKLOADS[name]["draws"]
-    # analytical: small sprites touch ~1 tile; large/scatter more
-    span = 1 if "small_spr" in WORKLOADS[name] else max(1, tile // 8)
-    active = min(tiles, max(1, draws * span // max(1, tiles // 2 + 1)))
-    workrefs = draws * span
-    bpp = 2
-    load_store = active * tile * tile * bpp
+def run(kind: int, tile: int) -> dict:
+    r = subprocess.run([str(EXE), str(kind), str(tile)], capture_output=True, text=True)
+    if r.returncode != 0:
+        raise RuntimeError(r.stderr.strip() or r.stdout)
+    line = r.stdout.strip().splitlines()[-1]
+    parts = dict()
+    for tok in line.split():
+        if "=" in tok:
+            k, v = tok.split("=", 1)
+            parts[k] = int(v)
+    names = {0: "W3_alpha_storm", 1: "W1_sprite_grid", 2: "W2_high_overdraw"}
     return {
-        "workload": name,
-        "tile_size": tile,
-        "tiles_total": tiles,
-        "tiles_active": active,
-        "draw_count": draws,
-        "workref_count": workrefs,
-        "max_workrefs_per_tile": max(1, workrefs // max(1, active)),
-        "tile_load_bytes": load_store,
-        "tile_store_bytes": load_store,
+        "workload": names.get(kind, f"kind{kind}"),
+        "tile_size": parts["tile"],
+        "tiles_total": parts["tiles"],
+        "tiles_active": parts["active"],
+        "workref_count": parts["refs"],
+        "max_workrefs_per_tile": parts["maxrefs"],
+        "tile_load_pixels": parts["load_px"],
+        "tile_store_pixels": parts["store_px"],
+        "tile_load_bytes": parts["load_b"],
+        "tile_store_bytes": parts["store_b"],
     }
 
 
-def main() -> None:
-    root = Path(__file__).resolve().parents[3]
-    out = root / "results" / "stage004_tile" / "tile_sweep.csv"
-    out.parent.mkdir(parents=True, exist_ok=True)
+def main() -> int:
+    if not EXE.is_file():
+        print(f"missing {EXE}; build stage004 first", file=sys.stderr)
+        return 1
+    OUT.parent.mkdir(parents=True, exist_ok=True)
     rows = []
-    for name in WORKLOADS:
+    for kind in (0, 1, 2):
         for tile in (16, 32, 64):
-            rows.append(metrics(name, tile))
-    with out.open("w", encoding="utf-8", newline="") as f:
+            rows.append(run(kind, tile))
+    with OUT.open("w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()
         w.writerows(rows)
-    print(f"wrote {out} ({len(rows)} rows)")
+    print(f"wrote {OUT} ({len(rows)} rows from functional model)")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
