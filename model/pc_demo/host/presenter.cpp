@@ -226,30 +226,25 @@ void Presenter::present(const uint8_t* fb, u32 w, u32 h, u32 stride, bool rgb565
                         fb + static_cast<size_t>(y) * stride, w * 4);
         }
     }
-    HDC hdc = static_cast<HDC>(hdc_);
-    HDC mem = CreateCompatibleDC(hdc);
-    HBITMAP hb = static_cast<HBITMAP>(hbmp_);
-    HGDIOBJ old = SelectObject(mem, hb);
+    // Single stretch path: internal FB → window. No intermediate BitBlt
+    // (BitBlt of a window-sized DIB only partially filled by SetDIBitsToDevice
+    //  flashed an unscaled ghost in the top-left).
     BITMAPINFO bmi{};
     bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bmi.bmiHeader.biWidth = static_cast<LONG>(w);
-    bmi.bmiHeader.biHeight = -static_cast<LONG>(h);
+    bmi.bmiHeader.biHeight = -static_cast<LONG>(h);  // top-down
     bmi.bmiHeader.biPlanes = 1;
     bmi.bmiHeader.biBitCount = 32;
     bmi.bmiHeader.biCompression = BI_RGB;
-    SetDIBitsToDevice(mem, 0, 0, static_cast<int>(w), static_cast<int>(h), 0, 0, 0,
-                      static_cast<unsigned>(h), converted_.data(), &bmi, DIB_RGB_COLORS);
-    // Stretch from DIB to window
     HDC win = GetDC(static_cast<HWND>(hwnd_));
+    if (!win) {
+        return;
+    }
     SetStretchBltMode(win, HALFTONE);
-    BitBlt(win, 0, 0, static_cast<int>(win_w_), static_cast<int>(win_h_), mem, 0, 0, SRCCOPY);
-    // Also blit scaled from converted via StretchDIBits
     StretchDIBits(win, 0, 0, static_cast<int>(win_w_), static_cast<int>(win_h_), 0, 0,
                   static_cast<int>(w), static_cast<int>(h), converted_.data(), &bmi,
                   DIB_RGB_COLORS, SRCCOPY);
     ReleaseDC(static_cast<HWND>(hwnd_), win);
-    SelectObject(mem, old);
-    DeleteDC(mem);
 }
 
 #else  // !_WIN32

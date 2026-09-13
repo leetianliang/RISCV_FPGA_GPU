@@ -283,6 +283,53 @@ bool build_blit_desc(u32 tex_base, u32 tex_stride, PixelFormat tex_fmt, u32 tex_
     return true;
 }
 
+// Deterministic CPU clip for FILL (Golden FILL has no clip extension).
+// Returns false if intersection is empty (emit no draw).
+bool clip_fill_rect(const RecCommand& c, u32 fb_w, u32 fb_h, i32& x, i32& y, u32& w, u32& h) {
+    if (c.fw == 0 || c.fh == 0) {
+        return false;
+    }
+    i32 x0 = c.fx;
+    i32 y0 = c.fy;
+    i32 x1 = c.fx + static_cast<i32>(c.fw);
+    i32 y1 = c.fy + static_cast<i32>(c.fh);
+    // RT bounds
+    if (x0 < 0) {
+        x0 = 0;
+    }
+    if (y0 < 0) {
+        y0 = 0;
+    }
+    if (x1 > static_cast<i32>(fb_w)) {
+        x1 = static_cast<i32>(fb_w);
+    }
+    if (y1 > static_cast<i32>(fb_h)) {
+        y1 = static_cast<i32>(fb_h);
+    }
+    if (c.clip_en) {
+        if (x0 < c.clip.xmin) {
+            x0 = c.clip.xmin;
+        }
+        if (y0 < c.clip.ymin) {
+            y0 = c.clip.ymin;
+        }
+        if (x1 > c.clip.xmax) {
+            x1 = c.clip.xmax;
+        }
+        if (y1 > c.clip.ymax) {
+            y1 = c.clip.ymax;
+        }
+    }
+    if (x1 <= x0 || y1 <= y0) {
+        return false;
+    }
+    x = x0;
+    y = y0;
+    w = static_cast<u32>(x1 - x0);
+    h = static_cast<u32>(y1 - y0);
+    return true;
+}
+
 }  // namespace
 
 bool GoldenBackend::run_immediate(const std::vector<RecCommand>& cmds) {
@@ -291,8 +338,13 @@ bool GoldenBackend::run_immediate(const std::vector<RecCommand>& cmds) {
     for (const auto& c : cmds) {
         golden::ExecResult st;
         if (c.op == RecOp::Fill) {
+            i32 x = 0, y = 0;
+            u32 w = 0, h = 0;
+            if (!clip_fill_rect(c, profile_.width, profile_.height, x, y, w, h)) {
+                continue;  // fully clipped → no-op
+            }
             st = gpu.execute_command(golden::make_fill_rect_cmd(
-                fb_base_, fb_stride_, c.fx, c.fy, c.fw, c.fh, to_golden(c.fcolor)));
+                fb_base_, fb_stride_, x, y, w, h, to_golden(c.fcolor)));
         } else {
             if (!texture_valid(c.sp.tex)) {
                 last_fault_ = 0xFFFF;
@@ -341,8 +393,13 @@ bool GoldenBackend::run_tile(const std::vector<RecCommand>& cmds) {
     u32 ext_next = ext_cursor_;
     for (const auto& c : cmds) {
         if (c.op == RecOp::Fill) {
-            draws.push_back(golden::make_fill_rect_cmd(fb_base_, fb_stride_, c.fx, c.fy,
-                                                       c.fw, c.fh, to_golden(c.fcolor)));
+            i32 x = 0, y = 0;
+            u32 w = 0, h = 0;
+            if (!clip_fill_rect(c, profile_.width, profile_.height, x, y, w, h)) {
+                continue;
+            }
+            draws.push_back(golden::make_fill_rect_cmd(fb_base_, fb_stride_, x, y, w, h,
+                                                       to_golden(c.fcolor)));
             continue;
         }
         if (!texture_valid(c.sp.tex)) {

@@ -70,6 +70,11 @@ target_link_libraries(gpu2d_test_presenter PRIVATE pc_host)
 target_compile_options(gpu2d_test_presenter PRIVATE ${GOLDEN_WARN_FLAGS})
 add_test(NAME gpu2d_test_presenter COMMAND gpu2d_test_presenter)
 
+add_executable(gpu2d_test_features tests/test_features.cpp)
+target_link_libraries(gpu2d_test_features PRIVATE golden_backend_lib neon_game)
+target_compile_options(gpu2d_test_features PRIVATE ${GOLDEN_WARN_FLAGS})
+add_test(NAME gpu2d_test_features COMMAND gpu2d_test_features)
+
 add_executable(gpu2d_test_system tests/test_system.cpp)
 target_link_libraries(gpu2d_test_system PRIVATE golden_backend_lib neon_game)
 target_compile_options(gpu2d_test_system PRIVATE ${GOLDEN_WARN_FLAGS})

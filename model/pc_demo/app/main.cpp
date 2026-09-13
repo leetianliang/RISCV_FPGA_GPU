@@ -315,26 +315,18 @@ int main(int argc, char** argv) {
         opts.tech_hud = tech_hud || cli.headless;
         opts.xray = xray;
         opts.tile_mode = gpu.backend() != BackendKind::Immediate;
+        opts.tile_size = cli.profile.tile_size ? cli.profile.tile_size : 32;
         opts.host_fps = host_fps;
+        // Telemetry from previous frame (1-frame lag). Single execute only —
+        // a second full re-render made X-Ray/tech HUD extremely slow.
+        const auto tel_view = gpu.telemetry().view();
+        opts.tel = &tel_view;
         neon::render_frame(rec, assets, sim, scfg, opts);
         rec.present();
 
         if (!gpu.execute_frame(rec.commands())) {
             std::fprintf(stderr, "execute_frame failed fault=0x%X\n", gpu.last_fault());
             return 1;
-        }
-
-        // second pass for tech HUD using real telemetry (Immediate has no tile map)
-        if (opts.tech_hud || opts.xray) {
-            rec.begin_frame();
-            const auto tel_view = gpu.telemetry().view();
-            opts.tel = &tel_view;
-            neon::render_frame(rec, assets, sim, scfg, opts);
-            rec.present();
-            if (!gpu.execute_frame(rec.commands())) {
-                std::fprintf(stderr, "execute_frame(hud) failed fault=0x%X\n", gpu.last_fault());
-                return 1;
-            }
         }
 
         const u8* fb = gpu.framebuffer();

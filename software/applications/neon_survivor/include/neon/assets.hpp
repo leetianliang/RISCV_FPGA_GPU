@@ -54,6 +54,7 @@ struct DrawOpts {
     bool xray = false;
     bool show_grid = false;
     bool tile_mode = false;
+    u32 tile_size = 32;  // for X-Ray grid when telemetry has no map
     const gpu2d::RendererTelemetry* tel = nullptr;
     double host_fps = 0.0;
     u32 particles_drawn = 0;
@@ -63,6 +64,9 @@ struct DrawOpts {
 
 void draw_text(gpu2d::GraphicsApi& api, const Assets& a, i32 x, i32 y, const char* s,
                gpu2d::Color c, u8 alpha = 255);
+// Indexed8+Palette glyph path (technical HUD).
+void draw_text_pal(gpu2d::GraphicsApi& api, const Assets& a, i32 x, i32 y, const char* s,
+                   gpu2d::Color c, u8 alpha = 255);
 
 void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
                   const SimConfig& cfg, const DrawOpts& opts);
@@ -74,6 +78,10 @@ struct DrawCounts {
     u32 alpha_draws = 0;
     u32 additive_draws = 0;
     u32 scaled_draws = 0;
+    u32 bilinear_draws = 0;
+    u32 palette_draws = 0;
+    u32 dither_draws = 0;
+    u32 clipped_draws = 0;
 };
 
 DrawCounts last_render_counts();

@@ -304,7 +304,8 @@ void draw_text(gpu2d::GraphicsApi& api, const Assets& a, i32 x, i32 y, const cha
         sp.src_x = gx;
         sp.src_y = gy;
         sp.color_key = true;
-        sp.color_key_rgb = 0xF81F;
+        // Canonical 24-bit RGB magenta (not RGB565 packed 0xF81F).
+        sp.color_key_rgb = 0x00FF00FFu;
         sp.color_mod = (c.r != 255 || c.g != 255 || c.b != 255);
         sp.mod = c;
         sp.blend = alpha < 255 ? gpu2d::BlendMode::StraightAlpha : gpu2d::BlendMode::Copy;
@@ -344,12 +345,14 @@ void draw_enemy(gpu2d::GraphicsApi& api, const Assets& a, const Enemy& e) {
         sp.mod = Color::rgb(255, 255, 255);
     }
     if (e.kind == EnemyKind::Heavy) {
-        // exercise scale path occasionally via slight upscale
+        // Visible Bilinear scale (FX-03): large Heavy body pulse.
         sp.scale_w = 24;
         sp.scale_h = 24;
         sp.dst_x = static_cast<i32>(e.x) - 12;
         sp.dst_y = static_cast<i32>(e.y) - 12;
+        sp.filter = gpu2d::FilterMode::Bilinear;
         ++g_counts.scaled_draws;
+        ++g_counts.bilinear_draws;
     }
     api.draw_sprite(sp);
     ++g_counts.sprites;
@@ -381,8 +384,13 @@ void draw_particle(gpu2d::GraphicsApi& api, const Assets& a, const Particle& p) 
         sp.dst_y = static_cast<i32>(p.y) - sz / 2;
         sp.blend = gpu2d::BlendMode::AddSat;
         sp.global_alpha = static_cast<u8>((p.life * 255) / (p.max_life ? p.max_life : 1));
+        // Default competition path: dither + bilinear on large glow (F-05 / F-09).
+        sp.filter = gpu2d::FilterMode::Bilinear;
+        sp.dither = true;
         ++g_counts.additive_draws;
         ++g_counts.scaled_draws;
+        ++g_counts.bilinear_draws;
+        ++g_counts.dither_draws;
     } else {
         sp.tex = a.particle;
         sp.w = 4;
@@ -407,6 +415,51 @@ void draw_particle(gpu2d::GraphicsApi& api, const Assets& a, const Particle& p) 
 
 }  // namespace
 
+void draw_text_pal(gpu2d::GraphicsApi& api, const Assets& a, i32 x, i32 y, const char* s,
+                   Color c, u8 alpha) {
+    // Indexed8 + Palette HUD path (FX-05).
+    if (!s || !a.font_pal.valid()) {
+        draw_text(api, a, x, y, s, c, alpha);
+        return;
+    }
+    i32 cx = x;
+    for (const char* p = s; *p; ++p) {
+        unsigned ch = static_cast<unsigned char>(*p);
+        if (ch == '\n') {
+            cx = x;
+            y += static_cast<i32>(kGlyphH) + 1;
+            continue;
+        }
+        if (ch < 32 || ch > 127) {
+            ch = '?';
+        }
+        if (cx + static_cast<i32>(kGlyphW) <= 0 || y + static_cast<i32>(kGlyphH) <= 0) {
+            cx += static_cast<i32>(kGlyphW);
+            continue;
+        }
+        const u32 gi = ch - 32;
+        const u32 gx = (gi % 16) * kGlyphW;
+        const u32 gy = (gi / 16) * kGlyphH;
+        gpu2d::SpriteParams sp;
+        sp.tex = a.font_pal;
+        sp.dst_x = cx < 0 ? 0 : cx;
+        sp.dst_y = y < 0 ? 0 : y;
+        sp.w = kGlyphW;
+        sp.h = kGlyphH;
+        sp.src_x = gx;
+        sp.src_y = gy;
+        sp.palette = true;
+        sp.color_mod = (c.r != 255 || c.g != 255 || c.b != 255);
+        sp.mod = c;
+        sp.blend = alpha < 255 ? gpu2d::BlendMode::StraightAlpha : gpu2d::BlendMode::Copy;
+        sp.global_alpha = alpha;
+        api.draw_sprite(sp);
+        ++g_counts.sprites;
+        ++g_counts.palette_draws;
+        cx += static_cast<i32>(kGlyphW);
+    }
+}
+
 void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
                   const SimConfig& cfg, const DrawOpts& opts) {
     g_counts = DrawCounts{};
@@ -426,6 +479,33 @@ void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
         api.fill_rect(static_cast<i32>((x + sc / 2) % cfg.width), 0, 1, cfg.height,
                       Color::rgb(16, 24, 48));
         ++g_counts.fills;
+    }
+
+    // Periodic bilinear shockwave (FX-03, always present in default game path).
+    {
+        const u32 period = 90;
+        const u32 ph = sc % period;
+        if (ph < 40) {
+            const i32 sz = static_cast<i32>(16 + ph * 3);
+            gpu2d::SpriteParams sp;
+            sp.tex = a.glow;
+            sp.w = 32;
+            sp.h = 32;
+            sp.scale_w = sz;
+            sp.scale_h = sz;
+            sp.dst_x = static_cast<i32>(cfg.width / 2) - sz / 2;
+            sp.dst_y = static_cast<i32>(cfg.height / 2) - sz / 2;
+            sp.blend = gpu2d::BlendMode::AddSat;
+            sp.filter = gpu2d::FilterMode::Bilinear;
+            sp.dither = true;
+            sp.global_alpha = static_cast<u8>(255 - ph * 6);
+            api.draw_sprite(sp);
+            ++g_counts.sprites;
+            ++g_counts.scaled_draws;
+            ++g_counts.bilinear_draws;
+            ++g_counts.additive_draws;
+            ++g_counts.dither_draws;
+        }
     }
 
     // Particles behind
@@ -465,11 +545,12 @@ void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
         }
     }
 
-    // Clip path demo: HUD panel with clip
+    // Clip path demo: HUD panel with clip (counts as clipped_fill)
     if (opts.hud) {
         api.set_clip(true, 0, 0, static_cast<i32>(cfg.width), 14);
         api.fill_rect(0, 0, cfg.width, 14, Color::rgba(0, 0, 0, 160));
         api.clear_clip();
+        ++g_counts.clipped_draws;
         char buf[128];
         std::snprintf(buf, sizeof(buf), "HP %d  SCORE %u  KILLS %u  EN %u  BL %u  PT %u",
                       sim.player.hp, sim.score, sim.kills, g_counts.sprites > 0 ? 0u : 0u,
@@ -504,45 +585,58 @@ void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
         api.fill_rect(0, y - 2, 280, 68, Color::rgba(0, 0, 0, 180));
         std::snprintf(buf, sizeof(buf), "CMD %u  SPR %u  WREF %u", t.command_count,
                       t.sprite_count, t.workref_count);
-        draw_text(api, a, 4, y, buf, Color::rgb(120, 255, 160));
-        std::snprintf(buf, sizeof(buf), "TILE %u/%u ACT %u MAXOD %u", t.tiles_active,
+        draw_text_pal(api, a, 4, y, buf, Color::rgb(120, 255, 160));
+        std::snprintf(buf, sizeof(buf), "TILE %u/%u MAXREF %u MAXOD %u", t.tiles_active,
                       t.tiles_total, t.max_workrefs_per_tile, t.max_overdraw);
-        draw_text(api, a, 4, y + 12, buf, Color::rgb(120, 255, 160));
+        draw_text_pal(api, a, 4, y + 12, buf, Color::rgb(120, 255, 160));
         std::snprintf(buf, sizeof(buf), "PC GOLDEN HOST FPS %.1f", opts.host_fps);
-        draw_text(api, a, 4, y + 24, buf, Color::rgb(255, 120, 120));
+        draw_text_pal(api, a, 4, y + 24, buf, Color::rgb(255, 120, 120));
         std::snprintf(buf, sizeof(buf), "GRID %ux%u TILE %u", t.grid_w, t.grid_h, t.tile_size);
-        draw_text(api, a, 4, y + 36, buf, Color::rgb(160, 160, 255));
+        draw_text_pal(api, a, 4, y + 36, buf, Color::rgb(160, 160, 255));
     }
 
-    if (opts.xray && opts.tel && opts.tel->has_workref_map && opts.tel->tile_workrefs) {
-        const auto& t = *opts.tel;
-        const i32 ts = static_cast<i32>(t.tile_size ? t.tile_size : 32);
-        for (u32 ty = 0; ty < t.grid_h; ++ty) {
-            for (u32 tx = 0; tx < t.grid_w; ++tx) {
-                const u16 wc = t.tile_workrefs[ty * t.grid_w + tx];
-                const i32 x = static_cast<i32>(tx) * ts;
-                const i32 y = static_cast<i32>(ty) * ts;
-                // grid lines
-                api.fill_rect(x, y, static_cast<u32>(ts), 1, Color::rgba(0, 255, 255, 80));
-                api.fill_rect(x, y, 1, static_cast<u32>(ts), Color::rgba(0, 255, 255, 80));
-                if (wc == 0) {
-                    continue;
-                }
-                // workref density block
-                const u8 v = static_cast<u8>(wc > 32 ? 255 : (wc * 8));
-                api.fill_rect(x + 2, y + 2, 6, 6, Color::rgba(v, 80, 255, 160));
-                if (t.has_overdraw && t.overdraw) {
-                    // sample overdraw at tile center
-                    const u32 px = static_cast<u32>(x + ts / 2);
-                    const u32 py = static_cast<u32>(y + ts / 2);
-                    if (px < t.grid_w * static_cast<u32>(ts) && py < cfg.height) {
-                        // overdraw is surface-sized
-                        const u32 idx = py * cfg.width + px;
-                        if (idx < cfg.width * cfg.height) {
-                            const u32 od = t.overdraw[idx];
+    // Architecture X-Ray: cheap grid (O(gw+gh) fills), heat only on active tiles.
+    if (opts.xray) {
+        const u32 ts = opts.tile_size ? opts.tile_size : 32u;
+        const u32 gw = (cfg.width + ts - 1) / ts;
+        const u32 gh = (cfg.height + ts - 1) / ts;
+        const bool have_map =
+            opts.tel && opts.tel->has_workref_map && opts.tel->tile_workrefs;
+        // One horizontal + one vertical line per tile axis (not per tile cell).
+        for (u32 ty = 0; ty <= gh; ++ty) {
+            const i32 y = static_cast<i32>(ty * ts);
+            if (y >= static_cast<i32>(cfg.height)) {
+                break;
+            }
+            api.fill_rect(0, y, cfg.width, 1, Color::rgba(0, 255, 255, 90));
+        }
+        for (u32 tx = 0; tx <= gw; ++tx) {
+            const i32 x = static_cast<i32>(tx * ts);
+            if (x >= static_cast<i32>(cfg.width)) {
+                break;
+            }
+            api.fill_rect(x, 0, 1, cfg.height, Color::rgba(0, 255, 255, 90));
+        }
+        if (have_map) {
+            const auto& t = *opts.tel;
+            for (u32 ty = 0; ty < gh && ty < t.grid_h; ++ty) {
+                for (u32 tx = 0; tx < gw && tx < t.grid_w; ++tx) {
+                    const u16 wc = t.tile_workrefs[ty * t.grid_w + tx];
+                    if (wc == 0) {
+                        continue;
+                    }
+                    const i32 x = static_cast<i32>(tx) * static_cast<i32>(ts);
+                    const i32 y = static_cast<i32>(ty) * static_cast<i32>(ts);
+                    const u8 v = static_cast<u8>(wc > 32 ? 255 : (wc * 8));
+                    api.fill_rect(x + 2, y + 2, 6, 6, Color::rgba(v, 80, 255, 160));
+                    if (t.has_overdraw && t.overdraw) {
+                        const u32 px = static_cast<u32>(x + static_cast<i32>(ts) / 2);
+                        const u32 py = static_cast<u32>(y + static_cast<i32>(ts) / 2);
+                        if (px < cfg.width && py < cfg.height) {
+                            const u32 od = t.overdraw[py * cfg.width + px];
                             if (od >= 2) {
                                 const u8 o = static_cast<u8>(od > 16 ? 255 : od * 16);
-                                api.fill_rect(x + ts - 8, y + 2, 6, 6,
+                                api.fill_rect(x + static_cast<i32>(ts) - 8, y + 2, 6, 6,
                                               Color::rgba(255, o, 40, 160));
                             }
                         }
@@ -550,8 +644,9 @@ void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
                 }
             }
         }
-        char buf[64];
-        std::snprintf(buf, sizeof(buf), "X-RAY %s", opts.tile_mode ? "TILE32" : "IMM");
+        char buf[80];
+        std::snprintf(buf, sizeof(buf), "X-RAY %s%s", opts.tile_mode ? "TILE32" : "IMM",
+                      have_map ? "" : " (NO MAP)");
         draw_text(api, a, 4, static_cast<i32>(cfg.height) - 16, buf, Color::rgb(0, 255, 255));
     }
 }
