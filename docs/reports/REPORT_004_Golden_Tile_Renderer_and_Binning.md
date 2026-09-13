@@ -10,7 +10,7 @@
 
 ## 3. END_COMMIT
 
-See `git log -1` after this report commit on master.
+`cea792c` (implementation); this report commit follows on master.
 
 ## 4. Reviewed Implementation HEAD
 
