@@ -422,12 +422,12 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden/tests/tile/test_tile_eq_random.cpp mixed BLIT_EXT/bilinear"
+        "model/golden/tests/tile/test_tile_eq_random.cpp mixed FILL/BLIT/EXT"
       ],
       "verification_evidence": [
-        "golden_test_tile_eq_random 300 frames"
+        "golden_test_tile_eq_random"
       ],
-      "test_name": "golden_test_tile_eq_random 300 frames",
+      "test_name": "golden_test_tile_eq_random",
       "notes": "See REPORT_004"
     },
     {
@@ -449,12 +449,12 @@
       "status": "PASS",
       "implementation_evidence": [
         "model/golden/tests/frames/tile/*",
-        "model/golden/tools/golden_cli.cpp generate-tile-fixtures"
+        "model/golden/tools/golden_cli.cpp run-tile-fixture"
       ],
       "verification_evidence": [
-        "fixtures generated + fixture_validate"
+        "golden_tile_fixture_*"
       ],
-      "test_name": "fixtures generated + fixture_validate",
+      "test_name": "golden_tile_fixture_*",
       "notes": "See REPORT_004"
     },
     {
@@ -462,12 +462,12 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden/include/golden/tile_binner.hpp TileStats"
+        "model/golden/prof-01"
       ],
       "verification_evidence": [
-        "golden_test_tile"
+        "ctest build/stage004 PROF-01"
       ],
-      "test_name": "golden_test_tile",
+      "test_name": "ctest build/stage004 PROF-01",
       "notes": "See REPORT_004"
     },
     {
@@ -475,7 +475,7 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden/include/golden/golden_gpu.hpp PixelEventSink"
+        "model/golden/include/golden/golden_gpu.hpp PixelEventSink clip_rejects"
       ],
       "verification_evidence": [
         "golden_test_tile"
@@ -488,7 +488,7 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden/src/golden_gpu.cpp note_write overdraw"
+        "model/golden/src/golden_gpu.cpp note_write global coords"
       ],
       "verification_evidence": [
         "golden_test_tile"
@@ -501,12 +501,12 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden/src/tile_binner.cpp estimated_external_*"
+        "model/golden/prof-04"
       ],
       "verification_evidence": [
-        "golden_tile_sweep"
+        "ctest build/stage004 PROF-04"
       ],
-      "test_name": "golden_tile_sweep",
+      "test_name": "ctest build/stage004 PROF-04",
       "notes": "See REPORT_004"
     },
     {
@@ -527,7 +527,7 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden/tools/tile_sweep_tool.cpp"
+        "model/golden/tools/tile_sweep_tool.cpp six workloads"
       ],
       "verification_evidence": [
         "run_tile_sweep.py"
@@ -540,12 +540,12 @@
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/architecture/tile_model/run_tile_sweep.py"
+        "model/golden/exp-02"
       ],
       "verification_evidence": [
-        "tile_sweep.csv"
+        "ctest build/stage004 EXP-02"
       ],
-      "test_name": "tile_sweep.csv",
+      "test_name": "ctest build/stage004 EXP-02",
       "notes": "See REPORT_004"
     },
     {

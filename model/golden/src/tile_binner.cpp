@@ -158,8 +158,9 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
     if (rt.depth_enable || rt.store_depth) {
         return ExecResult::failure(FaultCode::UNSUPPORTED_FEATURE, tf.rt_state);
     }
-    // Reserved RT_STATE bits [31:9] — reject when nonzero (architectural safety).
-    if ((tf.rt_state >> 9) != 0) {
+    // Reserved RT_STATE bits [31:9]: Strict only (K8).
+    const bool strict = (tile_cmd[0] & kHStrict) != 0;
+    if (strict && (tf.rt_state >> 9) != 0) {
         return ExecResult::failure(FaultCode::RESERVED_NONZERO, tf.rt_state);
     }
 
@@ -205,11 +206,16 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
     const RegisteredResource scratch_res{scratch_base, scratch_size, tf.tile_w,
                                          tf.tile_h, "tile_internal"};
 
-    // Enable true pixel/sampler profiler for this frame.
+    // Enable true pixel/sampler profiler for this frame (RAII restore on all exits).
     PixelEventSink sink;
     sink.reset_overdraw(tf.surface_w, tf.surface_h);
     PixelEventSink* prev_perf = gpu.perf;
     gpu.perf = &sink;
+    struct PerfGuard {
+        GoldenGPU& g;
+        PixelEventSink* prev;
+        ~PerfGuard() { g.perf = prev; }
+    } guard{gpu, prev_perf};
 
     for (u32 ty = 0; ty < tf.grid_h; ++ty) {
         for (u32 tx = 0; tx < tf.grid_w; ++tx) {
@@ -225,11 +231,11 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
             if (!parse_tile_header(hbytes.data(), th, reserved_w3)) {
                 return ExecResult::failure(FaultCode::BAD_TILE_CONFIG, header_addr);
             }
-            if (reserved_w3 != 0) {
+            if (strict && reserved_w3 != 0) {
                 return ExecResult::failure(FaultCode::RESERVED_NONZERO, header_addr);
             }
-            // TILE_FLAGS reserved [31:4] and depth bits.
-            if ((th.flags >> 4) != 0) {
+            // TILE_FLAGS reserved [31:4]: Strict only. Depth bits always rejected.
+            if (strict && (th.flags >> 4) != 0) {
                 return ExecResult::failure(FaultCode::RESERVED_NONZERO, th.flags);
             }
             if (th.flags & (kTileLoadDepth | kTileClearDepth)) {
@@ -495,13 +501,13 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
             }
         }
     }
-    // Copy true pixel/sampler events from sink.
-    gpu.perf = prev_perf;
+    // Copy true pixel/sampler events from sink (PerfGuard restores gpu.perf).
     g_last_stats.blend_ops = sink.blend_ops;
     g_last_stats.pixels_attempted = sink.pixels_attempted;
     g_last_stats.pixels_written = sink.pixels_written;
     g_last_stats.logical_pixel_writes = sink.pixels_written;
     g_last_stats.key_discards = sink.key_discards;
+    g_last_stats.clip_rejects = sink.clip_rejects;
     g_last_stats.texture_samples = sink.texture_samples;
     g_last_stats.palette_reads = sink.palette_reads;
     g_last_stats.bilinear_samples = sink.bilinear_samples;

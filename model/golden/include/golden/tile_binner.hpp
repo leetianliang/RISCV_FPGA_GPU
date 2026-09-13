@@ -42,6 +42,7 @@ struct TileStats {
     u64 pixels_attempted = 0;
     u64 pixels_written = 0;
     u64 key_discards = 0;
+    u64 clip_rejects = 0;
     u64 texture_samples = 0;
     u64 palette_reads = 0;
     u64 bilinear_samples = 0;

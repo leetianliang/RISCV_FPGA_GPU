@@ -975,5 +975,74 @@ int main(int argc, char** argv) {
     if (mode == "run-stream" || mode == "run-fill") {
         return run_stream_impl(argc, argv) ? 0 : 1;
     }
+    if (mode == "run-tile-fixture") {
+        // golden_cli run-tile-fixture <fixture_dir>
+        if (argc < 3) {
+            return usage();
+        }
+        const fs::path dir = argv[2];
+        std::vector<u8> cmd_b, init_b, gold_b, descs, hdrs, work, tex, ext, pal;
+        if (!read_file(dir / "command.bin", cmd_b) || cmd_b.size() != 64 ||
+            !read_file(dir / "initial_fb.raw", init_b) ||
+            !read_file(dir / "golden_fb.raw", gold_b) ||
+            !read_file(dir / "descriptors.bin", descs) ||
+            !read_file(dir / "tile_headers.bin", hdrs) ||
+            !read_file(dir / "workrefs.bin", work)) {
+            std::fprintf(stderr, "tile fixture missing files\n");
+            return 1;
+        }
+        GoldenGPU gpu;
+        const u32 tw = 32, th = 32, stride = 64;
+        gpu.register_surface(SurfaceDesc{0x10000, stride, tw, th, PixelFormat::RGB565},
+                             "d");
+        gpu.memory().write_block(0x10000, init_b.data(), init_b.size());
+        if (!tex.empty() || read_file(dir / "textures.bin", tex)) {
+            if (!tex.empty()) {
+                gpu.register_surface(
+                    SurfaceDesc{0x20000, 16, 8, 8, PixelFormat::RGB565}, "s");
+                gpu.memory().write_block(0x20000, tex.data(), tex.size());
+            }
+        }
+        if (read_file(dir / "extensions.bin", ext) && ext.size() >= 64) {
+            gpu.register_resource(RegisteredResource{0x30000, 64, 1, 1, "e"});
+            gpu.memory().write_block(0x30000, ext.data(), 64);
+        }
+        if (read_file(dir / "palette.bin", pal) && pal.size() == 1024) {
+            gpu.register_resource(RegisteredResource{0x40000, 1024, 256, 1, "p"});
+            gpu.memory().write_block(0x40000, pal.data(), pal.size());
+        }
+        const u32 desc_b = 0x38000, hdr_b = 0x3A000, work_b = 0x3C000;
+        gpu.register_resource(RegisteredResource{
+            desc_b, static_cast<u32>(descs.size() ? descs.size() : 64), 1, 1, "d"});
+        gpu.register_resource(RegisteredResource{
+            hdr_b, static_cast<u32>(hdrs.size() ? hdrs.size() : 64), 1, 1, "h"});
+        gpu.register_resource(RegisteredResource{
+            work_b, static_cast<u32>(work.size() ? work.size() : 4), 1, 1, "w"});
+        gpu.memory().write_block(desc_b, descs.data(), descs.size());
+        gpu.memory().write_block(hdr_b, hdrs.data(), hdrs.size());
+        if (!work.empty()) {
+            gpu.memory().write_block(work_b, work.data(), work.size());
+        }
+        GpuCmd64 tfcmd{};
+        deserialize_cmd_le(cmd_b.data(), 64, tfcmd);
+        // Force bases to replay addresses used above
+        tfcmd[4] = desc_b;
+        tfcmd[5] = hdr_b;
+        tfcmd[6] = work_b;
+        const auto st = execute_tile_frame(gpu, tfcmd);
+        if (!st.ok) {
+            std::fprintf(stderr, "tile fixture exec fail fault=%u\n",
+                         static_cast<u32>(st.fault));
+            return 1;
+        }
+        std::vector<u8> got;
+        gpu.memory().read_block(0x10000, init_b.size(), got);
+        if (got != gold_b) {
+            std::fprintf(stderr, "tile fixture framebuffer mismatch\n");
+            return 1;
+        }
+        std::printf("tile fixture PASS %s\n", dir.filename().string().c_str());
+        return 0;
+    }
     return usage();
 }

@@ -1,23 +1,46 @@
-# DESIGN_QUESTION — Tile LOAD_COLOR_DEFAULT / DONT_LOAD / CLEAR Matrix
+# DECISION — Tile LOAD_COLOR_DEFAULT / DONT_LOAD / CLEAR Matrix
 
-Status: **OPEN — awaiting reviewer freeze**
+Status: **FROZEN — REVIEW_004_V5**
 
-## Context
-
-`RT_STATE.LOAD_COLOR_DEFAULT` is defined in Command ISA V0.1 but its default color value and interaction with `TILE_DONT_LOAD_COLOR` / `TILE_CLEAR_COLOR` are not fully specified in the frozen text.
-
-## Stage-004 working rule (provisional, not architecturally frozen)
+## Frozen V0.1 Compatibility Rule
 
 ```text
-CLEAR_COLOR=1           → fill tile with CLEAR_COLOR
-CLEAR_COLOR=0 & DONT_LOAD=1
-  LOAD_COLOR_DEFAULT=1  → zero-fill (RGBA 0)
-  LOAD_COLOR_DEFAULT=0  → FAULT_UNSUPPORTED_FEATURE
-CLEAR_COLOR=0 & DONT_LOAD=0 → load from framebuffer
+Initialization priority:
+
+1. TILE_CLEAR_COLOR = 1
+   → initialize valid Tile pixels from CLEAR_COLOR
+     through normal DST_FORMAT conversion.
+
+2. Else TILE_DONT_LOAD_COLOR = 1:
+      LOAD_COLOR_DEFAULT = 1
+      → initialize valid Tile pixels from canonical 0x00000000
+        through normal DST_FORMAT conversion.
+
+      LOAD_COLOR_DEFAULT = 0
+      → UNSUPPORTED_FEATURE in the V0.1 compatibility profile.
+
+3. Else
+   → load valid Tile pixels from the framebuffer.
+
+STORE_COLOR = 1
+→ store final valid Tile pixels to framebuffer.
+
+STORE_COLOR = 0
+→ do not update framebuffer on Tile retire.
 ```
 
-Precedence assumed: CLEAR > DONT_LOAD > LOAD_COLOR_DEFAULT.
+## Default color consequences
 
-## Required reviewer action
+```text
+RGB565 default   → black 0x0000
+ARGB8888 default → 0x00000000
+XRGB8888 default → 0xFF000000
+```
 
-Freeze the full matrix and the actual default color value (zero vs CLEAR_COLOR vs other) before Stage 004 final Gate, or authorize this provisional rule as Golden/RTL authority.
+`LOAD_COLOR_DEFAULT=1` has no effect when a real framebuffer load occurs.
+
+## Implementation
+
+`model/golden/src/tile_binner.cpp` `execute_tile_frame()` implements this matrix.
+
+Synchronize into a later controlled ISA/System Architecture revision.

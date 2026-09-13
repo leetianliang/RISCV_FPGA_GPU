@@ -372,7 +372,8 @@ ExecResult GoldenGPU::sample_and_blend(const DecodedDraw& d, SurfaceView& src_vi
                                        static_cast<u32>(dy + d.state.dither_oy));
         if (wr.ok && perf) {
             ++perf->pixels_written;
-            perf->note_write(static_cast<u32>(dx), static_cast<u32>(dy));
+            perf->note_write(static_cast<u32>(dx + d.state.dither_ox),
+                             static_cast<u32>(dy + d.state.dither_oy));
         }
         return wr;
     }
@@ -423,7 +424,8 @@ ExecResult GoldenGPU::sample_and_blend(const DecodedDraw& d, SurfaceView& src_vi
                                static_cast<u32>(dy + d.state.dither_oy));
     if (wr2.ok && perf) {
         ++perf->pixels_written;
-        perf->note_write(static_cast<u32>(dx), static_cast<u32>(dy));
+        perf->note_write(static_cast<u32>(dx + d.state.dither_ox),
+                         static_cast<u32>(dy + d.state.dither_oy));
     }
     return wr2;
 }
@@ -508,6 +510,7 @@ ExecResult GoldenGPU::execute_draw_clipped(const DecodedDraw& d, bool extra_clip
     i32 ry0 = st.dst_y;
     i32 rx1 = st.dst_x + static_cast<i32>(st.dst_w);
     i32 ry1 = st.dst_y + static_cast<i32>(st.dst_h);
+    const i64 full_area = static_cast<i64>(rx1 - rx0) * (ry1 - ry0);
 
     // Clip applies only when CLIP_EN=1 (not merely because extension exists).
     if (extract_clip_en(st.draw_state)) {
@@ -528,7 +531,16 @@ ExecResult GoldenGPU::execute_draw_clipped(const DecodedDraw& d, bool extra_clip
         ry1 = std::min(ry1, ey1);
     }
     if (rx0 >= rx1 || ry0 >= ry1) {
+        if (perf && full_area > 0) {
+            perf->clip_rejects += static_cast<u64>(full_area);
+        }
         return ExecResult::success();
+    }
+    if (perf) {
+        const i64 kept = static_cast<i64>(rx1 - rx0) * (ry1 - ry0);
+        if (full_area > kept) {
+            perf->clip_rejects += static_cast<u64>(full_area - kept);
+        }
     }
 
     const i64 du_dx = st.du_dx;

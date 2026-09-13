@@ -9,17 +9,121 @@ using namespace golden;
 
 static std::vector<GpuCmd64> make_workload(int kind, u32 tw, u32 th, u32 stride) {
     std::vector<GpuCmd64> d;
-    const int n = (kind == 2) ? 128 : (kind == 0 ? 64 : (kind == 1 ? 80 : 40));
-    for (int i = 0; i < n; ++i) {
-        const u32 x = static_cast<u32>(i * 3) % tw;
-        const u32 y = static_cast<u32>(i * 5) % th;
-        u32 w = 8, h = 8;
+    const u32 dst_base = 0x10000;
+    auto fill = [&](u32 x, u32 y, u32 w, u32 h, Rgba8888 c) {
+        if (x >= tw) return;
+        if (y >= th) return;
         if (x + w > tw) w = tw - x;
         if (y + h > th) h = th - y;
-        if (kind == 1) {
-            auto c = make_fill_rect_cmd(0x10000, stride, static_cast<i32>(x),
-                                        static_cast<i32>(y), w ? w : 1, h ? h : 1,
-                                        Rgba8888::pack(128, 255, 0, 0));
+        if (w == 0 || h == 0) return;
+        d.push_back(make_fill_rect_cmd(dst_base, stride, static_cast<i32>(x),
+                                       static_cast<i32>(y), w, h, c));
+    };
+    auto blit = [&](u32 x, u32 y, u32 w, u32 h, u32 sx, u32 sy) {
+        if (w == 0 || h == 0) return;
+        if (sx + w > 8) w = 8 - sx;
+        if (sy + h > 8) h = 8 - sy;
+        if (x + w > tw) w = tw - x;
+        if (y + h > th) h = th - y;
+        if (w == 0 || h == 0) return;
+        BlitCmdDesc b;
+        b.src_base = 0x20000;
+        b.dst_base = dst_base;
+        b.src_stride = 16;
+        b.dst_stride = stride;
+        b.src_x = sx;
+        b.src_y = sy;
+        b.w = w;
+        b.h = h;
+        b.dst_x = static_cast<i32>(x);
+        b.dst_y = static_cast<i32>(y);
+        d.push_back(make_blit_cmd(b));
+    };
+    auto blit_ext_scale = [&](u32 x, u32 y, u32 sw, u32 sh, u32 dw, u32 dh) {
+        if (dw == 0 || dh == 0) return;
+        if (x + dw > tw) dw = tw - x;
+        if (y + dh > th) dh = th - y;
+        if (dw == 0 || dh == 0) return;
+        BlitCmdDesc b;
+        b.src_base = 0x20000;
+        b.dst_base = dst_base;
+        b.src_stride = 16;
+        b.dst_stride = stride;
+        b.blit_ext = true;
+        b.ext_ptr = 0x30000;
+        b.w = dw;
+        b.h = dh;
+        b.dst_x = static_cast<i32>(x);
+        b.dst_y = static_cast<i32>(y);
+        compute_axis_aligned_uv(0, sw, dw, b.u0, b.du_dx);
+        compute_axis_aligned_uv_v(0, sh, dh, b.v0, b.dv_dy);
+        auto cmd = make_blit_ext_cmd(b);
+        cmd[10] = pack_wh(sw, sh);
+        cmd[11] = pack_wh(dw, dh);
+        d.push_back(cmd);
+    };
+
+    switch (kind) {
+        case 0: {  // W1 sprite grid
+            for (u32 gy = 0; gy < th; gy += 8) {
+                for (u32 gx = 0; gx < tw; gx += 8) {
+                    blit(gx, gy, 6, 6, 1, 1);
+                }
+            }
+            break;
+        }
+        case 1: {  // W3 alpha storm
+            for (int i = 0; i < 80; ++i) {
+                auto c = make_fill_rect_cmd(
+                    dst_base, stride, static_cast<i32>((i * 5) % tw),
+                    static_cast<i32>((i * 7) % th), 8, 8,
+                    Rgba8888::pack(128, 255, 0, 0));
+                u32 ds = c[12];
+                ds = (ds & ~(0xFu << 8)) |
+                     (static_cast<u32>(BlendMode::STRAIGHT_ALPHA) << 8);
+                ds |= (1u << 20);
+                c[12] = ds;
+                c[14] = (128u << 24);
+                d.push_back(c);
+            }
+            break;
+        }
+        case 2: {  // W2 high overdraw stack
+            for (int i = 0; i < 64; ++i) {
+                fill(8, 8, 16, 16, Rgba8888::pack(255, static_cast<u8>(i),
+                                                 static_cast<u8>(i * 2),
+                                                 static_cast<u8>(i * 3)));
+            }
+            break;
+        }
+        case 3: {  // W4 large scaled sprites
+            for (u32 y = 0; y < th; y += 16) {
+                for (u32 x = 0; x < tw; x += 16) {
+                    blit_ext_scale(x, y, 4, 4, 16, 16);
+                }
+            }
+            break;
+        }
+        case 4: {  // W5 edge/scatter
+            fill(0, 0, 4, 4, Rgba8888::pack(255, 255, 0, 0));
+            fill(tw - 3, th - 3, 3, 3, Rgba8888::pack(255, 0, 255, 0));
+            fill(tw - 2, 0, 2, 2, Rgba8888::pack(255, 0, 0, 255));
+            fill(0, th - 2, 2, 2, Rgba8888::pack(255, 255, 255, 0));
+            fill(tw / 2, th / 2, 1, 1, Rgba8888::pack(255, 1, 2, 3));
+            for (u32 i = 0; i < 20; ++i) {
+                const u32 x = (i * 13) % tw;
+                const u32 y = (i * 17) % th;
+                fill(x, y, 1 + (i % 3), 1 + (i % 3),
+                     Rgba8888::pack(255, static_cast<u8>(i * 4), 64, 32));
+            }
+            break;
+        }
+        default: {  // W6 mixed
+            fill(0, 0, 8, 8, Rgba8888::pack(255, 10, 20, 30));
+            blit(8, 8, 6, 6, 0, 0);
+            blit_ext_scale(16, 16, 4, 4, 12, 12);
+            auto c = make_fill_rect_cmd(dst_base, stride, 2, 18, 10, 10,
+                                        Rgba8888::pack(128, 200, 0, 0));
             u32 ds = c[12];
             ds = (ds & ~(0xFu << 8)) |
                  (static_cast<u32>(BlendMode::STRAIGHT_ALPHA) << 8);
@@ -27,24 +131,8 @@ static std::vector<GpuCmd64> make_workload(int kind, u32 tw, u32 th, u32 stride)
             c[12] = ds;
             c[14] = (128u << 24);
             d.push_back(c);
-        } else if (kind >= 3) {
-            BlitCmdDesc b;
-            b.src_base = 0x20000;
-            b.dst_base = 0x10000;
-            b.src_stride = 16;
-            b.dst_stride = stride;
-            b.w = 4;
-            b.h = 4;
-            b.dst_x = static_cast<i32>(x);
-            b.dst_y = static_cast<i32>(y);
-            d.push_back(make_blit_cmd(b));
-        } else {
-            auto c = make_fill_rect_cmd(0x10000, stride, static_cast<i32>(x),
-                                        static_cast<i32>(y), w ? w : 1, h ? h : 1,
-                                        Rgba8888::pack(255, static_cast<u8>(i),
-                                                       static_cast<u8>(i * 2),
-                                                       static_cast<u8>(i * 3)));
-            d.push_back(c);
+            fill(1, 1, 3, 3, Rgba8888::pack(255, 255, 255, 255));
+            break;
         }
     }
     return d;
@@ -72,9 +160,15 @@ int main(int argc, char** argv) {
     }
     gpu.register_surface(SurfaceDesc{0x20000, 16, 8, 8, PixelFormat::RGB565}, "s");
     gpu.memory().write_block(0x20000, tex.data(), tex.size());
+    gpu.register_resource(RegisteredResource{0x30000, 64, 1, 1, "e"});
+    {
+        BlitCmdDesc ed;
+        auto ext = make_draw2d_ext_v1(ed);
+        gpu.memory().write_block(0x30000, ext.data(), 64);
+    }
     const auto draws = make_workload(kind, tw, th, stride);
     const auto bin = bin_draws(draws, gpu.memory(), tw, th, tile);
-    const u32 desc_b = 0x30000, hdr_b = 0x40000, work_b = 0x50000;
+    const u32 desc_b = 0x38000, hdr_b = 0x40000, work_b = 0x50000;
     gpu.register_resource(RegisteredResource{
         desc_b, static_cast<u32>(draws.size() * 64), 1, 1, "d"});
     gpu.register_resource(RegisteredResource{
