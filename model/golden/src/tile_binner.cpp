@@ -193,26 +193,17 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
     g_last_stats.tiles_total = tiles;
     g_last_stats.draw_descriptor_count = desc_capacity;
 
-    // Internal scratch at a dedicated high address. Resize when tile geometry changes.
-    const u32 scratch_base = 0x7F000000;
+    // True internal Tile scratch: separate MemoryImage, no architectural phys addr.
+    MemoryImage& tile_mem = gpu.tile_memory();
+    const u32 scratch_base = 0;  // local to tile_mem only
     const u32 scratch_size = tf.tile_w * tf.tile_h * bpp;
-    if (gpu.memory().has_region(scratch_base)) {
-        auto existing = gpu.resource(scratch_base);
-        if (existing && existing->name != "tile_scratch_internal") {
-            return ExecResult::failure(FaultCode::BAD_ADDRESS, scratch_base);
-        }
-        gpu.memory().forget_region(scratch_base);
-    }
-    {
-        const auto rs = gpu.memory().register_region("tile_scratch_internal",
-                                                     scratch_base, scratch_size);
-        if (rs.status != MemAccessStatus::OK) {
-            return ExecResult::failure(FaultCode::MEMORY_ERROR, scratch_base);
-        }
+    tile_mem.clear();
+    if (tile_mem.register_region("tile_internal", scratch_base, scratch_size).status !=
+        MemAccessStatus::OK) {
+        return ExecResult::failure(FaultCode::MEMORY_ERROR, scratch_size);
     }
     const RegisteredResource scratch_res{scratch_base, scratch_size, tf.tile_w,
-                                         tf.tile_h, "tile_scratch_internal"};
-    gpu.set_internal_resource(scratch_res);
+                                         tf.tile_h, "tile_internal"};
 
     for (u32 ty = 0; ty < tf.grid_h; ++ty) {
         for (u32 tx = 0; tx < tf.grid_w; ++tx) {
@@ -303,17 +294,14 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
                 g_last_stats.max_workrefs_per_tile = th.work_count;
             }
 
-            // LOAD tile from framebuffer into scratch (or clear / default / skip).
-            auto scratch_ptr = gpu.resource(scratch_base);
-            if (!scratch_ptr) {
-                return ExecResult::failure(FaultCode::MEMORY_ERROR, scratch_base);
-            }
-            const RegisteredResource& scratch_res = *scratch_ptr;
+            // LOAD tile from framebuffer into internal scratch (or clear / default).
             const bool dont_load = (th.flags & kTileDontLoadColor) != 0;
             const bool clear = (th.flags & kTileClearColor) != 0;
+            auto scratch_off = [&](u32 lx, u32 ly) -> u64 {
+                return static_cast<u64>(ly) * tf.tile_w * bpp + static_cast<u64>(lx) * bpp;
+            };
             if (clear) {
-                SurfaceView tile_sv(&gpu.memory(), scratch_res, tf.tile_w * bpp,
-                                    tile_fmt);
+                SurfaceView tile_sv(&tile_mem, scratch_res, tf.tile_w * bpp, tile_fmt);
                 const Rgba8888 cc = Rgba8888::from_u32(tf.clear_color);
                 for (u32 ly = 0; ly < vh; ++ly) {
                     for (u32 lx = 0; lx < vw; ++lx) {
@@ -321,14 +309,13 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
                                            cc, false, x0 + lx, y0 + ly);
                     }
                 }
+                g_last_stats.tile_store_pixels += vw * vh;  // cleared → store
             } else if (dont_load) {
-                // H8: DONT_LOAD without CLEAR requires LOAD_COLOR_DEFAULT (zero) or reject.
                 if (!rt.load_color_default) {
                     return ExecResult::failure(FaultCode::UNSUPPORTED_FEATURE,
                                                th.flags);
                 }
-                SurfaceView tile_sv(&gpu.memory(), scratch_res, tf.tile_w * bpp,
-                                    tile_fmt);
+                SurfaceView tile_sv(&tile_mem, scratch_res, tf.tile_w * bpp, tile_fmt);
                 for (u32 ly = 0; ly < vh; ++ly) {
                     for (u32 lx = 0; lx < vw; ++lx) {
                         tile_sv.write_rgba(static_cast<i32>(lx), static_cast<i32>(ly),
@@ -337,23 +324,18 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
                     }
                 }
             } else {
-                // Copy valid FB pixels into scratch (raw bytes, tile format).
+                // LOAD from framebuffer into internal scratch (raw bytes).
                 auto fb_res = gpu.resource(tf.dst_base);
                 if (!fb_res) {
                     return ExecResult::failure(FaultCode::MEMORY_ERROR, tf.dst_base);
                 }
                 for (u32 ly = 0; ly < vh; ++ly) {
-                    std::vector<u8> row(bpp);
                     for (u32 lx = 0; lx < vw; ++lx) {
                         const u64 fb_addr =
                             static_cast<u64>(tf.dst_base) +
                             static_cast<u64>(y0 + ly) * tf.dst_stride +
                             static_cast<u64>(x0 + lx) * bpp;
-                        const u64 tb_addr =
-                            static_cast<u64>(scratch_base) +
-                            static_cast<u64>(ly) * tf.tile_w * bpp +
-                            static_cast<u64>(lx) * bpp;
-                        if (fb_addr > 0xFFFFFFFFull || tb_addr > 0xFFFFFFFFull) {
+                        if (fb_addr > 0xFFFFFFFFull) {
                             return ExecResult::failure(FaultCode::BAD_ADDRESS);
                         }
                         std::vector<u8> tmp;
@@ -363,30 +345,26 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
                             return ExecResult::failure(FaultCode::MEMORY_ERROR,
                                                        static_cast<u32>(fb_addr));
                         }
-                        if (gpu.memory()
-                                .write_block(static_cast<u32>(tb_addr), tmp.data(),
-                                             bpp)
+                        if (tile_mem
+                                .write_block(static_cast<u32>(scratch_off(lx, ly)),
+                                             tmp.data(), bpp)
                                 .status != MemAccessStatus::OK) {
                             return ExecResult::failure(FaultCode::MEMORY_ERROR,
-                                                       static_cast<u32>(tb_addr));
+                                                       scratch_off(lx, ly));
                         }
                     }
-                    (void)row;
                 }
+                g_last_stats.tile_load_bytes += vw * vh * bpp;
+                g_last_stats.tile_load_pixels += vw * vh;
             }
-            g_last_stats.tile_load_bytes += vw * vh * bpp;
-            g_last_stats.tile_load_pixels += vw * vh;
 
             if (th.work_count == 0) {
-                // store clear-only tile
                 if (rt.store_color) {
                     for (u32 ly = 0; ly < vh; ++ly) {
                         for (u32 lx = 0; lx < vw; ++lx) {
                             std::vector<u8> px(bpp);
-                            const u64 tb = static_cast<u64>(scratch_base) +
-                                           static_cast<u64>(ly) * tf.tile_w * bpp +
-                                           static_cast<u64>(lx) * bpp;
-                            gpu.memory().read_block(static_cast<u32>(tb), bpp, px);
+                            tile_mem.read_block(static_cast<u32>(scratch_off(lx, ly)),
+                                                bpp, px);
                             const u64 fb = static_cast<u64>(tf.dst_base) +
                                            static_cast<u64>(y0 + ly) * tf.dst_stride +
                                            static_cast<u64>(x0 + lx) * bpp;
@@ -453,11 +431,10 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
                     }
                 }
 
-                // Translate draw into tile-local coordinates targeting scratch buffer.
+                // Translate draw into tile-local coordinates targeting internal scratch.
                 DecodedDraw local = dd;
                 local.state.dst_base = scratch_base;
                 local.state.dst_stride = tf.tile_w * bpp;
-                // Force destination format to TILE format (authoritative).
                 local.state.draw_state =
                     (local.state.draw_state & ~(0xFu << 4)) | (rt.dst_format << 4);
                 local.state.dst_x = dd.state.dst_x - static_cast<i32>(x0);
@@ -470,9 +447,9 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
                     local.state.clip_ymin = dd.state.clip_ymin - static_cast<i32>(y0);
                     local.state.clip_ymax = dd.state.clip_ymax - static_cast<i32>(y0);
                 }
-                // Render only the valid tile region in local coords.
-                const auto st = gpu.execute_decoded(
-                    local, true, 0, 0, static_cast<i32>(vw), static_cast<i32>(vh));
+                const auto st = gpu.execute_decoded_on(
+                    local, &tile_mem, scratch_res, tf.tile_w * bpp, tile_fmt, true, 0,
+                    0, static_cast<i32>(vw), static_cast<i32>(vh));
                 if (!st.ok) {
                     return st;
                 }
@@ -482,15 +459,14 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
             }
             g_last_stats.sum_workrefs += th.work_count;
 
-            // STORE valid tile region back to framebuffer.
+            // STORE valid tile region from internal scratch back to framebuffer.
             if (rt.store_color) {
                 for (u32 ly = 0; ly < vh; ++ly) {
                     for (u32 lx = 0; lx < vw; ++lx) {
                         std::vector<u8> px(bpp);
-                        const u64 tb = static_cast<u64>(scratch_base) +
-                                       static_cast<u64>(ly) * tf.tile_w * bpp +
+                        const u64 tb = static_cast<u64>(ly) * tf.tile_w * bpp +
                                        static_cast<u64>(lx) * bpp;
-                        if (gpu.memory()
+                        if (tile_mem
                                 .read_block(static_cast<u32>(tb), bpp, px)
                                 .status != MemAccessStatus::OK) {
                             return ExecResult::failure(FaultCode::MEMORY_ERROR,

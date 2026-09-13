@@ -33,29 +33,14 @@ public:
 
     std::optional<RegisteredResource> resource(u32 base) const;
 
-    // Internal (non-architectural) tile scratch — not addressable via MemoryImage.
-    struct InternalTileMem {
-        std::vector<u8> bytes;
-        u32 tile_w = 0;
-        u32 tile_h = 0;
-        u32 bpp = 0;
-        void ensure(u32 tw, u32 th, u32 bpp_in) {
-            if (tw != tile_w || th != tile_h || bpp_in != bpp) {
-                tile_w = tw;
-                tile_h = th;
-                bpp = bpp_in;
-                bytes.assign(static_cast<size_t>(tw) * th * bpp, 0);
-            } else if (bytes.size() != static_cast<size_t>(tw) * th * bpp) {
-                bytes.assign(static_cast<size_t>(tw) * th * bpp, 0);
-            }
-        }
-    };
-    InternalTileMem& internal_tile() noexcept { return tile_scratch_; }
+    // Internal (non-architectural) tile scratch — separate MemoryImage, no GPU phys addr.
+    MemoryImage& tile_memory() noexcept { return tile_mem_; }
 
-    // Internal-only resource slot (overwrites entry; used for tile scratch).
-    void set_internal_resource(const RegisteredResource& res) {
-        resources_[res.base] = res;
-    }
+    // Execute decoded draw targeting an alternate destination MemoryImage (Tile RT).
+    ExecResult execute_decoded_on(const DecodedDraw& d, MemoryImage* dst_mem,
+                                  const RegisteredResource& dst_res, u32 dst_stride,
+                                  PixelFormat dst_fmt, bool extra_clip, i32 x0, i32 y0,
+                                  i32 x1, i32 y1);
 
     ExecResult execute_command(const GpuCmd64& cmd);
     ExecResult execute_stream(const std::vector<GpuCmd64>& cmds);
@@ -70,14 +55,16 @@ private:
     };
     ExecResult execute_draw(const DecodedDraw& d);
     ExecResult execute_draw_clipped(const DecodedDraw& d, bool extra_clip, i32 ex0,
-                                    i32 ey0, i32 ex1, i32 ey1);
+                                    i32 ey0, i32 ex1, i32 ey1, MemoryImage* dst_mem,
+                                    const RegisteredResource* dst_res, u32 dst_stride,
+                                    PixelFormat dst_fmt);
     ExecResult sample_and_blend(const DecodedDraw& d, SurfaceView& src_view,
                                 SurfaceView& dst_view, i32 dx, i32 dy, i32 sx, i32 sy);
     Sampled sample_color(const DecodedDraw& d, SurfaceView& src_view, i32 sx, i32 sy);
 
     MemoryImage memory_;
+    MemoryImage tile_mem_;  // internal Tile scratch only
     std::map<u32, RegisteredResource> resources_;
-    InternalTileMem tile_scratch_;
 };
 
 // Helper for pixel-center scale coefficients (frozen formula).

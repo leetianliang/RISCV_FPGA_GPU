@@ -398,28 +398,60 @@ ExecResult GoldenGPU::sample_and_blend(const DecodedDraw& d, SurfaceView& src_vi
 
 ExecResult GoldenGPU::execute_decoded(const DecodedDraw& d, bool extra_clip, i32 x0,
                                       i32 y0, i32 x1, i32 y1) {
-    return execute_draw_clipped(d, extra_clip, x0, y0, x1, y1);
+    return execute_draw_clipped(d, extra_clip, x0, y0, x1, y1, nullptr, nullptr, 0,
+                                PixelFormat::RGB565);
+}
+
+ExecResult GoldenGPU::execute_decoded_on(const DecodedDraw& d, MemoryImage* dst_mem,
+                                         const RegisteredResource& dst_res,
+                                         u32 dst_stride, PixelFormat dst_fmt,
+                                         bool extra_clip, i32 x0, i32 y0, i32 x1,
+                                         i32 y1) {
+    return execute_draw_clipped(d, extra_clip, x0, y0, x1, y1, dst_mem, &dst_res,
+                                dst_stride, dst_fmt);
 }
 
 ExecResult GoldenGPU::execute_draw(const DecodedDraw& d) {
-    return execute_draw_clipped(d, false, 0, 0, 0, 0);
+    return execute_draw_clipped(d, false, 0, 0, 0, 0, nullptr, nullptr, 0,
+                                PixelFormat::RGB565);
 }
 
 ExecResult GoldenGPU::execute_draw_clipped(const DecodedDraw& d, bool extra_clip,
-                                           i32 ex0, i32 ey0, i32 ex1, i32 ey1) {
+                                           i32 ex0, i32 ey0, i32 ex1, i32 ey1,
+                                           MemoryImage* dst_mem,
+                                           const RegisteredResource* dst_res_opt,
+                                           u32 dst_stride_opt, PixelFormat dst_fmt_opt) {
     const Draw2DState& st = d.state;
 
     auto src_res = resource(st.src_base);
-    auto dst_res = resource(st.dst_base);
-    if (!dst_res) {
-        return ExecResult::failure(FaultCode::MEMORY_ERROR, st.dst_base);
+    RegisteredResource dst_res_local{};
+    const RegisteredResource* dst_res = nullptr;
+    MemoryImage* dst_memory = &memory_;
+    u32 dst_stride = st.dst_stride;
+    PixelFormat dst_fmt = static_cast<PixelFormat>(extract_dst_format(st.draw_state));
+
+    if (dst_mem != nullptr && dst_res_opt != nullptr) {
+        // Tile internal RT path
+        dst_memory = dst_mem;
+        dst_res = dst_res_opt;
+        dst_stride = dst_stride_opt;
+        dst_fmt = dst_fmt_opt;
+    } else {
+        auto lookup = resource(st.dst_base);
+        if (!lookup) {
+            return ExecResult::failure(FaultCode::MEMORY_ERROR, st.dst_base);
+        }
+        dst_res_local = *lookup;
+        dst_res = &dst_res_local;
+        dst_memory = &memory_;
+        dst_stride = st.dst_stride;
+        dst_fmt = static_cast<PixelFormat>(extract_dst_format(st.draw_state));
     }
     if (st.op != DrawOp::FILL_RECT && !src_res) {
         return ExecResult::failure(FaultCode::MEMORY_ERROR, st.src_base);
     }
 
-    SurfaceView dst_view(&memory_, *dst_res, st.dst_stride,
-                         static_cast<PixelFormat>(extract_dst_format(st.draw_state)));
+    SurfaceView dst_view(dst_memory, *dst_res, dst_stride, dst_fmt);
     SurfaceView src_view;
     if (st.op != DrawOp::FILL_RECT) {
         src_view = SurfaceView(&memory_, *src_res, st.src_stride,
@@ -430,11 +462,6 @@ ExecResult GoldenGPU::execute_draw_clipped(const DecodedDraw& d, bool extra_clip
         }
     }
     {
-        const u32 bpp_d = bytes_per_pixel(dst_view.format());
-        if (bpp_d == 0 || dst_view.format() == PixelFormat::INDEX8) {
-            return ExecResult::failure(FaultCode::BAD_FORMAT,
-                                       static_cast<u32>(dst_view.format()));
-        }
         const auto vst = validate_view(dst_view, dst_res->width);
         if (!vst.ok) {
             return vst;

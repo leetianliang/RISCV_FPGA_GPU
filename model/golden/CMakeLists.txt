@@ -63,6 +63,7 @@ golden_add_test_exec(golden_test_tile tests/tile/test_tile.cpp)
 golden_add_test_exec(golden_test_tile_eq_random tests/tile/test_tile_eq_random.cpp)
 golden_add_test_exec(golden_test_tile_ext tests/tile/test_tile_ext.cpp)
 golden_add_test_exec(golden_test_tile_faults tests/tile/test_tile_faults.cpp)
+golden_add_test_exec(golden_test_tile_extended tests/tile/test_tile_extended.cpp)
 
 add_test(
     NAME golden_test_integrity
