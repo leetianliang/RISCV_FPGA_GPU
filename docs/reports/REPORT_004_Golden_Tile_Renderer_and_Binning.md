@@ -10,7 +10,7 @@
 
 ## 3. END_COMMIT
 
-`PENDING — set after implementation commit via --end-commit`
+`956f70bf0ca9052ecf2e460c72b949ce1e29fee5`
 
 ## 4. Final Verification
 
