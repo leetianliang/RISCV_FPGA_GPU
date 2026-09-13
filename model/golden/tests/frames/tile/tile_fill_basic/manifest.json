@@ -1,0 +1,12 @@
+{
+  "format_version": 1,
+  "isa_version": 1,
+  "width": 32,
+  "height": 32,
+  "stride": 64,
+  "tile": 16,
+  "framebuffer_format": "RGB565",
+  "command_count": 1,
+  "base": 65536,
+  "description": "tile_fill_basic"
+}

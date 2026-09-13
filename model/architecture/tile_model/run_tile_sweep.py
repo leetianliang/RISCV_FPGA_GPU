@@ -18,23 +18,35 @@ def run(kind: int, tile: int) -> dict:
     if r.returncode != 0:
         raise RuntimeError(r.stderr.strip() or r.stdout)
     line = r.stdout.strip().splitlines()[-1]
-    parts = dict()
+    parts = {}
     for tok in line.split():
         if "=" in tok:
             k, v = tok.split("=", 1)
-            parts[k] = int(v)
-    names = {0: "W3_alpha_storm", 1: "W1_sprite_grid", 2: "W2_high_overdraw"}
+            if k == "avg_od":
+                parts[k] = float(v)
+            elif k in ("workload",):
+                continue
+            else:
+                try:
+                    parts[k] = int(v)
+                except ValueError:
+                    parts[k] = v
     return {
-        "workload": names.get(kind, f"kind{kind}"),
-        "tile_size": parts["tile"],
-        "tiles_total": parts["tiles"],
-        "tiles_active": parts["active"],
-        "workref_count": parts["refs"],
-        "max_workrefs_per_tile": parts["maxrefs"],
-        "tile_load_pixels": parts["load_px"],
-        "tile_store_pixels": parts["store_px"],
-        "tile_load_bytes": parts["load_b"],
-        "tile_store_bytes": parts["store_b"],
+        "workload": parts.get("workload", f"kind{kind}"),
+        "tile_size": parts.get("tile", tile),
+        "tiles_total": parts.get("tiles", 0),
+        "tiles_active": parts.get("active", 0),
+        "workref_count": parts.get("refs", 0),
+        "max_workrefs_per_tile": parts.get("maxrefs", 0),
+        "tile_load_pixels": parts.get("load_px", 0),
+        "tile_store_pixels": parts.get("store_px", 0),
+        "tile_load_bytes": parts.get("load_b", 0),
+        "tile_store_bytes": parts.get("store_b", 0),
+        "blend_ops": parts.get("blend", 0),
+        "pixels_written": parts.get("written", 0),
+        "key_discards": parts.get("key", 0),
+        "texture_samples": parts.get("samples", 0),
+        "max_overdraw": parts.get("max_od", 0),
     }
 
 
@@ -44,7 +56,7 @@ def main() -> int:
         return 1
     OUT.parent.mkdir(parents=True, exist_ok=True)
     rows = []
-    for kind in (0, 1, 2):
+    for kind in range(6):
         for tile in (16, 32, 64):
             rows.append(run(kind, tile))
     with OUT.open("w", encoding="utf-8", newline="") as f:

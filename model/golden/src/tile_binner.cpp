@@ -193,9 +193,9 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
     g_last_stats.tiles_total = tiles;
     g_last_stats.draw_descriptor_count = desc_capacity;
 
-    // True internal Tile scratch: separate MemoryImage, no architectural phys addr.
+    // Internal scratch: separate MemoryImage, no architectural phys addr.
     MemoryImage& tile_mem = gpu.tile_memory();
-    const u32 scratch_base = 0;  // local to tile_mem only
+    const u32 scratch_base = 0;
     const u32 scratch_size = tf.tile_w * tf.tile_h * bpp;
     tile_mem.clear();
     if (tile_mem.register_region("tile_internal", scratch_base, scratch_size).status !=
@@ -204,6 +204,12 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
     }
     const RegisteredResource scratch_res{scratch_base, scratch_size, tf.tile_w,
                                          tf.tile_h, "tile_internal"};
+
+    // Enable true pixel/sampler profiler for this frame.
+    PixelEventSink sink;
+    sink.reset_overdraw(tf.surface_w, tf.surface_h);
+    PixelEventSink* prev_perf = gpu.perf;
+    gpu.perf = &sink;
 
     for (u32 ty = 0; ty < tf.grid_h; ++ty) {
         for (u32 tx = 0; tx < tf.grid_w; ++tx) {
@@ -453,8 +459,6 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
                 if (!st.ok) {
                     return st;
                 }
-                ++g_last_stats.blend_ops;
-                g_last_stats.pixels_written += vw * vh;
                 ++g_last_stats.workref_count;
             }
             g_last_stats.sum_workrefs += th.work_count;
@@ -491,6 +495,20 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
             }
         }
     }
+    // Copy true pixel/sampler events from sink.
+    gpu.perf = prev_perf;
+    g_last_stats.blend_ops = sink.blend_ops;
+    g_last_stats.pixels_attempted = sink.pixels_attempted;
+    g_last_stats.pixels_written = sink.pixels_written;
+    g_last_stats.logical_pixel_writes = sink.pixels_written;
+    g_last_stats.key_discards = sink.key_discards;
+    g_last_stats.texture_samples = sink.texture_samples;
+    g_last_stats.palette_reads = sink.palette_reads;
+    g_last_stats.bilinear_samples = sink.bilinear_samples;
+    g_last_stats.max_overdraw = sink.max_overdraw;
+    g_last_stats.avg_overdraw_touched = sink.avg_overdraw_touched();
+    g_last_stats.estimated_external_load_bytes = g_last_stats.tile_load_bytes;
+    g_last_stats.estimated_external_store_bytes = g_last_stats.tile_store_bytes;
     return ExecResult::success();
 }
 

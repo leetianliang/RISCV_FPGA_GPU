@@ -171,6 +171,9 @@ GoldenGPU::Sampled GoldenGPU::sample_color(const DecodedDraw& d, SurfaceView& sr
 
     auto fetch_rgba = [&](i32 ax, i32 ay) -> Sampled {
         Sampled s;
+        if (perf) {
+            ++perf->texture_samples;
+        }
         const auto st = src_view.read_rgba(ax, ay, s.color);
         s.status = st;
         return s;
@@ -178,6 +181,10 @@ GoldenGPU::Sampled GoldenGPU::sample_color(const DecodedDraw& d, SurfaceView& sr
 
     auto fetch_index = [&](i32 ax, i32 ay) -> Sampled {
         Sampled s;
+        if (perf) {
+            ++perf->texture_samples;
+            ++perf->palette_reads;
+        }
         u8 idx = 0;
         const auto st = src_view.read_raw(ax, ay, &idx, 1);
         if (!st.ok) {
@@ -210,6 +217,9 @@ GoldenGPU::Sampled GoldenGPU::sample_color(const DecodedDraw& d, SurfaceView& sr
 
     if (sfmt == static_cast<u32>(PixelFormat::INDEX8)) {
         if (filter == static_cast<u32>(FilterMode::BILINEAR)) {
+            if (perf) {
+                ++perf->bilinear_samples;
+            }
             const i32 x0 = floor_q16_16(sx);
             const i32 y0 = floor_q16_16(sy);
             const u16 fx = frac_q16_16(sx);
@@ -259,6 +269,9 @@ GoldenGPU::Sampled GoldenGPU::sample_color(const DecodedDraw& d, SurfaceView& sr
     }
 
     if (filter == static_cast<u32>(FilterMode::BILINEAR)) {
+        if (perf) {
+            ++perf->bilinear_samples;
+        }
         const i32 x0 = floor_q16_16(sx);
         const i32 y0 = floor_q16_16(sy);
         const u16 fx = frac_q16_16(sx);
@@ -321,6 +334,9 @@ ExecResult GoldenGPU::sample_and_blend(const DecodedDraw& d, SurfaceView& src_vi
     const Rgba8888 mod_color = d.state.primary_color;
 
     Rgba8888 sampled{};
+    if (perf) {
+        ++perf->pixels_attempted;
+    }
     if (d.state.op == DrawOp::FILL_RECT) {
         sampled = d.state.primary_color;
     } else {
@@ -336,6 +352,9 @@ ExecResult GoldenGPU::sample_and_blend(const DecodedDraw& d, SurfaceView& src_vi
         const u32 rgb = (static_cast<u32>(sampled.r()) << 16) |
                         (static_cast<u32>(sampled.g()) << 8) | sampled.b();
         if (rgb == (d.state.color_key_rgb & 0x00FFFFFFu)) {
+            if (perf) {
+                ++perf->key_discards;
+            }
             return ExecResult::success();
         }
     }
@@ -348,9 +367,14 @@ ExecResult GoldenGPU::sample_and_blend(const DecodedDraw& d, SurfaceView& src_vi
                         d.state.global_alpha, global_en);
 
     if (blend == static_cast<u32>(BlendMode::COPY)) {
-        return dst_view.write_rgba(dx, dy, sm, dither,
+        const auto wr = dst_view.write_rgba(dx, dy, sm, dither,
                                        static_cast<u32>(dx + d.state.dither_ox),
                                        static_cast<u32>(dy + d.state.dither_oy));
+        if (wr.ok && perf) {
+            ++perf->pixels_written;
+            perf->note_write(static_cast<u32>(dx), static_cast<u32>(dy));
+        }
+        return wr;
     }
 
     Rgba8888 dstc{};
@@ -391,9 +415,17 @@ ExecResult GoldenGPU::sample_and_blend(const DecodedDraw& d, SurfaceView& src_vi
     } else {
         return ExecResult::failure(FaultCode::UNSUPPORTED_FEATURE, blend);
     }
-    return dst_view.write_rgba(dx, dy, out, dither,
+    if (perf) {
+        ++perf->blend_ops;
+    }
+    const auto wr2 = dst_view.write_rgba(dx, dy, out, dither,
                                static_cast<u32>(dx + d.state.dither_ox),
                                static_cast<u32>(dy + d.state.dither_oy));
+    if (wr2.ok && perf) {
+        ++perf->pixels_written;
+        perf->note_write(static_cast<u32>(dx), static_cast<u32>(dy));
+    }
+    return wr2;
 }
 
 ExecResult GoldenGPU::execute_decoded(const DecodedDraw& d, bool extra_clip, i32 x0,

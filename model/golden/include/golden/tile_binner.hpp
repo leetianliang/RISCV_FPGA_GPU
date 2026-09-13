@@ -38,8 +38,18 @@ struct TileStats {
     u32 tile_store_pixels = 0;
     u32 tile_load_bytes = 0;
     u32 tile_store_bytes = 0;
-    u32 blend_ops = 0;
-    u32 pixels_written = 0;
+    u64 blend_ops = 0;
+    u64 pixels_attempted = 0;
+    u64 pixels_written = 0;
+    u64 key_discards = 0;
+    u64 texture_samples = 0;
+    u64 palette_reads = 0;
+    u64 bilinear_samples = 0;
+    u32 max_overdraw = 0;
+    double avg_overdraw_touched = 0.0;
+    u64 logical_pixel_writes = 0;  // alias pixels_written
+    u64 estimated_external_load_bytes = 0;
+    u64 estimated_external_store_bytes = 0;
 };
 
 // Average workrefs per active tile.

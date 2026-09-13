@@ -2,6 +2,7 @@
 #include "golden/golden_gpu.hpp"
 #include "golden/gpu_isa.hpp"
 #include "golden/gpu_math.hpp"
+#include "golden/tile_binner.hpp"
 
 #include <cstdio>
 #include <cstring>
@@ -754,6 +755,206 @@ bool generate_stage003_fixtures(const fs::path& root) {
 
 }  // namespace
 
+// Tile binary fixtures: expected golden_fb from Immediate Golden, not Tile.
+namespace {
+
+bool write_tile_fixture(const fs::path& dir, const std::vector<GpuCmd64>& draws,
+                        const std::vector<u8>& tex, const std::vector<u8>& ext,
+                        const std::vector<u8>& pal, u32 tw, u32 th, u32 stride,
+                        u32 tile, const char* name) {
+    fs::create_directories(dir);
+    GoldenGPU imm;
+    imm.register_surface(SurfaceDesc{0x10000, stride, tw, th, PixelFormat::RGB565},
+                         "d");
+    if (!tex.empty()) {
+        imm.register_surface(SurfaceDesc{0x20000, 16, 8, 8, PixelFormat::RGB565}, "s");
+        imm.memory().write_block(0x20000, tex.data(), tex.size());
+        write_file(dir / "textures.bin", tex.data(), tex.size());
+    }
+    if (!ext.empty()) {
+        imm.register_resource(RegisteredResource{0x30000, 64, 1, 1, "e"});
+        imm.memory().write_block(0x30000, ext.data(), ext.size());
+        write_file(dir / "extensions.bin", ext.data(), ext.size());
+    }
+    if (!pal.empty()) {
+        imm.register_resource(RegisteredResource{0x40000, 1024, 256, 1, "p"});
+        imm.memory().write_block(0x40000, pal.data(), pal.size());
+        write_file(dir / "palette.bin", pal.data(), pal.size());
+    }
+    std::vector<u8> init(static_cast<size_t>(stride) * th, 0);
+    for (size_t i = 0; i + 1 < init.size(); i += 2) {
+        const u16 px = static_cast<u16>((i * 9 + 3) & 0xFFFF);
+        init[i] = static_cast<u8>(px & 0xFF);
+        init[i + 1] = static_cast<u8>(px >> 8);
+    }
+    imm.memory().write_block(0x10000, init.data(), init.size());
+    for (const auto& c : draws) {
+        if (!imm.execute_command(c).ok) {
+            std::fprintf(stderr, "imm fail %s\n", name);
+            return false;
+        }
+    }
+    std::vector<u8> golden;
+    imm.memory().read_block(0x10000, init.size(), golden);
+
+    const auto bin = bin_draws(draws, imm.memory(), tw, th, tile);
+    const u32 desc_b = 0x38000, hdr_b = 0x3A000, work_b = 0x3C000;
+    // Write serialized structures (for replay by Tile path)
+    std::vector<u8> descs;
+    for (const auto& c : draws) {
+        const auto b = serialize_cmd_le(c);
+        descs.insert(descs.end(), b.begin(), b.end());
+    }
+    std::vector<u8> hdrs;
+    for (const auto& h : bin.headers) {
+        const auto hb = serialize_tile_header(h);
+        hdrs.insert(hdrs.end(), hb.begin(), hb.end());
+    }
+    const auto wr = serialize_workrefs(bin.workrefs);
+    write_file(dir / "descriptors.bin", descs.data(), descs.size());
+    write_file(dir / "tile_headers.bin", hdrs.data(), hdrs.size());
+    write_file(dir / "workrefs.bin", wr.data(), wr.size());
+    write_file(dir / "initial_fb.raw", init.data(), init.size());
+    write_file(dir / "golden_fb.raw", golden.data(), golden.size());
+    // TILE_FRAME command
+    TileFrameCmd tf;
+    tf.draw_desc_base = desc_b;
+    tf.tile_header_base = hdr_b;
+    tf.work_list_base = work_b;
+    tf.dst_base = 0x10000;
+    tf.dst_stride = stride;
+    tf.surface_w = tw;
+    tf.surface_h = th;
+    tf.grid_w = (tw + tile - 1) / tile;
+    tf.grid_h = (th + tile - 1) / tile;
+    tf.tile_w = tile;
+    tf.tile_h = tile;
+    tf.rt_state = tile_rt_state_store(PixelFormat::RGB565);
+    const auto tfcmd = make_tile_frame_cmd(tf);
+    const auto tfb = serialize_cmd_le(tfcmd);
+    write_file(dir / "command.bin", tfb.data(), tfb.size());
+    char man[512];
+    std::snprintf(man, sizeof(man),
+                  "{\n  \"format_version\": 1,\n  \"isa_version\": 1,\n"
+                  "  \"width\": %u,\n  \"height\": %u,\n  \"stride\": %u,\n"
+                  "  \"tile\": %u,\n  \"framebuffer_format\": \"RGB565\",\n"
+                  "  \"command_count\": %zu,\n  \"base\": 65536,\n"
+                  "  \"description\": \"%s\"\n}\n",
+                  tw, th, stride, tile, draws.size(), name);
+    write_file(dir / "manifest.json", man, std::strlen(man));
+    std::printf("Generated tile fixture %s\n", name);
+    return true;
+}
+
+bool generate_tile_fixtures(const fs::path& root) {
+    const u32 tw = 32, th = 32, stride = 64, tile = 16;
+    // tile_fill_basic
+    {
+        auto fill = make_fill_rect_cmd(0x10000, stride, 2, 2, 8, 8,
+                                       Rgba8888::pack(255, 255, 0, 0));
+        if (!write_tile_fixture(root / "tile_fill_basic", {fill}, {}, {}, {}, tw, th,
+                                stride, tile, "tile_fill_basic")) {
+            return false;
+        }
+    }
+    // tile_alpha_overlap
+    {
+        auto c1 = make_fill_rect_cmd(0x10000, stride, 4, 4, 12, 12,
+                                     Rgba8888::pack(255, 255, 0, 0));
+        auto c2 = make_fill_rect_cmd(0x10000, stride, 10, 10, 12, 12,
+                                     Rgba8888::pack(128, 0, 0, 255));
+        u32 ds = c2[12];
+        ds = (ds & ~(0xFu << 8)) |
+             (static_cast<u32>(BlendMode::STRAIGHT_ALPHA) << 8);
+        ds |= (1u << 20);
+        c2[12] = ds;
+        c2[14] = (128u << 24);
+        if (!write_tile_fixture(root / "tile_alpha_overlap", {c1, c2}, {}, {}, {}, tw,
+                                th, stride, tile, "tile_alpha_overlap")) {
+            return false;
+        }
+    }
+    // tile_bilinear_cross_boundary
+    {
+        std::vector<u8> tex(16 * 8);
+        for (size_t i = 0; i + 1 < tex.size(); i += 2) {
+            const u16 px = static_cast<u16>((i * 7) & 0xFFFF);
+            tex[i] = static_cast<u8>(px & 0xFF);
+            tex[i + 1] = static_cast<u8>(px >> 8);
+        }
+        BlitCmdDesc d;
+        d.src_base = 0x20000;
+        d.dst_base = 0x10000;
+        d.src_stride = 16;
+        d.dst_stride = stride;
+        d.blit_ext = true;
+        d.ext_ptr = 0x30000;
+        d.filter = static_cast<u32>(FilterMode::BILINEAR);
+        d.w = 16;
+        d.h = 16;
+        d.dst_x = 8;
+        d.dst_y = 8;
+        compute_axis_aligned_uv(0, 4, 16, d.u0, d.du_dx);
+        compute_axis_aligned_uv_v(0, 4, 16, d.v0, d.dv_dy);
+        auto cmd = make_blit_ext_cmd(d);
+        cmd[10] = pack_wh(4, 4);
+        cmd[11] = pack_wh(16, 16);
+        auto ext = make_draw2d_ext_v1(d);
+        std::vector<u8> extv(ext.begin(), ext.end());
+        if (!write_tile_fixture(root / "tile_bilinear_cross_boundary", {cmd}, tex,
+                                extv, {}, tw, th, stride, tile,
+                                "tile_bilinear_cross_boundary")) {
+            return false;
+        }
+    }
+    // tile_palette (INDEX8 + palette)
+    {
+        std::vector<u8> itex(8 * 8);
+        for (size_t i = 0; i < itex.size(); ++i) {
+            itex[i] = static_cast<u8>(i & 0xFF);
+        }
+        std::vector<u8> pal(1024);
+        for (u32 i = 0; i < 256; ++i) {
+            pal[i * 4 + 0] = static_cast<u8>(i);
+            pal[i * 4 + 1] = static_cast<u8>(i);
+            pal[i * 4 + 2] = static_cast<u8>(i);
+            pal[i * 4 + 3] = 255;
+        }
+        BlitCmdDesc d;
+        d.src_base = 0x20000;
+        d.dst_base = 0x10000;
+        d.src_stride = 8;
+        d.dst_stride = stride;
+        d.src_format = static_cast<u32>(PixelFormat::INDEX8);
+        d.dst_format = static_cast<u32>(PixelFormat::RGB565);
+        d.palette_en = true;
+        d.palette_addr = 0x40000;
+        d.w = 8;
+        d.h = 8;
+        d.dst_x = 0;
+        d.dst_y = 0;
+        if (!write_tile_fixture(root / "tile_palette", {make_blit_cmd(d)}, itex, {},
+                                pal, tw, th, stride, tile, "tile_palette")) {
+            return false;
+        }
+    }
+    // tile_dither_cross_boundary
+    {
+        auto c = make_fill_rect_cmd(0x10000, stride, 14, 14, 8, 8,
+                                    Rgba8888::pack(255, 100, 200, 50));
+        u32 ds = c[12];
+        ds |= (1u << 27);
+        c[12] = ds;
+        if (!write_tile_fixture(root / "tile_dither_cross_boundary", {c}, {}, {}, {},
+                                tw, th, stride, tile, "tile_dither_cross_boundary")) {
+            return false;
+        }
+    }
+    return true;
+}
+
+}  // namespace
+
 int main(int argc, char** argv) {
     if (argc < 2) {
         return usage();
@@ -767,6 +968,9 @@ int main(int argc, char** argv) {
     }
     if (mode == "generate-stage003-fixtures") {
         return generate_stage003_fixtures(argv[2]) ? 0 : 1;
+    }
+    if (mode == "generate-tile-fixtures") {
+        return generate_tile_fixtures(argv[2]) ? 0 : 1;
     }
     if (mode == "run-stream" || mode == "run-fill") {
         return run_stream_impl(argc, argv) ? 0 : 1;

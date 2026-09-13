@@ -23,6 +23,52 @@ struct SurfaceDesc {
     PixelFormat format = PixelFormat::RGB565;
 };
 
+// Pixel/sampler event sink — optional, not required for correctness.
+struct PixelEventSink {
+    u64 pixels_attempted = 0;
+    u64 pixels_written = 0;
+    u64 key_discards = 0;
+    u64 clip_rejects = 0;
+    u64 blend_ops = 0;
+    u64 texture_samples = 0;
+    u64 palette_reads = 0;
+    u64 bilinear_samples = 0;
+    // Per-pixel overdraw: increment for each logical write to same (x,y).
+    // Slot is limited to the active RT size; reset by caller when needed.
+    std::vector<u32> overdraw;
+    u32 od_w = 0;
+    u32 od_h = 0;
+    u32 max_overdraw = 0;
+
+    void reset_overdraw(u32 w, u32 h) {
+        od_w = w;
+        od_h = h;
+        overdraw.assign(static_cast<size_t>(w) * h, 0);
+        max_overdraw = 0;
+    }
+    void note_write(u32 x, u32 y) {
+        if (od_w == 0 || x >= od_w || y >= od_h) {
+            return;
+        }
+        u32& c = overdraw[static_cast<size_t>(y) * od_w + x];
+        ++c;
+        if (c > max_overdraw) {
+            max_overdraw = c;
+        }
+    }
+    double avg_overdraw_touched() const {
+        u64 sum = 0;
+        u32 n = 0;
+        for (u32 c : overdraw) {
+            if (c) {
+                sum += c;
+                ++n;
+            }
+        }
+        return n ? static_cast<double>(sum) / n : 0.0;
+    }
+};
+
 class GoldenGPU {
 public:
     MemoryImage& memory() noexcept { return memory_; }
@@ -47,6 +93,9 @@ public:
     ExecResult execute_decoded(const DecodedDraw& d, bool extra_clip, i32 x0, i32 y0,
                                i32 x1, i32 y1);
     void reset();
+
+    // Optional profiler (enabled for Tile/Immediate stats experiments).
+    PixelEventSink* perf = nullptr;
 
 private:
     struct Sampled {
