@@ -51,6 +51,12 @@ golden_add_test_exec(golden_test_ext_faults tests/directed/test_ext_faults.cpp)
 golden_add_test_exec(golden_test_semantics_pairs tests/directed/test_semantics_pairs.cpp)
 golden_add_test_exec(golden_test_oracle_exact tests/directed/test_oracle_exact.cpp)
 golden_add_test_exec(golden_test_diff_suites tests/random/test_diff_suites.cpp)
+golden_add_test_exec(golden_test_core_alpha_diff tests/random/test_core_alpha_diff.cpp)
+golden_add_test_exec(golden_test_scale_param_diff tests/random/test_scale_param_diff.cpp)
+golden_add_test_exec(golden_test_clip_diff tests/random/test_clip_diff.cpp)
+golden_add_test_exec(golden_test_oracle_v2 tests/directed/test_oracle_v2.cpp)
+golden_add_test_exec(golden_test_dither_dst tests/directed/test_dither_dst.cpp)
+golden_add_test_exec(golden_test_ext_mem_matrix tests/directed/test_ext_mem_matrix.cpp)
 
 add_test(
     NAME golden_test_integrity

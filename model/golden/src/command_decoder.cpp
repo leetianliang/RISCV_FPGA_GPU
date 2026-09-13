@@ -243,6 +243,15 @@ DecodedDraw decode_draw_2d(const GpuCmd64& cmd, const u8* ext_bytes, u32 ext_siz
         out.state.src_y = 0;
         out.state.src_w = out.state.dst_w;
         out.state.src_h = out.state.dst_h;
+        if (extract_dither_en(out.state.draw_state) &&
+            extract_dst_format(out.state.draw_state) !=
+                static_cast<u32>(PixelFormat::RGB565)) {
+            if (out.state.strict) {
+                fail_draw(out, FaultCode::BAD_FORMAT, out.state.draw_state);
+                return out;
+            }
+            out.state.draw_state &= ~(1u << 27);
+        }
         // FILL may use Draw2D extension for Clip when H_EXT_VALID=1.
         if (out.state.has_ext) {
             if (!load_extension(out.state, ext_bytes, ext_size, out)) {

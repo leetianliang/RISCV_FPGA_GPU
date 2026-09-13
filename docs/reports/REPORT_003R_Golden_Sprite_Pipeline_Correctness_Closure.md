@@ -4,7 +4,7 @@
 
 **PASS** (pending reviewer approval)
 
-REVIEW_003R blocking findings D1–D13 addressed. CTest **53/53 PASS**.
+REVIEW_003R / 003R_V2 findings addressed. CTest **59/59 PASS**.
 
 ## 2. START_COMMIT
 
@@ -12,7 +12,24 @@ REVIEW_003R blocking findings D1–D13 addressed. CTest **53/53 PASS**.
 
 ## 3. END_COMMIT
 
-`470d7b365343bc42a2987d874152c963840549e6`
+Implementation commits through `362a3e7` plus this rework commit (see `git log -1`).
+
+## 3b. REVIEW_003R_V2 E1–E12 Mapping
+
+| Item | Test executable / function |
+|---|---|
+| E1 Core Alpha/Key/Add differential | `golden_test_core_alpha_diff::run_case` |
+| E2 Parameterized nearest scale | `golden_test_scale_param_diff::run_scale` |
+| E3 Clip differential | `golden_test_clip_diff::run_clip` |
+| E4 INDEX8 Bilinear | `golden_test_oracle_v2::test_index8_bilinear` |
+| E5 Bilinear fractions + 2D order | `golden_test_oracle_v2::test_bilinear_fractions_and_order` |
+| E6 Straight vs Premult | `golden_test_oracle_v2::test_straight_vs_premult_equiv` |
+| E7 Dither translate/off/non-RGB | `golden_test_dither_dst` |
+| E8 Destination format matrix | `golden_test_dither_dst::test_dst_formats` |
+| E9 Repeat periods | `golden_test_oracle_v2::test_repeat_periods` |
+| E10 Ext Strict/header matrix | `golden_test_ext_mem_matrix::test_ext_header_matrix` |
+| E11 Memory fault negatives | `golden_test_ext_mem_matrix::test_memory_negatives`, `golden_test_sampler_errors` |
+| E12 Matrix/report | `docs/testing/GOLDEN_REGRESSION_MATRIX.md` + this mapping |
 
 ## 4. REVIEW_003 / 003R Closure
 
