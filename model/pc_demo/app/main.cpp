@@ -15,7 +15,9 @@ namespace {
 
 using gpu2d::BackendKind;
 using gpu2d::Color;
+using gpu2d::PixelFormat;
 using gpu2d::ProfileDesc;
+using gpu2d::i32;
 using gpu2d::u16;
 using gpu2d::u32;
 using gpu2d::u64;
@@ -250,10 +252,133 @@ int main(int argc, char** argv) {
     double host_fps = 0.0;
     auto t0 = std::chrono::steady_clock::now();
 
+    // I-02: GPU-rendered launcher (interactive only; headless skips to scene).
+    enum class AppScreen : int { Menu = 0, Game = 1, Help = 2, Stress = 3 };
+    AppScreen screen = cli.headless ? AppScreen::Game : AppScreen::Menu;
+    // CLI --scene already selects content; interactive default starts at menu.
+
+    auto draw_launcher = [&](gpu2d::GraphicsApi& api, AppScreen sc) {
+        api.fill_rect(0, 0, cli.profile.width, cli.profile.height,
+                      Color::rgb(6, 8, 20));
+        for (u32 x = 20; x + 20 < cli.profile.width; x += 40) {
+            api.fill_rect(static_cast<i32>(x), 40, 2, cli.profile.height - 80,
+                          Color::rgb(20, 40, 70));
+        }
+        neon::draw_text(api, assets, 24, 28, "RISC-V + FPGA 2D GPU DEMO", Color::rgb(80, 220, 255));
+        if (sc == AppScreen::Menu) {
+            neon::draw_text(api, assets, 40, 80, "1  NEON SURVIVOR", Color::rgb(180, 255, 180));
+            neon::draw_text(api, assets, 40, 100, "2  GPU PLAYGROUND - COMING SOON",
+                            Color::rgb(120, 120, 140));
+            neon::draw_text(api, assets, 40, 120, "3  ARCHITECTURE X-RAY / HELP",
+                            Color::rgb(180, 255, 180));
+            neon::draw_text(api, assets, 40, 140, "4  BENCHMARK / STRESS",
+                            Color::rgb(180, 255, 180));
+            neon::draw_text(api, assets, 40, 180, "ESC QUIT", Color::rgb(160, 160, 160));
+            neon::draw_text(api, assets, 40, 200, "GPU: TILE-BASED 2D / CPU: RISC-V (PC GOLDEN)",
+                            Color::rgb(100, 140, 180));
+        } else if (sc == AppScreen::Help) {
+            neon::draw_text(api, assets, 40, 70, "ARCHITECTURE X-RAY", Color::rgb(0, 255, 255));
+            neon::draw_text(api, assets, 40, 95, "F6 IMMEDIATE  F7 TILE32", Color::rgb(200, 200, 200));
+            neon::draw_text(api, assets, 40, 110, "F8 TECH HUD   F10 X-RAY", Color::rgb(200, 200, 200));
+            neon::draw_text(api, assets, 40, 125, "F1-F5 STRESS SCENES", Color::rgb(200, 200, 200));
+            neon::draw_text(api, assets, 40, 140, "WASD MOVE  P PAUSE  R RESET", Color::rgb(200, 200, 200));
+            neon::draw_text(api, assets, 40, 165, "TILE GRID SHOWS WORKREF / OVERDRAW WHEN TILE MODE",
+                            Color::rgb(160, 200, 255));
+            neon::draw_text(api, assets, 40, 200, "1 OR 4 BACK / ENTER GAME  ESC MENU",
+                            Color::rgb(160, 160, 160));
+        } else if (sc == AppScreen::Stress) {
+            neon::draw_text(api, assets, 40, 70, "BENCHMARK / STRESS (PC GOLDEN)", Color::rgb(255, 200, 80));
+            neon::draw_text(api, assets, 40, 95, "F1 SPRITE STORM", Color::rgb(200, 200, 200));
+            neon::draw_text(api, assets, 40, 110, "F2 ALPHA STORM", Color::rgb(200, 200, 200));
+            neon::draw_text(api, assets, 40, 125, "F3 BULLET HELL", Color::rgb(200, 200, 200));
+            neon::draw_text(api, assets, 40, 140, "F4 SCALE STORM", Color::rgb(200, 200, 200));
+            neon::draw_text(api, assets, 40, 155, "F5 OVERDRAW STORM", Color::rgb(200, 200, 200));
+            neon::draw_text(api, assets, 40, 185, "1 PLAY  0/ESC MENU", Color::rgb(160, 160, 160));
+            neon::draw_text(api, assets, 40, 205, "NOT FPGA PERFORMANCE", Color::rgb(255, 100, 100));
+        }
+    };
+
     while (true) {
         if (!cli.headless) {
             if (!pres.pump(input)) {
                 break;
+            }
+            if (screen == AppScreen::Menu) {
+                if (input.edge_1) {
+                    screen = AppScreen::Game;
+                    neon::sim_reset(sim, scfg, cli.seed);
+                    rng.seed(cli.seed);
+                    sim.scene = neon::SceneId::Game;
+                    cli.scene = neon::SceneId::Game;
+                } else if (input.edge_2) {
+                    // placeholder
+                } else if (input.edge_3) {
+                    screen = AppScreen::Help;
+                    xray = true;
+                } else if (input.edge_4) {
+                    screen = AppScreen::Stress;
+                }
+                input.clear_edges();
+                rec.begin_frame();
+                draw_launcher(rec, screen);
+                rec.present();
+                if (!gpu.execute_frame(rec.commands())) {
+                    std::fprintf(stderr, "launcher fault=0x%X\n", gpu.last_fault());
+                    return 1;
+                }
+                const u8* fbm = gpu.framebuffer();
+                pres.present(fbm, gpu.fb_width(), gpu.fb_height(), gpu.fb_stride(),
+                             gpu.fb_format() == PixelFormat::RGB565);
+                continue;
+            }
+            if (screen == AppScreen::Help) {
+                if (input.edge_1 || input.edge_4) {
+                    screen = AppScreen::Game;
+                    neon::sim_reset(sim, scfg, cli.seed);
+                    rng.seed(cli.seed);
+                    sim.scene = neon::SceneId::Game;
+                } else if (input.edge_quit || input.edge_3) {
+                    screen = AppScreen::Menu;
+                    xray = cli.xray;
+                }
+                input.clear_edges();
+                rec.begin_frame();
+                draw_launcher(rec, screen);
+                rec.present();
+                if (!gpu.execute_frame(rec.commands())) {
+                    std::fprintf(stderr, "help fault=0x%X\n", gpu.last_fault());
+                    return 1;
+                }
+                const u8* fbh = gpu.framebuffer();
+                pres.present(fbh, gpu.fb_width(), gpu.fb_height(), gpu.fb_stride(),
+                             gpu.fb_format() == PixelFormat::RGB565);
+                continue;
+            }
+            if (screen == AppScreen::Stress) {
+                if (input.edge_1 || input.edge_5) {
+                    screen = AppScreen::Game;
+                } else if (input.edge_quit || input.edge_4) {
+                    screen = AppScreen::Menu;
+                }
+                // F1-F5 still switch stress while showing menu then jump in
+                if (input.edge_f1 || input.edge_f2 || input.edge_f3 || input.edge_f4 ||
+                    input.edge_f5) {
+                    screen = AppScreen::Game;
+                }
+                if (screen == AppScreen::Stress) {
+                    input.clear_edges();
+                    rec.begin_frame();
+                    draw_launcher(rec, screen);
+                    rec.present();
+                    if (!gpu.execute_frame(rec.commands())) {
+                        std::fprintf(stderr, "stress menu fault=0x%X\n", gpu.last_fault());
+                        return 1;
+                    }
+                    const u8* fbs = gpu.framebuffer();
+                    pres.present(fbs, gpu.fb_width(), gpu.fb_height(), gpu.fb_stride(),
+                                 gpu.fb_format() == PixelFormat::RGB565);
+                    continue;
+                }
             }
             if (input.edge_f6) {
                 gpu.set_backend(BackendKind::Immediate);

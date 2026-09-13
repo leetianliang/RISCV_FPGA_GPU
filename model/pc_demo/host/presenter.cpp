@@ -115,6 +115,21 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
                     if (down && !g_input->reset) g_input->edge_reset = true;
                     g_input->reset = down;
                     break;
+                case '1':
+                    if (down) g_input->edge_1 = true;
+                    break;
+                case '2':
+                    if (down) g_input->edge_2 = true;
+                    break;
+                case '3':
+                    if (down) g_input->edge_3 = true;
+                    break;
+                case '4':
+                    if (down) g_input->edge_4 = true;
+                    break;
+                case '5':
+                    if (down) g_input->edge_5 = true;
+                    break;
                 default:
                     break;
             }

@@ -19,11 +19,13 @@ struct InputState {
     bool edge_f1 = false, edge_f2 = false, edge_f3 = false, edge_f4 = false, edge_f5 = false;
     bool edge_f6 = false, edge_f7 = false, edge_f8 = false, edge_f9 = false, edge_f10 = false;
     bool edge_pause = false, edge_reset = false;
+    bool edge_1 = false, edge_2 = false, edge_3 = false, edge_4 = false, edge_5 = false;
     void clear_edges() {
         edge_up = edge_down = edge_left = edge_right = edge_quit = false;
         edge_f1 = edge_f2 = edge_f3 = edge_f4 = edge_f5 = false;
         edge_f6 = edge_f7 = edge_f8 = edge_f9 = edge_f10 = false;
         edge_pause = edge_reset = false;
+        edge_1 = edge_2 = edge_3 = edge_4 = edge_5 = false;
     }
 };
 

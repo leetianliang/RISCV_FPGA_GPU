@@ -568,14 +568,14 @@ void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
         }
         std::snprintf(buf, sizeof(buf), "HP %d  TIME %u  KILLS %u  SCORE %u", sim.player.hp,
                       static_cast<u32>(sim.frame / 60), sim.kills, sim.score);
-        draw_text(api, a, 4, 3, buf, Color::rgb(180, 255, 255));
+        draw_text_pal(api, a, 4, 3, buf, Color::rgb(180, 255, 255));
         std::snprintf(buf, sizeof(buf), "EN %u  BL %u  PT %u  MODE %s", en, bl, pt,
                       opts.tile_mode ? "TILE32" : "IMMEDIATE");
         const i32 right = static_cast<i32>(cfg.width) > 240
                               ? static_cast<i32>(cfg.width) - 220
                               : 4;
         const i32 ry = static_cast<i32>(cfg.width) > 240 ? 3 : 16;
-        draw_text(api, a, right, ry, buf, Color::rgb(255, 200, 80));
+        draw_text_pal(api, a, right, ry, buf, Color::rgb(255, 200, 80));
     }
 
     if (opts.tech_hud && opts.tel) {

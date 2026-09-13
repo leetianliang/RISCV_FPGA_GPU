@@ -105,36 +105,56 @@ u32 hash_fb(const GoldenBackend& g) {
 }  // namespace
 
 int main() {
-    // J-01 / SYS-01: 100 frames Immediate == Tile
+    // J-01 / SYS-01 / B11: 100 frames Immediate == Tile + feature coverage
     {
         App imm, tile;
         CHECK(imm.init(160, 90, 1234, BackendKind::Immediate));
         CHECK(tile.init(160, 90, 1234, BackendKind::Tile32));
+        u32 cov_alpha = 0, cov_add = 0, cov_scale = 0, cov_clip = 0, cov_pal = 0, cov_bil = 0;
         for (int f = 0; f < 100; ++f) {
             CHECK(imm.step_render());
             CHECK(tile.step_render());
+            const auto dc = neon::last_render_counts();
+            cov_alpha += dc.alpha_draws;
+            cov_add += dc.additive_draws;
+            cov_scale += dc.scaled_draws;
+            cov_clip += dc.clipped_draws;
+            cov_pal += dc.palette_draws;
+            cov_bil += dc.bilinear_draws;
             const u32 n = imm.gpu.fb_stride() * imm.gpu.fb_height();
             if (std::memcmp(imm.gpu.framebuffer(), tile.gpu.framebuffer(), n) != 0) {
                 std::printf("frame %d FB mismatch cmds=%zu\n", f, imm.rec.commands().size());
-                size_t shown = 0;
-                for (const auto& c : imm.rec.commands()) {
-                    if (c.op == gpu2d::RecOp::Sprite &&
-                        (c.sp.scale_w || c.sp.blend != gpu2d::BlendMode::Copy || c.sp.color_mod ||
-                         c.clip_en || c.sp.color_key)) {
-                        std::printf("  sp t=%u %d,%d %ux%u sc=%d,%d bl=%u key=%d mod=%d\n",
-                                    c.sp.tex.v, c.sp.dst_x, c.sp.dst_y, c.sp.w, c.sp.h,
-                                    c.sp.scale_w, c.sp.scale_h,
-                                    static_cast<unsigned>(c.sp.blend), c.sp.color_key ? 1 : 0,
-                                    c.sp.color_mod ? 1 : 0);
-                        if (++shown > 6) {
-                            break;
-                        }
-                    }
-                }
                 ++g_fail;
                 break;
             }
         }
+        std::printf("coverage100 alpha=%u add=%u scale=%u clip=%u pal=%u bil=%u\n",
+                    cov_alpha, cov_add, cov_scale, cov_clip, cov_pal, cov_bil);
+        CHECK(cov_alpha > 0);
+        CHECK(cov_add > 0);
+        CHECK(cov_scale > 0);
+        CHECK(cov_clip > 0);
+        CHECK(cov_pal > 0);
+        CHECK(cov_bil > 0);
+    }
+
+    // B10 / SYS-02: 1000 rendered application frames (moderate profile)
+    {
+        App a;
+        CHECK(a.init(96, 64, 7, BackendKind::Tile32));
+        for (int f = 0; f < 1000; ++f) {
+            if (!a.step_render()) {
+                std::printf("1000-frame fail at %d fault=0x%X\n", f, a.gpu.last_fault());
+                ++g_fail;
+                break;
+            }
+            const u8* fb = a.gpu.framebuffer();
+            if (!fb) {
+                ++g_fail;
+                break;
+            }
+        }
+        CHECK(a.sim.frame == 1000);
     }
 
     // SYS-03: switch stability with same sim
