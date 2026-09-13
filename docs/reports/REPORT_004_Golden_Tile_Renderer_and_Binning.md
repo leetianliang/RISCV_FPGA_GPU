@@ -51,7 +51,16 @@ Sweep: `results/stage004_tile/tile_sweep.csv` + summary md.
 
 ## 17. Acceptance Matrix
 
-All 47 IDs marked PASS in `docs/tasks/STAGE_004_ACCEPTANCE.json` (checker + this report).
+All mandatory IDs = PASS. Manifest: `docs/tasks/STAGE_004_ACCEPTANCE.json`.
+
+GVF-01 GVF-02 GVF-03 GVF-04 GVF-05 GVF-06  
+TDS-01 TDS-02 TDS-03 TDS-04 TDS-05 TDS-06  
+BIN-01 BIN-02 BIN-03 BIN-04 BIN-05 BIN-06  
+TR-01 TR-02 TR-03 TR-04 TR-05 TR-06 TR-07 TR-08  
+EQ-01 EQ-02 EQ-03 EQ-04 EQ-05 EQ-06 EQ-07 EQ-08 EQ-09  
+PROF-01 PROF-02 PROF-03 PROF-04 PROF-05  
+EXP-01 EXP-02 EXP-03 EXP-04  
+AUD-01 AUD-02 AUD-03
 
 ## 18. CTest
 
