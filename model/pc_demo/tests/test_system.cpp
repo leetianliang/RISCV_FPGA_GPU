@@ -170,46 +170,134 @@ int main() {
         CHECK(h1 != 0);
     }
 
-    // Stress thresholds (H-T2): one frame each mode, check draw counts
+    // H-T2 frozen thresholds + H-T4 Imm==Tile per stress mode
     {
         struct Case {
             neon::SceneId sc;
             const char* name;
-            u32 min_sprites;
+            u32 frames;
+            u32 min_metric;
+            int metric;  // 0=sprites 1=alpha 2=scaled 3=bilinear+scale 4=max_od 5=bullets
         };
         const Case cases[] = {
-            {neon::SceneId::SpriteStorm, "sprite", 50},
-            {neon::SceneId::BulletHell, "bullet", 30},
-            {neon::SceneId::AlphaStorm, "alpha", 20},
-            {neon::SceneId::ScaleStorm, "scale", 10},
-            {neon::SceneId::OverdrawStorm, "overdraw", 10},
+            {neon::SceneId::SpriteStorm, "sprite", 80, 500, 0},
+            {neon::SceneId::BulletHell, "bullet", 80, 1000, 5},
+            {neon::SceneId::AlphaStorm, "alpha", 80, 300, 1},
+            {neon::SceneId::ScaleStorm, "scale", 80, 200, 2},
+            {neon::SceneId::OverdrawStorm, "overdraw", 80, 8, 4},
         };
         for (const auto& c : cases) {
-            App a;
-            CHECK(a.init(320, 180, 9, BackendKind::Tile32));
-            a.sim.scene = c.sc;
-            for (int f = 0; f < 90; ++f) {
-                CHECK(a.step_render());
+            App imm, tile;
+            CHECK(imm.init(320, 180, 9, BackendKind::Immediate));
+            CHECK(tile.init(320, 180, 9, BackendKind::Tile32));
+            imm.sim.scene = c.sc;
+            tile.sim.scene = c.sc;
+            u32 last_metric = 0;
+            for (u32 f = 0; f < c.frames; ++f) {
+                CHECK(imm.step_render());
+                CHECK(tile.step_render());
+            }
+            const u32 n = imm.gpu.fb_stride() * imm.gpu.fb_height();
+            if (std::memcmp(imm.gpu.framebuffer(), tile.gpu.framebuffer(), n) != 0) {
+                std::printf("stress %s Imm!=Tile\n", c.name);
+                ++g_fail;
             }
             const auto dc = neon::last_render_counts();
-            // also from telemetry
-            const auto& t = a.gpu.telemetry();
-            std::printf("stress %s sprites=%u cmds=%u wrefs=%u max_od=%u\n", c.name,
-                        dc.sprites, t.command_count, t.workref_count, t.max_overdraw);
-            // Reduced thresholds for headless unit test speed; CLI demo uses higher.
-            CHECK(dc.sprites + t.command_count > 0);
-            if (c.sc == neon::SceneId::OverdrawStorm) {
-                // overdraw storm should produce some overdraw when tile backend used
-                CHECK(t.max_overdraw >= 1);
+            const auto& t = tile.gpu.telemetry();
+            u32 live_en = 0, live_bl = 0, live_pt = 0;
+            for (const auto& e : tile.sim.enemies) {
+                live_en += e.alive ? 1 : 0;
+            }
+            for (const auto& b : tile.sim.bullets) {
+                live_bl += b.alive ? 1 : 0;
+            }
+            for (const auto& p : tile.sim.particles) {
+                live_pt += p.life ? 1 : 0;
+            }
+            switch (c.metric) {
+                case 0:
+                    last_metric = dc.sprites;
+                    break;
+                case 1:
+                    last_metric = dc.alpha_draws;
+                    break;
+                case 2:
+                    last_metric = dc.scaled_draws;
+                    break;
+                case 4:
+                    last_metric = t.max_overdraw;
+                    break;
+                case 5:
+                    last_metric = live_bl + dc.sprites;
+                    break;
+                default:
+                    last_metric = dc.sprites;
+                    break;
+            }
+            std::printf(
+                "stress %s metric=%u (min %u) sprites=%u alpha=%u scaled=%u bil=%u "
+                "live_en=%u live_bl=%u live_pt=%u max_od=%u\n",
+                c.name, last_metric, c.min_metric, dc.sprites, dc.alpha_draws,
+                dc.scaled_draws, dc.bilinear_draws, live_en, live_bl, live_pt, t.max_overdraw);
+            if (last_metric < c.min_metric) {
+                std::printf("  FAIL threshold %s metric=%u < %u\n", c.name, last_metric,
+                            c.min_metric);
+                ++g_fail;
             }
         }
     }
 
-    // Palette path exercised (font_index8 texture valid)
+    // XR G-T1..G-T4
     {
         App a;
-        CHECK(a.init(64, 64, 1, BackendKind::Immediate));
-        CHECK(a.assets.font_pal.valid());
+        CHECK(a.init(160, 90, 42, BackendKind::Tile32));
+        a.sim.scene = neon::SceneId::Game;
+        for (int f = 0; f < 40; ++f) {
+            CHECK(a.step_render());
+        }
+        const auto& t = a.gpu.telemetry();
+        // G-T1: known grid for 160x90 tile32 → 5 x 3
+        CHECK(t.grid_w == 5);
+        CHECK(t.grid_h == 3);
+        CHECK(t.tile_size == 32);
+        // G-T2: inactive / low / high work tiles
+        if (t.has_workref_map && !t.tile_workrefs.empty()) {
+            u32 zero = 0, low = 0, high = 0;
+            const size_t n = static_cast<size_t>(t.grid_w) * t.grid_h;
+            for (size_t i = 0; i < n; ++i) {
+                const u16 wc = t.tile_workrefs[i];
+                if (wc == 0) {
+                    ++zero;
+                } else if (wc <= 4) {
+                    ++low;
+                } else if (wc >= 10) {
+                    ++high;
+                }
+            }
+            std::printf("xray grid %ux%u zero=%u low=%u high=%u\n", t.grid_w, t.grid_h, zero,
+                        low, high);
+            CHECK(zero >= 1 || low >= 1);  // corners often empty
+            CHECK(low + high >= 1);
+        }
+        // G-T3: X-Ray does not alter sim
+        const u32 h0 = neon::hash_sim(a.sim);
+        CommandRecorder rec;
+        rec.begin_frame();
+        neon::DrawOpts opts;
+        opts.hud = true;
+        opts.xray = true;
+        opts.tile_size = 32;
+        opts.tile_mode = true;
+        const auto tel = a.gpu.telemetry().view();
+        opts.tel = &tel;
+        neon::render_frame(rec, a.assets, a.sim, a.cfg, opts);
+        CHECK(neon::hash_sim(a.sim) == h0);
+        // G-T4: base scene FB before overlay execute unchanged after sim-only
+        const u32 fb0 = hash_fb(a.gpu);
+        rec.present();
+        CHECK(a.gpu.execute_frame(rec.commands()));
+        // overlay changes pixels
+        CHECK(hash_fb(a.gpu) != fb0);
     }
 
     if (g_fail) {

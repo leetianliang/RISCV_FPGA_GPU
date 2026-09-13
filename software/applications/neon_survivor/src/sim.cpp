@@ -55,7 +55,7 @@ void sim_reset(SimState& s, const SimConfig& cfg, u32 seed) {
     s.player.max_hp = 100;
     s.enemies.reserve(2048);
     s.bullets.reserve(4096);
-    s.particles.reserve(2048);
+    s.particles.reserve(4096);
     s.spawn_timer = 0;
     s.attack_timer = 0;
     s.entity_hash = seed;
@@ -240,33 +240,34 @@ void sim_step(SimState& s, const SimConfig& cfg, Rng& rng, const bool* keys, boo
             spawn_enemy(s, cfg, rng, k);
         }
     } else if (s.scene == SceneId::SpriteStorm) {
+        // Frozen threshold: >= 500 visible sprite draws. Cap ~900 live enemies.
         if (tick % 2 == 0) {
-            for (int i = 0; i < 8; ++i) {
+            for (int i = 0; i < 20; ++i) {
                 spawn_enemy(s, cfg, rng, EnemyKind::Normal);
             }
         }
     } else if (s.scene == SceneId::AlphaStorm) {
+        // Frozen threshold: >= 300 alpha-blended draws (live fade particles).
         if (tick % 2 == 0) {
-            Particle p;
-            p.x = rng.range(0, cfg.width);
-            p.y = rng.range(0, cfg.height);
-            p.vx = (rng.frand() - 0.5f) * 2;
-            p.vy = (rng.frand() - 0.5f) * 2;
-            p.life = p.max_life = 40;
-            p.r = 80;
-            p.g = 200;
-            p.b = 255;
-            p.mode = 0;
-            spawn_particle(s, p);
-        }
-        for (int i = 0; i < 4; ++i) {
-            spawn_particle(s, Particle{});
+            for (int i = 0; i < 18; ++i) {
+                Particle p;
+                p.x = rng.range(0, cfg.width);
+                p.y = rng.range(0, cfg.height);
+                p.vx = (rng.frand() - 0.5f) * 2;
+                p.vy = (rng.frand() - 0.5f) * 2;
+                p.life = p.max_life = 48;
+                p.r = 80;
+                p.g = 200;
+                p.b = 255;
+                p.mode = 0;
+                spawn_particle(s, p);
+            }
         }
     } else if (s.scene == SceneId::BulletHell) {
-        // radial + spiral from center
-        if (tick % 8 == 0) {
-            for (int i = 0; i < 12; ++i) {
-                const float a = static_cast<float>(i) / 12.0f * 6.2831853f;
+        // Frozen threshold: >= 1000 live projectiles or draws.
+        if (tick % 2 == 0) {
+            for (int i = 0; i < 20; ++i) {
+                const float a = static_cast<float>(i) / 20.0f * 6.2831853f;
                 Bullet b;
                 b.x = cx;
                 b.y = cy;
@@ -278,16 +279,16 @@ void sim_step(SimState& s, const SimConfig& cfg, Rng& rng, const bool* keys, boo
                 spawn_bullet(s, b);
             }
         }
-        if (tick % 3 == 0) {
-            s.spiral_angle += 7;
+        {
+            s.spiral_angle += 9;
             const float a = static_cast<float>(s.spiral_angle) * 0.0174533f;
-            for (int arm = 0; arm < 3; ++arm) {
-                const float aa = a + arm * 2.094f;
+            for (int arm = 0; arm < 4; ++arm) {
+                const float aa = a + arm * 1.5708f;
                 Bullet b;
                 b.x = cx;
                 b.y = cy;
-                b.vx = std::cos(aa) * 1.6f;
-                b.vy = std::sin(aa) * 1.6f;
+                b.vx = std::cos(aa) * 1.2f;
+                b.vy = std::sin(aa) * 1.2f;
                 b.alive = true;
                 b.kind = 2;
                 b.enemy = true;
@@ -295,24 +296,27 @@ void sim_step(SimState& s, const SimConfig& cfg, Rng& rng, const bool* keys, boo
             }
         }
     } else if (s.scene == SceneId::ScaleStorm) {
-        if (tick % 3 == 0) {
-            spawn_enemy(s, cfg, rng, EnemyKind::Heavy);
-            spawn_enemy(s, cfg, rng, EnemyKind::Normal);
+        // Frozen threshold: >= 200 scaled draws (Heavy enemies use scale+bilinear).
+        if (tick % 2 == 0) {
+            for (int i = 0; i < 12; ++i) {
+                spawn_enemy(s, cfg, rng, EnemyKind::Heavy);
+            }
         }
     } else if (s.scene == SceneId::OverdrawStorm) {
+        // Frozen threshold: max_overdraw >= 8 in a tight cluster.
         if (tick % 2 == 0) {
-            for (int i = 0; i < 6; ++i) {
+            for (int i = 0; i < 16; ++i) {
                 Particle p;
-                p.x = cx + (rng.frand() - 0.5f) * 40;
-                p.y = cy + (rng.frand() - 0.5f) * 40;
+                p.x = cx + (rng.frand() - 0.5f) * 28;
+                p.y = cy + (rng.frand() - 0.5f) * 28;
                 p.vx = (rng.frand() - 0.5f);
                 p.vy = (rng.frand() - 0.5f);
-                p.life = p.max_life = 24;
+                p.life = p.max_life = 36;
                 p.r = 255;
                 p.g = 80;
                 p.b = 200;
                 p.mode = 1;
-                p.scale = 1.5f + rng.frand();
+                p.scale = 2.0f + rng.frand();
                 spawn_particle(s, p);
             }
         }
