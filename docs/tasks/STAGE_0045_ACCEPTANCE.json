@@ -1,0 +1,816 @@
+{
+  "stage": "0045",
+  "acceptance": [
+    {
+      "id": "HOST-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "PC window displays project RGB565 framebuffer",
+      "implementation_evidence": [
+        "model/pc_demo/host/presenter.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_presenter",
+        "gpu2d_demo_headless_imm"
+      ],
+      "test_name": "gpu2d_test_presenter",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "HOST-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Input and clean shutdown",
+      "implementation_evidence": [
+        "model/pc_demo/host/presenter.cpp",
+        "model/pc_demo/app/main.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_presenter"
+      ],
+      "test_name": "gpu2d_test_presenter",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "HOST-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "640x360 and 1280x720 paths",
+      "implementation_evidence": [
+        "model/pc_demo/host/presenter.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_presenter"
+      ],
+      "test_name": "gpu2d_test_presenter",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "HOST-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Headless mode requires no window",
+      "implementation_evidence": [
+        "model/pc_demo/host/presenter.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_presenter",
+        "gpu2d_demo_headless_imm"
+      ],
+      "test_name": "gpu2d_test_presenter",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "HOST-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Golden Core free of window/SDL deps",
+      "implementation_evidence": [
+        "scripts/check_app_boundary.py",
+        "model/golden/CMakeLists.txt"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_boundary",
+        "golden_test_integrity"
+      ],
+      "test_name": "gpu2d_test_boundary",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "API-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Common Graphics API application-facing",
+      "implementation_evidence": [
+        "software/graphics/include/gpu2d/graphics_api.hpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_api"
+      ],
+      "test_name": "gpu2d_test_api",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "API-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Game uses handles not Golden addresses",
+      "implementation_evidence": [
+        "software/graphics/include/gpu2d/types.hpp",
+        "scripts/check_app_boundary.py"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_boundary",
+        "gpu2d_test_api"
+      ],
+      "test_name": "gpu2d_test_boundary",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "API-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Fill/Sprite/Alpha/Additive/Scale/Clip/Palette expressible",
+      "implementation_evidence": [
+        "software/graphics/include/gpu2d/graphics_api.hpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_api",
+        "gpu2d_test_backend"
+      ],
+      "test_name": "gpu2d_test_api",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "API-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Command order deterministic",
+      "implementation_evidence": [
+        "software/graphics/include/gpu2d/renderer.hpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_api"
+      ],
+      "test_name": "gpu2d_test_api",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "API-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "API stream backend-neutral",
+      "implementation_evidence": [
+        "model/pc_demo/golden_backend/golden_renderer.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_backend",
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_backend",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "API-06",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "No game-specific GPU opcode or GpuCmd construction in app",
+      "implementation_evidence": [
+        "scripts/check_app_boundary.py"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_boundary"
+      ],
+      "test_name": "gpu2d_test_boundary",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "BACK-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Immediate backend executes app streams",
+      "implementation_evidence": [
+        "model/pc_demo/golden_backend/golden_renderer.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_backend"
+      ],
+      "test_name": "gpu2d_test_backend",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "BACK-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Tile32 backend executes same streams",
+      "implementation_evidence": [
+        "model/pc_demo/golden_backend/golden_renderer.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_backend"
+      ],
+      "test_name": "gpu2d_test_backend",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "BACK-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Integrated scene Immediate==Tile byte-for-byte",
+      "implementation_evidence": [
+        "model/pc_demo/tests/test_backend.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_backend",
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_backend",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "BACK-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Runtime backend switching",
+      "implementation_evidence": [
+        "model/pc_demo/golden_backend/golden_renderer.cpp",
+        "model/pc_demo/tests/test_system.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "BACK-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Resource upload backend-owned",
+      "implementation_evidence": [
+        "model/pc_demo/golden_backend/golden_renderer.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_backend"
+      ],
+      "test_name": "gpu2d_test_backend",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "BACK-06",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "RendererTelemetry abstraction",
+      "implementation_evidence": [
+        "software/graphics/include/gpu2d/telemetry.hpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_api",
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_api",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "SIM-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Fixed-timestep simulation",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/sim.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_sim"
+      ],
+      "test_name": "gpu2d_test_sim",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "SIM-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Fixed-seed deterministic mode",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/include/neon/sim.hpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_sim"
+      ],
+      "test_name": "gpu2d_test_sim",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "SIM-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Scripted/headless input path",
+      "implementation_evidence": [
+        "model/pc_demo/app/main.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_sim",
+        "gpu2d_demo_headless_imm"
+      ],
+      "test_name": "gpu2d_test_sim",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "SIM-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Reset restores initial state",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/sim.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_sim"
+      ],
+      "test_name": "gpu2d_test_sim",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "SIM-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Rendering backend does not alter gameplay state",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/sim.cpp",
+        "model/pc_demo/tests/test_system.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "GAME-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Player movement and HP",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/sim.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_sim"
+      ],
+      "test_name": "gpu2d_test_sim",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "GAME-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Normal/Fast/Heavy enemy classes",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/sim.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_sim"
+      ],
+      "test_name": "gpu2d_test_sim",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "GAME-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Straight projectile",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/sim.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_sim"
+      ],
+      "test_name": "gpu2d_test_sim",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "GAME-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Radial/spread projectile pattern",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/sim.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_sim"
+      ],
+      "test_name": "gpu2d_test_sim",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "GAME-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Spiral/bullet-hell pattern",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/sim.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_sim"
+      ],
+      "test_name": "gpu2d_test_sim",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "GAME-06",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Spawn/damage/kill/score playable loop",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/sim.cpp",
+        "model/pc_demo/app/main.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_sim",
+        "gpu2d_demo_headless_imm"
+      ],
+      "test_name": "gpu2d_test_sim",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "FX-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Alpha-fade particle/trail",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/assets.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system",
+        "gpu2d_test_backend"
+      ],
+      "test_name": "gpu2d_test_backend",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "FX-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Additive glow/explosion",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/assets.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system",
+        "gpu2d_test_backend"
+      ],
+      "test_name": "gpu2d_test_backend",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "FX-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Scaling and bilinear effect",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/assets.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_backend"
+      ],
+      "test_name": "gpu2d_test_backend",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "FX-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Color Mod / Palette damage or variant",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/assets.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_backend"
+      ],
+      "test_name": "gpu2d_test_backend",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "FX-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Color Key + Indexed8/Palette paths exercised",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/assets.cpp",
+        "model/pc_demo/tests/test_system.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "FX-06",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "GPU-rendered HUD with telemetry",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/assets.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system",
+        "gpu2d_demo_headless_imm"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "XR-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Tile grid visualization",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/assets.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "XR-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Per-Tile WorkRef visualization",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/assets.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "XR-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Active Tile visualization",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/assets.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "XR-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Overdraw visualization when available",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/assets.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "XR-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Normal/X-Ray switch does not affect simulation",
+      "implementation_evidence": [
+        "model/pc_demo/app/main.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "STR-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Sprite Storm",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/sim.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system",
+        "gpu2d_test_sim"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "STR-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Alpha Storm",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/sim.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system",
+        "gpu2d_test_sim"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "STR-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Bullet Hell",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/sim.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system",
+        "gpu2d_test_sim"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "STR-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Scale Storm",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/sim.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system",
+        "gpu2d_test_sim"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "STR-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Overdraw Storm",
+      "implementation_evidence": [
+        "software/applications/neon_survivor/src/sim.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "STR-06",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Stress telemetry labeled PC Golden workload stats",
+      "implementation_evidence": [
+        "results/stage0045/stress/stress_stats.md"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "SYS-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "100 frames Immediate==Tile exact",
+      "implementation_evidence": [
+        "model/pc_demo/tests/test_system.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "SYS-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "1000-frame headless stability",
+      "implementation_evidence": [
+        "model/pc_demo/tests/test_sim.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_sim"
+      ],
+      "test_name": "gpu2d_test_sim",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "SYS-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Immediate\u2192Tile\u2192Immediate switch stability",
+      "implementation_evidence": [
+        "model/pc_demo/tests/test_system.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "SYS-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Deterministic frame capture/hash",
+      "implementation_evidence": [
+        "model/pc_demo/tests/test_system.cpp",
+        "results/stage0045/captures/"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "SYS-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Game code independent of Golden internals",
+      "implementation_evidence": [
+        "scripts/check_app_boundary.py"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_boundary"
+      ],
+      "test_name": "gpu2d_test_boundary",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "SYS-06",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Presenter does not host-render game content",
+      "implementation_evidence": [
+        "model/pc_demo/host/presenter.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_presenter"
+      ],
+      "test_name": "gpu2d_test_presenter",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "SYS-07",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Stage-004 regressions still pass",
+      "implementation_evidence": [
+        "model/golden/"
+      ],
+      "verification_evidence": [
+        "ctest stage0045 includes golden_*"
+      ],
+      "test_name": "golden_test_tile_faults",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "AUD-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "56-ID acceptance manifest",
+      "implementation_evidence": [
+        "docs/tasks/STAGE_0045_ACCEPTANCE.json"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_boundary"
+      ],
+      "test_name": "gpu2d_test_boundary",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "AUD-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Strict acceptance checker",
+      "implementation_evidence": [
+        "scripts/check_stage0045_acceptance.py"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_boundary"
+      ],
+      "test_name": "gpu2d_test_boundary",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "AUD-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "REPORT_0045 exact commits and 56-row matrix",
+      "implementation_evidence": [
+        "docs/reports/REPORT_0045_PC_Golden_Interactive_Application.md"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_boundary"
+      ],
+      "test_name": "gpu2d_test_boundary",
+      "notes": "See REPORT_0045"
+    },
+    {
+      "id": "AUD-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Captures and stress outputs checked/generated",
+      "implementation_evidence": [
+        "results/stage0045/captures/",
+        "results/stage0045/stress/stress_stats.md"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_system",
+        "gpu2d_demo_headless_tile"
+      ],
+      "test_name": "gpu2d_test_system",
+      "notes": "See REPORT_0045"
+    }
+  ]
+}

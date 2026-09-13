@@ -1,0 +1,83 @@
+#pragma once
+
+#include "gpu2d/graphics_api.hpp"
+#include "gpu2d/telemetry.hpp"
+#include "gpu2d/types.hpp"
+#include "neon/sim.hpp"
+
+#include <vector>
+
+namespace neon {
+
+// Procedural pixel payloads (game-owned data, no Golden types).
+struct SpriteBlob {
+    std::vector<gpu2d::u8> pixels;  // RGB565 packed
+    u32 w = 0;
+    u32 h = 0;
+    u32 stride = 0;
+    bool indexed8 = false;
+    std::vector<gpu2d::u32> palette;  // 256 RGBA when indexed8
+};
+
+struct AssetBlobs {
+    SpriteBlob player;
+    SpriteBlob enemy_n;
+    SpriteBlob enemy_f;
+    SpriteBlob enemy_h;
+    SpriteBlob bullet;
+    SpriteBlob bullet_e;
+    SpriteBlob particle;
+    SpriteBlob glow;
+    SpriteBlob font;
+    SpriteBlob font_index8;
+};
+
+AssetBlobs build_procedural_assets();
+
+// Texture handles created by the host/backend layer (game only stores IDs).
+struct Assets {
+    gpu2d::TextureId player{};
+    gpu2d::TextureId enemy_n{};
+    gpu2d::TextureId enemy_f{};
+    gpu2d::TextureId enemy_h{};
+    gpu2d::TextureId bullet{};
+    gpu2d::TextureId bullet_e{};
+    gpu2d::TextureId particle{};
+    gpu2d::TextureId glow{};
+    gpu2d::TextureId font{};
+    gpu2d::TextureId font_pal{};
+};
+
+struct DrawOpts {
+    bool hud = true;
+    bool tech_hud = false;
+    bool xray = false;
+    bool show_grid = false;
+    bool tile_mode = false;
+    const gpu2d::RendererTelemetry* tel = nullptr;
+    double host_fps = 0.0;
+    u32 particles_drawn = 0;
+    u32 enemies_drawn = 0;
+    u32 bullets_drawn = 0;
+};
+
+void draw_text(gpu2d::GraphicsApi& api, const Assets& a, i32 x, i32 y, const char* s,
+               gpu2d::Color c, u8 alpha = 255);
+
+void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
+                  const SimConfig& cfg, const DrawOpts& opts);
+
+// Count of submitted draws this frame (for stress thresholds).
+struct DrawCounts {
+    u32 sprites = 0;
+    u32 fills = 0;
+    u32 alpha_draws = 0;
+    u32 additive_draws = 0;
+    u32 scaled_draws = 0;
+};
+
+DrawCounts last_render_counts();
+u32 font_glyph_w();
+u32 font_glyph_h();
+
+}  // namespace neon
