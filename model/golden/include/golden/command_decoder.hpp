@@ -52,6 +52,9 @@ struct Draw2DState {
     i32 dv_dx = 0;
     i32 du_dy = 0;
     i32 dv_dy = 1 << 16;
+    // Global RT origin offset for dither when rendering tile-local coordinates.
+    i32 dither_ox = 0;
+    i32 dither_oy = 0;
 };
 
 struct DecodedHeader {

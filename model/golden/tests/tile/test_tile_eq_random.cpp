@@ -57,9 +57,8 @@ ExecResult run_tile_path(GoldenGPU& gpu, const std::vector<GpuCmd64>& draws,
     tf.grid_h = (th + tile - 1) / tile;
     tf.tile_w = tile;
     tf.tile_h = tile;
-    tf.rt_state = static_cast<u32>(PixelFormat::RGB565);
-    return execute_tile_frame(gpu, make_tile_frame_cmd(tf),
-                              static_cast<u32>(draws.size()));
+    tf.rt_state = tile_rt_state_store(PixelFormat::RGB565);
+    return execute_tile_frame(gpu, make_tile_frame_cmd(tf));
 }
 
 std::vector<GpuCmd64> random_draws(u32 seed, u32 tw, u32 th) {
@@ -67,40 +66,87 @@ std::vector<GpuCmd64> random_draws(u32 seed, u32 tw, u32 th) {
     std::vector<GpuCmd64> draws;
     const int n = 4 + static_cast<int>(rng.range(8));
     for (int i = 0; i < n; ++i) {
-        const auto color = Rgba8888::pack(
-            rng.range(2) ? 255 : static_cast<u32>(1 + rng.range(254)),
-            static_cast<u8>(rng.range(256)), static_cast<u8>(rng.range(256)),
-            static_cast<u8>(rng.range(256)));
-        const u32 w = 1 + rng.range(24);
-        const u32 h = 1 + rng.range(24);
-        const u32 x = rng.range(tw);
-        const u32 y = rng.range(th);
-        auto cmd = make_fill_rect_cmd(0x10000, tw * 2, static_cast<i32>(x),
-                                      static_cast<i32>(y), w, h, color);
-        if (rng.range(3) == 0) {
-            u32 ds = cmd[12];
-            ds = (ds & ~(0xFu << 8)) |
-                 (static_cast<u32>(BlendMode::STRAIGHT_ALPHA) << 8);
-            cmd[12] = ds;
-            cmd[14] = (static_cast<u32>(rng.range(256)) << 24);
+        const u32 kind = rng.range(5);  // FILL / FILL-α / FILL-add / BLIT / BLIT-key
+        if (kind < 3) {
+            const auto color = Rgba8888::pack(
+                rng.range(2) ? 255 : static_cast<u32>(1 + rng.range(254)),
+                static_cast<u8>(rng.range(256)), static_cast<u8>(rng.range(256)),
+                static_cast<u8>(rng.range(256)));
+            // also clamp fill dest
+            const u32 x = rng.range(tw);
+            const u32 y = rng.range(th);
+            u32 w = 1 + rng.range(24);
+            u32 h = 1 + rng.range(24);
+            if (x + w > tw) w = tw - x;
+            if (y + h > th) h = th - y;
+            if (w == 0) w = 1;
+            if (h == 0) h = 1;
+            auto cmd = make_fill_rect_cmd(0x10000, tw * 2, static_cast<i32>(x),
+                                          static_cast<i32>(y), w, h, color);
+            if (kind == 1) {
+                u32 ds = cmd[12];
+                ds = (ds & ~(0xFu << 8)) |
+                     (static_cast<u32>(BlendMode::STRAIGHT_ALPHA) << 8);
+                ds |= (1u << 20);
+                cmd[12] = ds;
+                cmd[14] = (static_cast<u32>(rng.range(256)) << 24);
+            } else if (kind == 2) {
+                u32 ds = cmd[12];
+                ds = (ds & ~(0xFu << 8)) |
+                     (static_cast<u32>(BlendMode::ADD_SAT) << 8);
+                cmd[12] = ds;
+            }
+            draws.push_back(cmd);
+        } else {
+            // small RGB565 blit from a 8x8 sheet at 0x20000
+            BlitCmdDesc d;
+            d.src_base = 0x20000;
+            d.dst_base = 0x10000;
+            d.src_stride = 16;
+            d.dst_stride = tw * 2;
+            d.src_x = rng.range(4);
+            d.src_y = rng.range(4);
+            d.w = 1 + rng.range(8);
+            d.h = 1 + rng.range(8);
+            if (d.src_x + d.w > 8) d.w = 8 - d.src_x;
+            if (d.src_y + d.h > 8) d.h = 8 - d.src_y;
+            if (d.w == 0) d.w = 1;
+            if (d.h == 0) d.h = 1;
+            // keep dest fully in-bounds
+            d.dst_x = static_cast<i32>(rng.range(tw > d.w ? tw - d.w + 1 : 1));
+            d.dst_y = static_cast<i32>(rng.range(th > d.h ? th - d.h + 1 : 1));
+            if (kind == 4) {
+                d.color_key_en = true;
+                d.color_key_rgb = 0x001C00;
+            }
+            draws.push_back(make_blit_cmd(d));
         }
-        draws.push_back(cmd);
     }
     return draws;
 }
 
 void run_frame(u32 seed, u32 tile) {
     const u32 tw = 48, th = 40;
+    const u32 stride = tw * 2;
     GoldenGPU imm;
-    imm.register_surface(SurfaceDesc{0x10000, tw * 2, tw, th, PixelFormat::RGB565},
+    imm.register_surface(SurfaceDesc{0x10000, stride, tw, th, PixelFormat::RGB565},
                          "d");
-    std::vector<u8> init(static_cast<size_t>(tw * 2) * th, 0);
+    imm.register_surface(SurfaceDesc{0x20000, 16, 8, 8, PixelFormat::RGB565}, "s");
+    std::vector<u8> init(static_cast<size_t>(stride) * th, 0);
+    std::vector<u8> tex(16 * 8);
+    Rng tr(seed ^ 0xA5A5u);
+    for (size_t i = 0; i + 1 < tex.size(); i += 2) {
+        const u16 px = static_cast<u16>(tr.next() & 0xFFFF);
+        tex[i] = static_cast<u8>(px & 0xFF);
+        tex[i + 1] = static_cast<u8>(px >> 8);
+    }
     imm.memory().write_block(0x10000, init.data(), init.size());
+    imm.memory().write_block(0x20000, tex.data(), tex.size());
     const auto draws = random_draws(seed, tw, th);
     for (const auto& c : draws) {
         const auto st = imm.execute_command(c);
         if (!st.ok) {
-            std::printf("imm fail seed=%u\n", seed);
+            std::printf("imm fail seed=%u fault=%u\n", seed, static_cast<u32>(st.fault));
             ++g_failures;
             return;
         }
@@ -109,9 +155,11 @@ void run_frame(u32 seed, u32 tile) {
     imm.memory().read_block(0x10000, init.size(), fb_imm);
 
     GoldenGPU tileg;
-    tileg.register_surface(SurfaceDesc{0x10000, tw * 2, tw, th, PixelFormat::RGB565},
+    tileg.register_surface(SurfaceDesc{0x10000, stride, tw, th, PixelFormat::RGB565},
                            "d");
+    tileg.register_surface(SurfaceDesc{0x20000, 16, 8, 8, PixelFormat::RGB565}, "s");
     tileg.memory().write_block(0x10000, init.data(), init.size());
+    tileg.memory().write_block(0x20000, tex.data(), tex.size());
     const auto st = run_tile_path(tileg, draws, tw, th, tile);
     if (!st.ok) {
         std::printf("tile fail seed=%u tile=%u fault=%u\n", seed, tile,

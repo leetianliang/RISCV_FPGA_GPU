@@ -348,8 +348,9 @@ ExecResult GoldenGPU::sample_and_blend(const DecodedDraw& d, SurfaceView& src_vi
                         d.state.global_alpha, global_en);
 
     if (blend == static_cast<u32>(BlendMode::COPY)) {
-        return dst_view.write_rgba(dx, dy, sm, dither, static_cast<u32>(dx),
-                                   static_cast<u32>(dy));
+        return dst_view.write_rgba(dx, dy, sm, dither,
+                                       static_cast<u32>(dx + d.state.dither_ox),
+                                       static_cast<u32>(dy + d.state.dither_oy));
     }
 
     Rgba8888 dstc{};
@@ -390,8 +391,9 @@ ExecResult GoldenGPU::sample_and_blend(const DecodedDraw& d, SurfaceView& src_vi
     } else {
         return ExecResult::failure(FaultCode::UNSUPPORTED_FEATURE, blend);
     }
-    return dst_view.write_rgba(dx, dy, out, dither, static_cast<u32>(dx),
-                               static_cast<u32>(dy));
+    return dst_view.write_rgba(dx, dy, out, dither,
+                               static_cast<u32>(dx + d.state.dither_ox),
+                               static_cast<u32>(dy + d.state.dither_oy));
 }
 
 ExecResult GoldenGPU::execute_decoded(const DecodedDraw& d, bool extra_clip, i32 x0,

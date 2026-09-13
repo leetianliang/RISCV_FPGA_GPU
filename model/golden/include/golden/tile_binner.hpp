@@ -15,9 +15,17 @@ TileBinResult bin_draws(const std::vector<GpuCmd64>& draws, const MemoryImage& m
 std::vector<u8> serialize_workrefs(const std::vector<WorkRef>& refs);
 
 // Execute TILE_FRAME through GoldenGPU memory model (shared pixel backend).
-// desc_count_hint=0: derive descriptor bounds from registered resource at draw_desc_base.
-ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd,
-                              u32 desc_count_hint = 0);
+// Descriptor capacity comes from the registered resource at draw_desc_base.
+ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd);
+
+// Convenience: default RT_STATE for tests (format + STORE_COLOR).
+inline u32 tile_rt_state_store(PixelFormat fmt, bool strict = false) {
+    u32 rt = static_cast<u32>(fmt) | kRtStoreColor;
+    if (strict) {
+        rt |= kRtStrictTargetMatch;
+    }
+    return rt;
+}
 
 struct TileStats {
     u32 tiles_total = 0;

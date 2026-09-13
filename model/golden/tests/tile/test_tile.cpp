@@ -161,8 +161,8 @@ void test_tile_frame_exec() {
         tf.grid_h = 2;
         tf.tile_w = 32;
         tf.tile_h = 32;
-        tf.rt_state = static_cast<u32>(PixelFormat::RGB565);
-        const auto st = execute_tile_frame(gpu, make_tile_frame_cmd(tf), 2);
+        tf.rt_state = tile_rt_state_store(PixelFormat::RGB565);
+        const auto st = execute_tile_frame(gpu, make_tile_frame_cmd(tf));
         if (!st.ok) {
             std::printf("tile frame fail fault=%u detail=%u\n",
                         static_cast<u32>(st.fault), st.fault_detail);
@@ -232,6 +232,56 @@ void test_tile_order_sensitive() {
 
 }  // namespace
 
+void test_repeat_tile_frame() {
+    // Same GoldenGPU: two TILE_FRAMEs must both succeed (G1).
+    GoldenGPU gpu;
+    const u32 stride = 64;
+    gpu.register_surface(SurfaceDesc{0x10000, stride, 32, 32, PixelFormat::RGB565},
+                         "d");
+    std::vector<u8> init(stride * 32, 0);
+    gpu.memory().write_block(0x10000, init.data(), init.size());
+    auto fill = make_fill_rect_cmd(0x10000, stride, 0, 0, 8, 8,
+                                   Rgba8888::pack(255, 255, 0, 0));
+    std::vector<GpuCmd64> draws = {fill};
+    auto run_once = [&](u32 desc_base, u32 hdr_base, u32 work_base) {
+        const auto bin = bin_draws(draws, gpu.memory(), 32, 32, 32);
+        gpu.register_resource(RegisteredResource{desc_base, 64, 1, 1, "d"});
+        gpu.register_resource(RegisteredResource{hdr_base, 64, 1, 1, "h"});
+        gpu.register_resource(RegisteredResource{work_base, 16, 1, 1, "w"});
+        const auto b = serialize_cmd_le(fill);
+        gpu.memory().write_block(desc_base, b.data(), 64);
+        for (size_t i = 0; i < bin.headers.size(); ++i) {
+            const auto hb = serialize_tile_header(bin.headers[i]);
+            gpu.memory().write_block(hdr_base + static_cast<u32>(i) * 16, hb.data(),
+                                     16);
+        }
+        const auto wr = serialize_workrefs(bin.workrefs);
+        if (!wr.empty()) {
+            gpu.memory().write_block(work_base, wr.data(), wr.size());
+        }
+        TileFrameCmd tf;
+        tf.draw_desc_base = desc_base;
+        tf.tile_header_base = hdr_base;
+        tf.work_list_base = work_base;
+        tf.dst_base = 0x10000;
+        tf.dst_stride = stride;
+        tf.surface_w = 32;
+        tf.surface_h = 32;
+        tf.grid_w = 1;
+        tf.grid_h = 1;
+        tf.tile_w = 32;
+        tf.tile_h = 32;
+        tf.rt_state = tile_rt_state_store(PixelFormat::RGB565);
+        return execute_tile_frame(gpu, make_tile_frame_cmd(tf));
+    };
+    EXPECT_TRUE(run_once(0x30000, 0x31000, 0x32000).ok);
+    // second frame on same GPU with different fill
+    fill = make_fill_rect_cmd(0x10000, stride, 8, 8, 4, 4,
+                              Rgba8888::pack(255, 0, 255, 0));
+    draws = {fill};
+    EXPECT_TRUE(run_once(0x33000, 0x34000, 0x35000).ok);
+}
+
 int main() {
     test_header_roundtrip();
     test_workref_range();
@@ -239,6 +289,7 @@ int main() {
     test_binner_outside_noop();
     test_tile_frame_exec();
     test_tile_order_sensitive();
+    test_repeat_tile_frame();
     if (g_failures) {
         std::printf("golden_test_tile FAIL %d\n", g_failures);
         return 1;

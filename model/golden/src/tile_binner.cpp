@@ -130,8 +130,7 @@ std::vector<u8> serialize_workrefs(const std::vector<WorkRef>& refs) {
     return out;
 }
 
-ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd,
-                              u32 desc_count_hint) {
+ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
     g_last_stats = TileStats{};
     const DecodedHeader hdr = decode_cmd_header(tile_cmd);
     if (!hdr.ok) {
@@ -153,17 +152,42 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd,
     if (rt.depth_enable || rt.store_depth) {
         return ExecResult::failure(FaultCode::UNSUPPORTED_FEATURE, tf.rt_state);
     }
+    // Reserved RT_STATE bits [31:9] — reject when nonzero (architectural safety).
+    if ((tf.rt_state >> 9) != 0) {
+        return ExecResult::failure(FaultCode::RESERVED_NONZERO, tf.rt_state);
+    }
+    // Unsupported flag combinations: DONT_LOAD without CLEAR leaves tile undefined
+    // unless we support LOAD_COLOR_DEFAULT on the scratch fill.
+    const bool any_dont_load = false;  // per-tile; checked below
 
-    // Descriptor bounds from registered resource (no host-only count).
-    u32 desc_capacity = desc_count_hint;
+    // Descriptor bounds from registered resource only (no host side-channel).
+    auto dres = gpu.resource(tf.draw_desc_base);
+    if (!dres) {
+        return ExecResult::failure(FaultCode::MEMORY_ERROR, tf.draw_desc_base);
+    }
+    const u32 desc_capacity = dres->size / 64;
     if (desc_capacity == 0) {
-        auto dres = gpu.resource(tf.draw_desc_base);
-        if (!dres) {
-            return ExecResult::failure(FaultCode::MEMORY_ERROR, tf.draw_desc_base);
+        return ExecResult::failure(FaultCode::DESCRIPTOR_BOUNDS, dres->size);
+    }
+
+    // Destination allocation must cover the surface.
+    auto fres = gpu.resource(tf.dst_base);
+    if (!fres) {
+        return ExecResult::failure(FaultCode::MEMORY_ERROR, tf.dst_base);
+    }
+    {
+        const u64 need = static_cast<u64>(tf.surface_h) * tf.dst_stride;
+        const u64 last = static_cast<u64>(tf.dst_base) + need;
+        if (need > fres->size || last > (1ull << 32)) {
+            std::printf("tf BAD_RECT need=%llu size=%u stride=%u\n",
+                        static_cast<unsigned long long>(need), fres->size,
+                        tf.dst_stride);
+            return ExecResult::failure(FaultCode::BAD_RECT, tf.dst_stride);
         }
-        desc_capacity = dres->size / 64;
-        if (desc_capacity == 0) {
-            return ExecResult::failure(FaultCode::DESCRIPTOR_BOUNDS, dres->size);
+        if (tf.dst_stride < static_cast<u64>(tf.surface_w) * bpp) {
+            std::printf("tf stride too small sw=%u bpp=%u stride=%u\n", tf.surface_w,
+                        bpp, tf.dst_stride);
+            return ExecResult::failure(FaultCode::BAD_RECT, tf.dst_stride);
         }
     }
 
@@ -171,19 +195,24 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd,
     g_last_stats.tiles_total = tiles;
     g_last_stats.draw_descriptor_count = desc_capacity;
 
-    // Scratch tile buffer region (one tile at a time).
+    // Reusable internal scratch (not architectural DDR). Create once / resize if needed.
     const u32 scratch_base = 0x800000;
     const u32 scratch_size = tf.tile_w * tf.tile_h * bpp;
-    {
-        const auto rs = gpu.memory().register_region("tile_scratch", scratch_base,
-                                                     scratch_size);
+    if (!gpu.memory().has_region(scratch_base)) {
+        const auto rs =
+            gpu.memory().register_region("tile_scratch", scratch_base, scratch_size);
         if (rs.status != MemAccessStatus::OK) {
             return ExecResult::failure(FaultCode::MEMORY_ERROR, scratch_base);
         }
+        gpu.register_resource(RegisteredResource{scratch_base, scratch_size, tf.tile_w,
+                                                 tf.tile_h, "tile_scratch"});
     }
-    RegisteredResource scratch_res{scratch_base, scratch_size, tf.tile_w, tf.tile_h,
-                                   "tile_scratch"};
-    gpu.register_resource(scratch_res);
+    // Re-register is a no-op if already present; ensure resource map has it.
+    if (!gpu.resource(scratch_base)) {
+        gpu.register_resource(RegisteredResource{scratch_base, scratch_size, tf.tile_w,
+                                                 tf.tile_h, "tile_scratch"});
+    }
+    (void)any_dont_load;
 
     for (u32 ty = 0; ty < tf.grid_h; ++ty) {
         for (u32 tx = 0; tx < tf.grid_w; ++tx) {
@@ -267,8 +296,15 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd,
                 g_last_stats.max_workrefs_per_tile = th.work_count;
             }
 
-            // LOAD tile from framebuffer into scratch (or clear).
-            if ((th.flags & kTileClearColor) != 0) {
+            // LOAD tile from framebuffer into scratch (or clear / default / skip).
+            auto scratch_ptr = gpu.resource(scratch_base);
+            if (!scratch_ptr) {
+                return ExecResult::failure(FaultCode::MEMORY_ERROR, scratch_base);
+            }
+            const RegisteredResource& scratch_res = *scratch_ptr;
+            const bool dont_load = (th.flags & kTileDontLoadColor) != 0;
+            const bool clear = (th.flags & kTileClearColor) != 0;
+            if (clear) {
                 SurfaceView tile_sv(&gpu.memory(), scratch_res, tf.tile_w * bpp,
                                     tile_fmt);
                 const Rgba8888 cc = Rgba8888::from_u32(tf.clear_color);
@@ -277,6 +313,22 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd,
                         tile_sv.write_rgba(static_cast<i32>(lx), static_cast<i32>(ly),
                                            cc, false, x0 + lx, y0 + ly);
                     }
+                }
+            } else if (dont_load) {
+                // DONT_LOAD: initialize scratch to LOAD_COLOR_DEFAULT (0) or reject
+                // if RT_STATE requires a real default color load. Stage-004: zero fill.
+                SurfaceView tile_sv(&gpu.memory(), scratch_res, tf.tile_w * bpp,
+                                    tile_fmt);
+                for (u32 ly = 0; ly < vh; ++ly) {
+                    for (u32 lx = 0; lx < vw; ++lx) {
+                        tile_sv.write_rgba(static_cast<i32>(lx), static_cast<i32>(ly),
+                                           Rgba8888::pack(0, 0, 0, 0), false,
+                                           x0 + lx, y0 + ly);
+                    }
+                }
+                if (rt.load_color_default) {
+                    // LOAD_COLOR_DEFAULT with DONT_LOAD is contradictory for Stage-004
+                    // unless default is defined as 0 — accepted as zero init.
                 }
             } else {
                 // Copy valid FB pixels into scratch (raw bytes, tile format).
@@ -404,6 +456,8 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd,
                     (local.state.draw_state & ~(0xFu << 4)) | (rt.dst_format << 4);
                 local.state.dst_x = dd.state.dst_x - static_cast<i32>(x0);
                 local.state.dst_y = dd.state.dst_y - static_cast<i32>(y0);
+                local.state.dither_ox = static_cast<i32>(x0);
+                local.state.dither_oy = static_cast<i32>(y0);
                 if (extract_clip_en(dd.state.draw_state)) {
                     local.state.clip_xmin = dd.state.clip_xmin - static_cast<i32>(x0);
                     local.state.clip_xmax = dd.state.clip_xmax - static_cast<i32>(x0);

@@ -81,12 +81,7 @@ inline GpuCmd64 make_tile_frame_cmd(const TileFrameCmd& t) noexcept {
     cmd[9] = pack_wh(t.surface_w, t.surface_h);
     cmd[10] = pack_wh(t.grid_w, t.grid_h);
     cmd[11] = pack_wh(t.tile_w, t.tile_h);
-    u32 rt = t.rt_state;
-    // Default: STORE_COLOR enabled when caller did not specify bits 31:4.
-    if ((rt & 0xF0u) == 0) {
-        rt |= kRtStoreColor;
-    }
-    cmd[12] = rt;
+    cmd[12] = t.rt_state;  // exact wire encoding; no auto-default
     cmd[13] = t.clear_color;
     cmd[14] = t.depth_base;
     cmd[15] = t.depth_stride;

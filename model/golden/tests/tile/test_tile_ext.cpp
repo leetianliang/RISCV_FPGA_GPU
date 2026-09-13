@@ -118,7 +118,7 @@ void test_workref_order_via_tile() {
         tf.grid_h = 1;
         tf.tile_w = 32;
         tf.tile_h = 32;
-        tf.rt_state = static_cast<u32>(PixelFormat::RGB565);
+        tf.rt_state = tile_rt_state_store(PixelFormat::RGB565);
         EXPECT_TRUE(execute_tile_frame(g, make_tile_frame_cmd(tf)).ok);
         g.memory().read_block(0x10000, init.size(), fb);
     };
@@ -147,13 +147,13 @@ void test_workref_order_via_tile() {
 
 void test_strict_target_match() {
     GoldenGPU g;
-    const u32 stride = 64;
-    g.register_surface(SurfaceDesc{0x10000, stride, 32, 32, PixelFormat::RGB565},
+    const u32 stride = 128;  // ARGB 32px
+    g.register_surface(SurfaceDesc{0x10000, stride, 32, 32, PixelFormat::ARGB8888},
                        "d");
     std::vector<u8> init(stride * 32, 0);
     g.memory().write_block(0x10000, init.data(), init.size());
-    auto fill = make_fill_rect_cmd(0x10000, stride, 0, 0, 4, 4,
-                                   Rgba8888::pack(255, 1, 2, 3));
+    auto fill = make_fill_rect_cmd(0x10000, 64, 0, 0, 4, 4,
+                                   Rgba8888::pack(255, 1, 2, 3));  // RGB565 desc
     std::vector<GpuCmd64> draws = {fill};
     const auto bin = bin_draws(draws, g.memory(), 32, 32, 32);
     const u32 desc_base = 0x30000, hdr_base = 0x34000, work_base = 0x36000;
@@ -180,10 +180,8 @@ void test_strict_target_match() {
     tf.grid_h = 1;
     tf.tile_w = 32;
     tf.tile_h = 32;
-    // mismatch: TILE format ARGB, desc is RGB565, strict
-    tf.rt_state = static_cast<u32>(PixelFormat::ARGB8888) | kRtStrictTargetMatch |
-                  kRtStoreColor;
-    // dest resource is RGB565; strict mismatch on format
+    // TILE format ARGB, descriptor RGB565 → strict mismatch
+    tf.rt_state = tile_rt_state_store(PixelFormat::ARGB8888, true);
     const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
     EXPECT_TRUE(!st.ok);
     EXPECT_TRUE(st.fault == FaultCode::TILE_TARGET_MISMATCH);
