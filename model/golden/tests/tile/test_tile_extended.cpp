@@ -427,6 +427,130 @@ int main() {
         d.dst_y = 0;
         run_eq(e, {make_blit_cmd(d)}, "indexed8_palette");
     }
+    // P4: nearest_scale_cross_tile (dest 12..28 crosses 16/32 tile boundary)
+    {
+        AssetEnv e;
+        setup_pair(e, PixelFormat::RGB565, 32, 32, 64, rgb565_tex(),
+                   PixelFormat::RGB565, 16, {}, {});
+        BlitCmdDesc d;
+        d.src_base = 0x20000;
+        d.dst_base = 0x10000;
+        d.src_stride = 16;
+        d.dst_stride = 64;
+        d.blit_ext = true;
+        d.ext_ptr = 0x30000;
+        d.w = 16;
+        d.h = 16;
+        d.dst_x = 12;
+        d.dst_y = 12;
+        compute_axis_aligned_uv(0, 4, 16, d.u0, d.du_dx);
+        compute_axis_aligned_uv_v(0, 4, 16, d.v0, d.dv_dy);
+        auto cmd = make_blit_ext_cmd(d);
+        cmd[10] = pack_wh(4, 4);
+        cmd[11] = pack_wh(16, 16);
+        BlitCmdDesc ed;
+        auto ext = make_draw2d_ext_v1(ed);
+        std::vector<u8> extv(ext.begin(), ext.end());
+        auto putw = [&](int i, u32 w) {
+            extv[i * 4 + 0] = static_cast<u8>(w & 0xFF);
+            extv[i * 4 + 1] = static_cast<u8>((w >> 8) & 0xFF);
+            extv[i * 4 + 2] = static_cast<u8>((w >> 16) & 0xFF);
+            extv[i * 4 + 3] = static_cast<u8>((w >> 24) & 0xFF);
+        };
+        putw(3, static_cast<u32>(d.u0));
+        putw(4, static_cast<u32>(d.v0));
+        putw(5, static_cast<u32>(d.du_dx));
+        putw(8, static_cast<u32>(d.dv_dy));
+        e.imm.memory().write_block(0x30000, extv.data(), 64);
+        e.tileg.memory().write_block(0x30000, extv.data(), 64);
+        run_eq(e, {cmd}, "nearest_scale_cross_tile");
+    }
+    // P4: clip_cross_tile
+    {
+        AssetEnv e;
+        setup_pair(e, PixelFormat::RGB565, 32, 32, 64, rgb565_tex(),
+                   PixelFormat::RGB565, 16, {}, {});
+        BlitCmdDesc d;
+        d.src_base = 0x20000;
+        d.dst_base = 0x10000;
+        d.src_stride = 16;
+        d.dst_stride = 64;
+        d.w = 8;
+        d.h = 8;
+        d.dst_x = 12;
+        d.dst_y = 12;
+        d.blit_ext = true;
+        d.ext_ptr = 0x30000;
+        d.clip_en = true;
+        d.clip_xmin = 12;
+        d.clip_ymin = 12;
+        d.clip_xmax = 20;
+        d.clip_ymax = 20;
+        d.u0 = 0;
+        d.du_dx = 65536;
+        d.dv_dy = 65536;
+        auto cmd = make_blit_ext_cmd(d);
+        cmd[10] = pack_wh(8, 8);
+        cmd[11] = pack_wh(8, 8);
+        BlitCmdDesc ed;
+        ed.clip_xmin = 12;
+        ed.clip_ymin = 12;
+        ed.clip_xmax = 20;
+        ed.clip_ymax = 20;
+        auto ext = make_draw2d_ext_v1(ed);
+        std::vector<u8> extv(ext.begin(), ext.end());
+        auto putw = [&](int i, u32 w) {
+            extv[i * 4 + 0] = static_cast<u8>(w & 0xFF);
+            extv[i * 4 + 1] = static_cast<u8>((w >> 8) & 0xFF);
+            extv[i * 4 + 2] = static_cast<u8>((w >> 16) & 0xFF);
+            extv[i * 4 + 3] = static_cast<u8>((w >> 24) & 0xFF);
+        };
+        putw(3, 0);
+        putw(5, 65536);
+        putw(8, 65536);
+        e.imm.memory().write_block(0x30000, extv.data(), 64);
+        e.tileg.memory().write_block(0x30000, extv.data(), 64);
+        run_eq(e, {cmd}, "clip_cross_tile");
+    }
+    // P4: clamp_out_of_range
+    {
+        AssetEnv e;
+        setup_pair(e, PixelFormat::RGB565, 32, 32, 64, rgb565_tex(),
+                   PixelFormat::RGB565, 16, {}, {});
+        BlitCmdDesc d;
+        d.src_base = 0x20000;
+        d.dst_base = 0x10000;
+        d.src_stride = 16;
+        d.dst_stride = 64;
+        d.blit_ext = true;
+        d.ext_ptr = 0x30000;
+        d.addr_u = static_cast<u32>(AddressMode::CLAMP);
+        d.w = 8;
+        d.h = 8;
+        d.dst_x = 0;
+        d.dst_y = 0;
+        d.u0 = 100 * 65536;  // far beyond source
+        d.du_dx = 65536;
+        d.dv_dy = 65536;
+        auto cmd = make_blit_ext_cmd(d);
+        cmd[10] = pack_wh(4, 4);
+        cmd[11] = pack_wh(8, 8);
+        BlitCmdDesc ed;
+        auto ext = make_draw2d_ext_v1(ed);
+        std::vector<u8> extv(ext.begin(), ext.end());
+        auto putw = [&](int i, u32 w) {
+            extv[i * 4 + 0] = static_cast<u8>(w & 0xFF);
+            extv[i * 4 + 1] = static_cast<u8>((w >> 8) & 0xFF);
+            extv[i * 4 + 2] = static_cast<u8>((w >> 16) & 0xFF);
+            extv[i * 4 + 3] = static_cast<u8>((w >> 24) & 0xFF);
+        };
+        putw(3, static_cast<u32>(d.u0));
+        putw(5, static_cast<u32>(d.du_dx));
+        putw(8, static_cast<u32>(d.dv_dy));
+        e.imm.memory().write_block(0x30000, extv.data(), 64);
+        e.tileg.memory().write_block(0x30000, extv.data(), 64);
+        run_eq(e, {cmd}, "clamp_out_of_range");
+    }
 
     if (g_failures) {
         std::printf("golden_test_tile_extended FAIL %d\n", g_failures);

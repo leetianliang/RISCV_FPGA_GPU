@@ -195,6 +195,12 @@ add_test(
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../../tools/fixture_validate/validate_tile_fixtures.py
 )
 
+# P6: real sweep verification test (invokes functional model)
+add_test(
+    NAME golden_test_tile_sweep
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../../model/architecture/tile_model/run_tile_sweep.py
+)
+
 foreach(tf tile_fill_basic tile_alpha_overlap tile_bilinear_cross_boundary tile_palette tile_dither_cross_boundary)
     add_test(
         NAME golden_tile_fixture_${tf}

@@ -164,6 +164,17 @@ ExecResult execute_tile_frame(GoldenGPU& gpu, const GpuCmd64& tile_cmd) {
         return ExecResult::failure(FaultCode::RESERVED_NONZERO, tf.rt_state);
     }
 
+    // P1: frozen alignment rules (Command ISA V0.1).
+    if ((tf.draw_desc_base & 0x3Fu) != 0) {
+        return ExecResult::failure(FaultCode::BAD_ALIGNMENT, tf.draw_desc_base);
+    }
+    if ((tf.tile_header_base & 0x0Fu) != 0) {
+        return ExecResult::failure(FaultCode::BAD_ALIGNMENT, tf.tile_header_base);
+    }
+    if ((tf.work_list_base & 0x03u) != 0) {
+        return ExecResult::failure(FaultCode::BAD_ALIGNMENT, tf.work_list_base);
+    }
+
     // Descriptor bounds from registered resource only (no host side-channel).
     auto dres = gpu.resource(tf.draw_desc_base);
     if (!dres) {

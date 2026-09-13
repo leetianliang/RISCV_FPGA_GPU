@@ -836,6 +836,7 @@ bool write_tile_fixture(const fs::path& dir, const std::vector<GpuCmd64>& draws,
     char man[512];
     std::snprintf(man, sizeof(man),
                   "{\n  \"format_version\": 1,\n  \"isa_version\": 1,\n"
+                  "  \"pixel_arith_version\": 1,\n"
                   "  \"width\": %u,\n  \"height\": %u,\n  \"stride\": %u,\n"
                   "  \"tile\": %u,\n  \"framebuffer_format\": \"RGB565\",\n"
                   "  \"command_count\": %zu,\n  \"base\": 65536,\n"

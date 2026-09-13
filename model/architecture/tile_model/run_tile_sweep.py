@@ -31,9 +31,10 @@ def run(kind: int, tile: int) -> dict:
                     parts[k] = int(v)
                 except ValueError:
                     parts[k] = v
+    kind_i = int(parts.get("kind", kind))
     return {
-        "workload_id": f"kind{parts.get('kind', kind)}",
-        "workload_name": parts.get("workload", f"W?{kind}"),
+        "workload_id": f"W{kind_i + 1}",
+        "workload_name": parts.get("workload", f"W{kind_i + 1}"),
         "version": 1,
         "seed": 0,
         "tile_size": parts.get("tile", tile),
@@ -53,6 +54,25 @@ def run(kind: int, tile: int) -> dict:
     }
 
 
+def expected_tiles(tile: int, tw: int = 64, th: int = 64) -> int:
+    gw = (tw + tile - 1) // tile
+    gh = (th + tile - 1) // tile
+    return gw * gh
+
+
+def verify_row(row: dict) -> list[str]:
+    errs: list[str] = []
+    tile = int(row["tile_size"])
+    want = expected_tiles(tile)
+    if int(row["tiles_total"]) != want:
+        errs.append(f"tiles_total {row['tiles_total']} != {want} for tile={tile}")
+    if int(row["tiles_active"]) <= 0:
+        errs.append("tiles_active must be > 0")
+    if int(row["tile_load_bytes"]) < 0 or int(row["tile_store_bytes"]) < 0:
+        errs.append("negative traffic bytes")
+    return errs
+
+
 def main() -> int:
     if not EXE.is_file():
         print(f"missing {EXE}; build stage004 first", file=sys.stderr)
@@ -62,11 +82,21 @@ def main() -> int:
     for kind in range(6):
         for tile in (16, 32, 64):
             rows.append(run(kind, tile))
+    bad = 0
+    for r in rows:
+        for e in verify_row(r):
+            print(f"[FAIL] {r['workload_id']} tile={r['tile_size']}: {e}", file=sys.stderr)
+            bad += 1
+    if len(rows) != 18:
+        print(f"[FAIL] expected 18 sweep rows, got {len(rows)}", file=sys.stderr)
+        bad += 1
+    if bad:
+        return 1
     with OUT.open("w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()
         w.writerows(rows)
-    print(f"wrote {OUT} ({len(rows)} rows from functional model)")
+    print(f"wrote {OUT} ({len(rows)} rows from functional model, W1-W6 x 16/32/64)")
     return 0
 
 

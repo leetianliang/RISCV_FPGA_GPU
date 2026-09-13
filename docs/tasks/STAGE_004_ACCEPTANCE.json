@@ -12,7 +12,8 @@
         "golden_test_integrity"
       ],
       "test_name": "golden_test_integrity",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Test integrity guard"
     },
     {
       "id": "GVF-02",
@@ -25,7 +26,8 @@
         "golden_test_scale_param_diff"
       ],
       "test_name": "golden_test_scale_param_diff",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Independent scale oracle"
     },
     {
       "id": "GVF-03",
@@ -38,7 +40,8 @@
         "golden_test_oracle_v2"
       ],
       "test_name": "golden_test_oracle_v2",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Proof assertions"
     },
     {
       "id": "GVF-04",
@@ -51,7 +54,8 @@
         "golden_test_dither_dst"
       ],
       "test_name": "golden_test_dither_dst",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Dest format/dither matrix"
     },
     {
       "id": "GVF-05",
@@ -64,7 +68,8 @@
         "golden_test_ext_mem_matrix"
       ],
       "test_name": "golden_test_ext_mem_matrix",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Ext/mem negatives"
     },
     {
       "id": "GVF-06",
@@ -77,7 +82,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Report hygiene"
     },
     {
       "id": "TDS-01",
@@ -90,7 +96,8 @@
         "golden_test_command_header"
       ],
       "test_name": "golden_test_command_header",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "TILE_FRAME opcode"
     },
     {
       "id": "TDS-02",
@@ -103,7 +110,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Tile Header serialize"
     },
     {
       "id": "TDS-03",
@@ -116,7 +124,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "WorkRef"
     },
     {
       "id": "TDS-04",
@@ -129,7 +138,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Descriptor 64B encoding"
     },
     {
       "id": "TDS-05",
@@ -142,20 +152,23 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Tile grid"
     },
     {
       "id": "TDS-06",
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
+        "model/golden/src/tile_binner.cpp",
         "model/golden/tests/tile/test_tile_faults.cpp"
       ],
       "verification_evidence": [
         "golden_test_tile_faults"
       ],
       "test_name": "golden_test_tile_faults",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Tile fault matrix"
     },
     {
       "id": "BIN-01",
@@ -168,7 +181,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "One desc per draw"
     },
     {
       "id": "BIN-02",
@@ -181,7 +195,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Raster bounds"
     },
     {
       "id": "BIN-03",
@@ -194,7 +209,8 @@
         "golden_test_tile_ext"
       ],
       "test_name": "golden_test_tile_ext",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "WorkRef order"
     },
     {
       "id": "BIN-04",
@@ -207,7 +223,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Multi-tile coverage"
     },
     {
       "id": "BIN-05",
@@ -220,7 +237,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Deterministic output"
     },
     {
       "id": "BIN-06",
@@ -233,7 +251,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Binary path"
     },
     {
       "id": "TR-01",
@@ -246,7 +265,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "TILE_FRAME path"
     },
     {
       "id": "TR-02",
@@ -259,7 +279,8 @@
         "golden_test_tile_eq_random"
       ],
       "test_name": "golden_test_tile_eq_random",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Shared pixel backend"
     },
     {
       "id": "TR-03",
@@ -272,7 +293,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Tile load"
     },
     {
       "id": "TR-04",
@@ -285,7 +307,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Compat quantize"
     },
     {
       "id": "TR-05",
@@ -298,7 +321,8 @@
         "golden_test_tile_extended"
       ],
       "test_name": "golden_test_tile_extended",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Global coords"
     },
     {
       "id": "TR-06",
@@ -311,7 +335,8 @@
         "golden_test_tile_ext"
       ],
       "test_name": "golden_test_tile_ext",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Draw order"
     },
     {
       "id": "TR-07",
@@ -324,20 +349,23 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Edge tiles"
     },
     {
       "id": "TR-08",
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
+        "model/golden/src/tile_binner.cpp",
         "model/golden/tests/tile/test_tile_faults.cpp"
       ],
       "verification_evidence": [
         "golden_test_tile_faults"
       ],
       "test_name": "golden_test_tile_faults",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Descriptor/ext/palette memory"
     },
     {
       "id": "EQ-01",
@@ -350,7 +378,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "FILL Imm==Tile"
     },
     {
       "id": "EQ-02",
@@ -363,7 +392,8 @@
         "golden_test_tile_extended"
       ],
       "test_name": "golden_test_tile_extended",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "BLIT Imm==Tile"
     },
     {
       "id": "EQ-03",
@@ -376,20 +406,26 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Order-sensitive Imm==Tile"
     },
     {
       "id": "EQ-04",
       "mandatory": true,
       "status": "PASS",
       "implementation_evidence": [
-        "model/golden/tests/tile/test_tile_extended.cpp"
+        "model/golden/tests/tile/test_tile_extended.cpp",
+        "model/golden/tests/frames/tile/tile_bilinear_cross_boundary",
+        "model/golden/tests/frames/tile/tile_dither_cross_boundary"
       ],
       "verification_evidence": [
-        "golden_test_tile_extended"
+        "golden_test_tile_extended",
+        "golden_tile_fixture_tile_bilinear_cross_boundary",
+        "golden_tile_fixture_tile_dither_cross_boundary"
       ],
       "test_name": "golden_test_tile_extended",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Extended feature Imm==Tile"
     },
     {
       "id": "EQ-05",
@@ -402,7 +438,8 @@
         "golden_test_tile_extended"
       ],
       "test_name": "golden_test_tile_extended",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Dest format Imm==Tile"
     },
     {
       "id": "EQ-06",
@@ -415,7 +452,8 @@
         "golden_test_tile_eq_random"
       ],
       "test_name": "golden_test_tile_eq_random",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Tile sizes"
     },
     {
       "id": "EQ-07",
@@ -428,7 +466,8 @@
         "golden_test_tile_eq_random"
       ],
       "test_name": "golden_test_tile_eq_random",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Mixed random Imm==Tile"
     },
     {
       "id": "EQ-08",
@@ -441,7 +480,8 @@
         "golden_test_tile_faults"
       ],
       "test_name": "golden_test_tile_faults",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Pathological workloads"
     },
     {
       "id": "EQ-09",
@@ -454,7 +494,8 @@
         "golden_tile_fixture_validate"
       ],
       "test_name": "golden_tile_fixture_validate",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Tile binary fixtures"
     },
     {
       "id": "PROF-01",
@@ -467,7 +508,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Tile counters"
     },
     {
       "id": "PROF-02",
@@ -480,7 +522,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Pixel workload counters"
     },
     {
       "id": "PROF-03",
@@ -493,7 +536,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Overdraw"
     },
     {
       "id": "PROF-04",
@@ -503,10 +547,11 @@
         "model/golden/src/tile_binner.cpp"
       ],
       "verification_evidence": [
-        "golden_test_tile_eq_random"
+        "golden_test_tile_sweep"
       ],
-      "test_name": "golden_test_tile_eq_random",
-      "notes": "See REPORT_004"
+      "test_name": "golden_test_tile_sweep",
+      "notes": "See REPORT_004",
+      "requirement": "Traffic separation"
     },
     {
       "id": "PROF-05",
@@ -516,10 +561,11 @@
         "model/golden/tools/tile_sweep_tool.cpp"
       ],
       "verification_evidence": [
-        "golden_test_tile_eq_random"
+        "golden_test_tile_sweep"
       ],
-      "test_name": "golden_test_tile_eq_random",
-      "notes": "See REPORT_004"
+      "test_name": "golden_test_tile_sweep",
+      "notes": "See REPORT_004",
+      "requirement": "No fake timing"
     },
     {
       "id": "EXP-01",
@@ -529,10 +575,11 @@
         "model/golden/tools/tile_sweep_tool.cpp"
       ],
       "verification_evidence": [
-        "golden_test_tile_eq_random"
+        "golden_test_tile_sweep"
       ],
-      "test_name": "golden_test_tile_eq_random",
-      "notes": "See REPORT_004"
+      "test_name": "golden_test_tile_sweep",
+      "notes": "See REPORT_004",
+      "requirement": "Fixed workloads"
     },
     {
       "id": "EXP-02",
@@ -542,10 +589,11 @@
         "model/architecture/tile_model/run_tile_sweep.py"
       ],
       "verification_evidence": [
-        "golden_test_tile_eq_random"
+        "golden_test_tile_sweep"
       ],
-      "test_name": "golden_test_tile_eq_random",
-      "notes": "See REPORT_004"
+      "test_name": "golden_test_tile_sweep",
+      "notes": "See REPORT_004",
+      "requirement": "Sweep sizes"
     },
     {
       "id": "EXP-03",
@@ -555,10 +603,11 @@
         "results/stage004_tile/tile_sweep.csv"
       ],
       "verification_evidence": [
-        "golden_test_tile_eq_random"
+        "golden_test_tile_sweep"
       ],
-      "test_name": "golden_test_tile_eq_random",
-      "notes": "See REPORT_004"
+      "test_name": "golden_test_tile_sweep",
+      "notes": "See REPORT_004",
+      "requirement": "CSV results"
     },
     {
       "id": "EXP-04",
@@ -568,10 +617,11 @@
         "results/stage004_tile/tile_sweep_summary.md"
       ],
       "verification_evidence": [
-        "golden_test_tile_eq_random"
+        "golden_test_tile_sweep"
       ],
-      "test_name": "golden_test_tile_eq_random",
-      "notes": "See REPORT_004"
+      "test_name": "golden_test_tile_sweep",
+      "notes": "See REPORT_004",
+      "requirement": "Summary"
     },
     {
       "id": "AUD-01",
@@ -584,7 +634,8 @@
         "golden_test_integrity"
       ],
       "test_name": "golden_test_integrity",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Acceptance manifest"
     },
     {
       "id": "AUD-02",
@@ -597,7 +648,8 @@
         "golden_test_integrity"
       ],
       "test_name": "golden_test_integrity",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Acceptance checker"
     },
     {
       "id": "AUD-03",
@@ -610,7 +662,8 @@
         "golden_test_tile"
       ],
       "test_name": "golden_test_tile",
-      "notes": "See REPORT_004"
+      "notes": "See REPORT_004",
+      "requirement": "Report matrix"
     }
   ]
 }

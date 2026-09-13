@@ -215,14 +215,33 @@ void test_fault_matrix() {
         const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
         EXPECT_TRUE(st.fault == FaultCode::DESCRIPTOR_BOUNDS);
     }
-    // misaligned desc base
+    // misaligned desc base — all other memory otherwise valid → BAD_ALIGNMENT
     {
         GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        // register at unaligned address so lookup would succeed if we skipped align check
         g.register_resource(RegisteredResource{0x30001, 64, 1, 1, "d"});
         auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30001, 0x31000, 0x32000);
-        // register succeeds; capacity = 64/64=1; missing header → MEMORY
         const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
-        EXPECT_TRUE(st.fault == FaultCode::MEMORY_ERROR);
+        EXPECT_TRUE(st.fault == FaultCode::BAD_ALIGNMENT);
+    }
+    // misaligned header base
+    {
+        GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        g.register_resource(RegisteredResource{0x30000, 64, 1, 1, "d"});
+        g.register_resource(RegisteredResource{0x31008, 64, 1, 1, "h"});
+        auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31008, 0x32000);
+        const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
+        EXPECT_TRUE(st.fault == FaultCode::BAD_ALIGNMENT);
+    }
+    // misaligned worklist base
+    {
+        GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        g.register_resource(RegisteredResource{0x30000, 64, 1, 1, "d"});
+        g.register_resource(RegisteredResource{0x31000, 64, 1, 1, "h"});
+        g.register_resource(RegisteredResource{0x32002, 16, 1, 1, "w"});
+        auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32002);
+        const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
+        EXPECT_TRUE(st.fault == FaultCode::BAD_ALIGNMENT);
     }
     // dest allocation too small
     {
@@ -237,39 +256,104 @@ void test_fault_matrix() {
         const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
         EXPECT_TRUE(st.fault == FaultCode::BAD_RECT);
     }
-    // strict target format mismatch
+    // strict target format mismatch — exact TILE_TARGET_MISMATCH
     {
         GoldenGPU g = make_gpu(32, 32, 128, PixelFormat::ARGB8888);
         auto f = make_fill_rect_cmd(0x10000, 64, 0, 0, 4, 4,
-                                    Rgba8888::pack(255, 1, 2, 3));  // RGB565 desc
+                                    Rgba8888::pack(255, 1, 2, 3));
         setup_tile(g, {f}, 32, 32, 32, 128, 0x30000, 0x31000, 0x32000);
         auto tf = base_tf(32, 32, 32, 128, PixelFormat::ARGB8888, 0x30000, 0x31000, 0x32000);
         tf.rt_state |= kRtStrictTargetMatch;
-        GpuCmd64 c = make_tile_frame_cmd(tf);
-        const auto st = execute_tile_frame(g, c);
-        EXPECT_TRUE(!st.ok);
-        EXPECT_TRUE(st.fault == FaultCode::TILE_TARGET_MISMATCH ||
-                    st.fault == FaultCode::BAD_RECT);
+        const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
+        EXPECT_TRUE(st.fault == FaultCode::TILE_TARGET_MISMATCH);
     }
-    // TILE_FLAGS reserved non-strict ignore / strict fault
+    // strict target base mismatch
     {
         GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
-        auto fill2 = make_fill_rect_cmd(0x10000, 64, 0, 0, 4, 4,
-                                        Rgba8888::pack(255, 1, 2, 3));
-        setup_tile(g, {fill2}, 32, 32, 32, 64, 0x30000, 0x31000, 0x32000);
+        auto f = make_fill_rect_cmd(0x20000, 64, 0, 0, 4, 4,
+                                    Rgba8888::pack(255, 1, 2, 3));  // different dest base
+        setup_tile(g, {f}, 32, 32, 32, 64, 0x30000, 0x31000, 0x32000);
+        auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
+        tf.rt_state |= kRtStrictTargetMatch;
+        const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
+        EXPECT_TRUE(st.fault == FaultCode::TILE_TARGET_MISMATCH);
+    }
+    // strict target stride mismatch
+    {
+        GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        auto f = make_fill_rect_cmd(0x10000, 32, 0, 0, 4, 4,
+                                    Rgba8888::pack(255, 1, 2, 3));  // different stride
+        setup_tile(g, {f}, 32, 32, 32, 64, 0x30000, 0x31000, 0x32000);
+        auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
+        tf.rt_state |= kRtStrictTargetMatch;
+        const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
+        EXPECT_TRUE(st.fault == FaultCode::TILE_TARGET_MISMATCH);
+    }
+    // Header W3 non-Strict acceptance
+    {
+        GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        auto f = make_fill_rect_cmd(0x10000, 64, 0, 0, 4, 4,
+                                    Rgba8888::pack(255, 1, 2, 3));
+        setup_tile(g, {f}, 32, 32, 32, 64, 0x30000, 0x31000, 0x32000);
+        u8 w3[4] = {1, 0, 0, 0};
+        g.memory().write_block(0x31000 + 12, w3, 4);
+        auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
+        EXPECT_TRUE(execute_tile_frame(g, make_tile_frame_cmd(tf)).ok);
+    }
+    // TILE_FLAGS Reserved non-Strict acceptance
+    {
+        GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        auto f = make_fill_rect_cmd(0x10000, 64, 0, 0, 4, 4,
+                                    Rgba8888::pack(255, 1, 2, 3));
+        setup_tile(g, {f}, 32, 32, 32, 64, 0x30000, 0x31000, 0x32000);
         TileHeader th = {};
         th.work_offset = 0;
         th.work_count = 1;
-        th.flags = (1u << 4);  // reserved
+        th.flags = (1u << 4);
         const auto hb = serialize_tile_header(th);
         g.memory().write_block(0x31000, hb.data(), 16);
         auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
-        // non-strict: ignore reserved → may still execute
-        // strict: fault
-        GpuCmd64 c = make_tile_frame_cmd(tf);
-        c[0] |= kHStrict;
-        const auto st = execute_tile_frame(g, c);
-        EXPECT_TRUE(st.fault == FaultCode::RESERVED_NONZERO);
+        EXPECT_TRUE(execute_tile_frame(g, make_tile_frame_cmd(tf)).ok);
+    }
+    // WorkList offset/count extending beyond mapped worklist
+    {
+        GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        g.register_resource(RegisteredResource{0x30000, 64, 1, 1, "d"});
+        auto b = serialize_cmd_le(fill);
+        g.memory().write_block(0x30000, b.data(), 64);
+        g.register_resource(RegisteredResource{0x31000, 64, 1, 1, "h"});
+        TileHeader th = {};
+        th.work_offset = 100;  // beyond mapped worklist
+        th.work_count = 1;
+        const auto hb = serialize_tile_header(th);
+        g.memory().write_block(0x31000, hb.data(), 16);
+        g.register_resource(RegisteredResource{0x32000, 16, 1, 1, "w"});
+        auto tf = base_tf(32, 32, 32, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
+        const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
+        EXPECT_TRUE(st.fault == FaultCode::WORKLIST_BOUNDS);
+    }
+    // partial Tile Header array OOB: grid needs 4 headers, only 2 mapped
+    {
+        GoldenGPU g = make_gpu(32, 32, 64, PixelFormat::RGB565);
+        g.register_resource(RegisteredResource{0x30000, 64, 1, 1, "d"});
+        auto b = serialize_cmd_le(fill);
+        g.memory().write_block(0x30000, b.data(), 64);
+        // only 2 of 4 headers (16B each) are mapped
+        g.register_resource(RegisteredResource{0x31000, 32, 1, 1, "h"});
+        for (int i = 0; i < 2; ++i) {
+            TileHeader th = {};
+            th.work_offset = 0;
+            th.work_count = 1;
+            const auto hb = serialize_tile_header(th);
+            g.memory().write_block(0x31000 + static_cast<u32>(i) * 16, hb.data(), 16);
+        }
+        g.register_resource(RegisteredResource{0x32000, 16, 1, 1, "w"});
+        u8 wr[4] = {0, 0, 0, 0};
+        g.memory().write_block(0x32000, wr, 4);
+        auto tf = base_tf(32, 32, 16, 64, PixelFormat::RGB565, 0x30000, 0x31000, 0x32000);
+        const auto st = execute_tile_frame(g, make_tile_frame_cmd(tf));
+        EXPECT_TRUE(!st.ok);
+        EXPECT_TRUE(st.fault == FaultCode::MEMORY_ERROR);
     }
 }
 

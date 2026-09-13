@@ -1,6 +1,7 @@
 {
   "format_version": 1,
   "isa_version": 1,
+  "pixel_arith_version": 1,
   "width": 32,
   "height": 32,
   "stride": 64,
