@@ -10,7 +10,7 @@
 
 ## 3. END_COMMIT
 
-`ff282315fd0f2f6fcd8b1c401155d0386c33f28a`
+`fe99e88972f20e625cde20e0339edff097f65346`
 
 ## 4. Environment
 
@@ -64,7 +64,7 @@ gpu2d Graphics API + CommandRecorder (software/graphics)
 cmake -S . -B build/stage0045 -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build/stage0045 --parallel
 ctest --test-dir build/stage0045 --output-on-failure
-80/80 PASS
+ctest stage0045: 84 tests (71 golden + 13 gpu2d) PASS (Agent-local)
 python scripts/check_stage0045_acceptance.py
 python scripts/check_app_boundary.py
 ```
@@ -138,32 +138,32 @@ results/stage0045/captures/v4_overdraw_stress.raw
 | GAME-06 | Spawn/damage/kill/score playable loop | PASS | software/applications/neon_survivor/src/sim.cpp, model/pc_demo/app/main.cpp | gpu2d_test_sim, gpu2d_demo_headless_imm | gpu2d_test_sim |
 | FX-01 | Alpha-fade particle/trail | PASS | software/applications/neon_survivor/src/assets.cpp | gpu2d_test_system, gpu2d_test_backend | gpu2d_test_backend |
 | FX-02 | Additive glow/explosion | PASS | software/applications/neon_survivor/src/assets.cpp | gpu2d_test_system, gpu2d_test_backend | gpu2d_test_backend |
-| FX-03 | Scaling and bilinear effect | PASS | software/applications/neon_survivor/src/assets.cpp | gpu2d_test_backend | gpu2d_test_backend |
-| FX-04 | Color Mod / Palette damage or variant | PASS | software/applications/neon_survivor/src/assets.cpp | gpu2d_test_backend | gpu2d_test_backend |
-| FX-05 | Color Key + Indexed8/Palette paths exercised | PASS | software/applications/neon_survivor/src/assets.cpp, model/pc_demo/tests/test_system.cpp | gpu2d_test_system | gpu2d_test_system |
+| FX-03 | Scaling and bilinear effect | PASS | software/applications/neon_survivor/src/assets.cpp | gpu2d_test_features, gpu2d_test_system | gpu2d_test_features |
+| FX-04 | Color Mod / Palette damage or variant | PASS | software/applications/neon_survivor/src/assets.cpp | gpu2d_test_features, gpu2d_test_system | gpu2d_test_features |
+| FX-05 | Color Key + Indexed8/Palette paths exercised | PASS | software/applications/neon_survivor/src/assets.cpp, model/pc_demo/tests/test_features.cpp | gpu2d_test_features | gpu2d_test_features |
 | FX-06 | GPU-rendered HUD with telemetry | PASS | software/applications/neon_survivor/src/assets.cpp | gpu2d_test_system, gpu2d_demo_headless_imm | gpu2d_test_system |
-| XR-01 | Tile grid visualization | PASS | software/applications/neon_survivor/src/assets.cpp | gpu2d_test_system | gpu2d_test_system |
-| XR-02 | Per-Tile WorkRef visualization | PASS | software/applications/neon_survivor/src/assets.cpp | gpu2d_test_system | gpu2d_test_system |
-| XR-03 | Active Tile visualization | PASS | software/applications/neon_survivor/src/assets.cpp | gpu2d_test_system | gpu2d_test_system |
-| XR-04 | Overdraw visualization when available | PASS | software/applications/neon_survivor/src/assets.cpp | gpu2d_test_system | gpu2d_test_system |
-| XR-05 | Normal/X-Ray switch does not affect simulation | PASS | model/pc_demo/app/main.cpp | gpu2d_test_system | gpu2d_test_system |
+| XR-01 | Tile grid visualization | PASS | software/applications/neon_survivor/src/assets.cpp, model/pc_demo/tests/test_system.cpp | gpu2d_test_system | gpu2d_test_system |
+| XR-02 | Per-Tile WorkRef visualization | PASS | software/applications/neon_survivor/src/assets.cpp, model/pc_demo/tests/test_system.cpp | gpu2d_test_system | gpu2d_test_system |
+| XR-03 | Active Tile visualization | PASS | software/applications/neon_survivor/src/assets.cpp, model/pc_demo/tests/test_system.cpp | gpu2d_test_system | gpu2d_test_system |
+| XR-04 | Overdraw visualization when available | PASS | software/applications/neon_survivor/src/assets.cpp, model/pc_demo/tests/test_system.cpp | gpu2d_test_system | gpu2d_test_system |
+| XR-05 | Normal/X-Ray switch does not affect simulation | PASS | model/pc_demo/app/main.cpp, model/pc_demo/tests/test_system.cpp | gpu2d_test_system | gpu2d_test_system |
 | STR-01 | Sprite Storm | PASS | software/applications/neon_survivor/src/sim.cpp | gpu2d_test_system, gpu2d_test_sim | gpu2d_test_system |
 | STR-02 | Alpha Storm | PASS | software/applications/neon_survivor/src/sim.cpp | gpu2d_test_system, gpu2d_test_sim | gpu2d_test_system |
 | STR-03 | Bullet Hell | PASS | software/applications/neon_survivor/src/sim.cpp | gpu2d_test_system, gpu2d_test_sim | gpu2d_test_system |
 | STR-04 | Scale Storm | PASS | software/applications/neon_survivor/src/sim.cpp | gpu2d_test_system, gpu2d_test_sim | gpu2d_test_system |
 | STR-05 | Overdraw Storm | PASS | software/applications/neon_survivor/src/sim.cpp | gpu2d_test_system | gpu2d_test_system |
-| STR-06 | Stress telemetry labeled PC Golden workload stats | PASS | results/stage0045/stress/stress_stats.md | gpu2d_test_system | gpu2d_test_system |
-| SYS-01 | 100 frames Immediate==Tile exact | PASS | model/pc_demo/tests/test_system.cpp | gpu2d_test_system | gpu2d_test_system |
-| SYS-02 | 1000-frame headless stability | PASS | model/pc_demo/tests/test_sim.cpp | gpu2d_test_sim | gpu2d_test_sim |
+| STR-06 | Stress telemetry labeled PC Golden workload stats | PASS | results/stage0045/stress/stress_stats.md, model/pc_demo/tests/test_system.cpp | gpu2d_test_system, gpu2d_test_cli_scenes | gpu2d_test_system |
+| SYS-01 | 100 frames Immediate==Tile + feature coverage | PASS | model/pc_demo/tests/test_system.cpp | gpu2d_test_system | gpu2d_test_system |
+| SYS-02 | 1000-frame rendered headless stability | PASS | model/pc_demo/tests/test_system.cpp | gpu2d_test_system | gpu2d_test_system |
 | SYS-03 | Immediate→Tile→Immediate switch stability | PASS | model/pc_demo/tests/test_system.cpp | gpu2d_test_system | gpu2d_test_system |
-| SYS-04 | Deterministic frame capture/hash | PASS | model/pc_demo/tests/test_system.cpp, results/stage0045/captures/ | gpu2d_test_system | gpu2d_test_system |
+| SYS-04 | Deterministic frame capture/hash | PASS | model/pc_demo/tests/test_system.cpp, scripts/verify_stage0045_captures.py | gpu2d_test_system, gpu2d_test_capture_verify | gpu2d_test_capture_verify |
 | SYS-05 | Game code independent of Golden internals | PASS | scripts/check_app_boundary.py | gpu2d_test_boundary | gpu2d_test_boundary |
 | SYS-06 | Presenter does not host-render game content | PASS | model/pc_demo/host/presenter.cpp | gpu2d_test_presenter | gpu2d_test_presenter |
 | SYS-07 | Stage-004 regressions still pass | PASS | model/golden/ | ctest stage0045 includes golden_* | golden_test_tile_faults |
 | AUD-01 | 56-ID acceptance manifest | PASS | docs/tasks/STAGE_0045_ACCEPTANCE.json | gpu2d_test_boundary | gpu2d_test_boundary |
 | AUD-02 | Strict acceptance checker | PASS | scripts/check_stage0045_acceptance.py | gpu2d_test_boundary | gpu2d_test_boundary |
 | AUD-03 | REPORT_0045 exact commits and 56-row matrix | PASS | docs/reports/REPORT_0045_PC_Golden_Interactive_Application.md | gpu2d_test_boundary | gpu2d_test_boundary |
-| AUD-04 | Captures and stress outputs checked/generated | PASS | results/stage0045/captures/, results/stage0045/stress/stress_stats.md | gpu2d_test_system, gpu2d_demo_headless_tile | gpu2d_test_system |
+| AUD-04 | Captures and stress outputs checked/generated | PASS | results/stage0045/captures/, scripts/verify_stage0045_captures.py, results/stage0045/stress/stress_stats.md | gpu2d_test_capture_verify, gpu2d_test_cli_scenes, gpu2d_test_system | gpu2d_test_capture_verify |
 
 ## 16. Git Status
 
