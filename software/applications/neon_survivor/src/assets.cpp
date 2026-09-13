@@ -460,13 +460,12 @@ void draw_text_pal(gpu2d::GraphicsApi& api, const Assets& a, i32 x, i32 y, const
     }
 }
 
-void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
-                  const SimConfig& cfg, const DrawOpts& opts) {
+void render_scene_base(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
+                       const SimConfig& cfg) {
     g_counts = DrawCounts{};
     // Background: two-layer parallax fills
     const u32 sc = static_cast<u32>(sim.frame);
     api.fill_rect(0, 0, cfg.width, cfg.height, Color::rgb(8, 10, 24));
-    // far stars as small fills (deterministic)
     for (int i = 0; i < 24; ++i) {
         const u32 sx = (i * 97u + sc / 3) % cfg.width;
         const u32 sy = (i * 53u) % cfg.height;
@@ -474,14 +473,13 @@ void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
                       Color::rgb(40, 50, 90));
         ++g_counts.fills;
     }
-    // mid grid lines
     for (u32 x = 0; x < cfg.width; x += 64) {
         api.fill_rect(static_cast<i32>((x + sc / 2) % cfg.width), 0, 1, cfg.height,
                       Color::rgb(16, 24, 48));
         ++g_counts.fills;
     }
 
-    // Periodic bilinear shockwave (FX-03, always present in default game path).
+    // Periodic bilinear shockwave (FX-03)
     {
         const u32 period = 90;
         const u32 ph = sc % period;
@@ -508,21 +506,16 @@ void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
         }
     }
 
-    // Particles behind
     for (const auto& p : sim.particles) {
         if (p.life) {
             draw_particle(api, a, p);
         }
     }
-
-    // Enemies
     for (const auto& e : sim.enemies) {
         if (e.alive) {
             draw_enemy(api, a, e);
         }
     }
-
-    // Player
     {
         gpu2d::SpriteParams sp;
         sp.tex = a.player;
@@ -537,25 +530,22 @@ void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
         api.draw_sprite(sp);
         ++g_counts.sprites;
     }
-
-    // Bullets
     for (const auto& b : sim.bullets) {
         if (b.alive) {
             draw_bullet(api, a, b);
         }
     }
+}
 
-    // Clip path demo: HUD panel with clip (counts as clipped_fill)
+void render_debug_overlay(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
+                          const SimConfig& cfg, const DrawOpts& opts) {
+    // Clip path demo: HUD panel (clipped_fill)
     if (opts.hud) {
         api.set_clip(true, 0, 0, static_cast<i32>(cfg.width), 14);
         api.fill_rect(0, 0, cfg.width, 14, Color::rgba(0, 0, 0, 160));
         api.clear_clip();
         ++g_counts.clipped_draws;
         char buf[128];
-        std::snprintf(buf, sizeof(buf), "HP %d  SCORE %u  KILLS %u  EN %u  BL %u  PT %u",
-                      sim.player.hp, sim.score, sim.kills, g_counts.sprites > 0 ? 0u : 0u,
-                      g_counts.sprites, g_counts.sprites);
-        // accurate counts from sim
         u32 en = 0, bl = 0, pt = 0;
         for (const auto& e : sim.enemies) {
             en += e.alive ? 1 : 0;
@@ -571,9 +561,8 @@ void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
         draw_text_pal(api, a, 4, 3, buf, Color::rgb(180, 255, 255));
         std::snprintf(buf, sizeof(buf), "EN %u  BL %u  PT %u  MODE %s", en, bl, pt,
                       opts.tile_mode ? "TILE32" : "IMMEDIATE");
-        const i32 right = static_cast<i32>(cfg.width) > 240
-                              ? static_cast<i32>(cfg.width) - 220
-                              : 4;
+        const i32 right =
+            static_cast<i32>(cfg.width) > 240 ? static_cast<i32>(cfg.width) - 220 : 4;
         const i32 ry = static_cast<i32>(cfg.width) > 240 ? 3 : 16;
         draw_text_pal(api, a, right, ry, buf, Color::rgb(255, 200, 80));
     }
@@ -589,7 +578,6 @@ void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
         std::snprintf(buf, sizeof(buf), "TILE %u/%u MAXREF %u MAXOD %u", t.tiles_active,
                       t.tiles_total, t.max_workrefs_per_tile, t.max_overdraw);
         draw_text_pal(api, a, 4, y + 12, buf, Color::rgb(120, 255, 160));
-        // Headless/capture: omit live FPS so framebuffer bytes are deterministic.
         if (opts.host_fps > 0.0) {
             std::snprintf(buf, sizeof(buf), "PC GOLDEN HOST FPS %.1f", opts.host_fps);
         } else {
@@ -600,14 +588,13 @@ void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
         draw_text_pal(api, a, 4, y + 36, buf, Color::rgb(160, 160, 255));
     }
 
-    // Architecture X-Ray: cheap grid (O(gw+gh) fills), heat only on active tiles.
+    // Architecture X-Ray (uses opts.tel — must be BASE telemetry, not overlay).
     if (opts.xray) {
         const u32 ts = opts.tile_size ? opts.tile_size : 32u;
         const u32 gw = (cfg.width + ts - 1) / ts;
         const u32 gh = (cfg.height + ts - 1) / ts;
         const bool have_map =
             opts.tel && opts.tel->has_workref_map && opts.tel->tile_workrefs;
-        // One horizontal + one vertical line per tile axis (not per tile cell).
         for (u32 ty = 0; ty <= gh; ++ty) {
             const i32 y = static_cast<i32>(ty * ts);
             if (y >= static_cast<i32>(cfg.height)) {
@@ -649,10 +636,18 @@ void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
                 }
             }
         }
-        char buf[80];
-        std::snprintf(buf, sizeof(buf), "X-RAY %s%s", opts.tile_mode ? "TILE32" : "IMM",
-                      have_map ? "" : " (NO MAP)");
+        char buf[96];
+        std::snprintf(buf, sizeof(buf), "X-RAY %s BASE-TEL%s",
+                      opts.tile_mode ? "TILE32" : "IMM", have_map ? "" : " NO-MAP");
         draw_text(api, a, 4, static_cast<i32>(cfg.height) - 16, buf, Color::rgb(0, 255, 255));
+    }
+}
+
+void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
+                  const SimConfig& cfg, const DrawOpts& opts) {
+    render_scene_base(api, a, sim, cfg);
+    if (opts.hud || opts.tech_hud || opts.xray) {
+        render_debug_overlay(api, a, sim, cfg, opts);
     }
 }
 

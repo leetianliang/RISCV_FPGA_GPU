@@ -68,6 +68,14 @@ void draw_text(gpu2d::GraphicsApi& api, const Assets& a, i32 x, i32 y, const cha
 void draw_text_pal(gpu2d::GraphicsApi& api, const Assets& a, i32 x, i32 y, const char* s,
                    gpu2d::Color c, u8 alpha = 255);
 
+// Base game scene only — no HUD / tech HUD / X-Ray. Authoritative telemetry source.
+void render_scene_base(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
+                       const SimConfig& cfg);
+// Debug overlay only (HUD / tech HUD / X-Ray). Must not clear or redraw the game.
+// opts.tel must be BASE telemetry from the completed base execute, not overlay telemetry.
+void render_debug_overlay(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
+                          const SimConfig& cfg, const DrawOpts& opts);
+// Combined convenience (base + optional overlay) for simple tests.
 void render_frame(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
                   const SimConfig& cfg, const DrawOpts& opts);
 

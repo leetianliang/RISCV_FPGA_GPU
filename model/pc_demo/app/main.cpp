@@ -251,6 +251,7 @@ int main(int argc, char** argv) {
     u64 frames_run = 0;
     double host_fps = 0.0;
     auto t0 = std::chrono::steady_clock::now();
+    gpu2d::TelemetrySnapshot base_tel;
 
     // I-02: GPU-rendered launcher (interactive only; headless skips to scene).
     enum class AppScreen : int { Menu = 0, Game = 1, Help = 2, Stress = 3 };
@@ -434,25 +435,37 @@ int main(int argc, char** argv) {
         const bool keys[4] = {input.up, input.down, input.left, input.right};
         neon::sim_step(sim, scfg, rng, keys, cli.headless);
 
+        // R2-01: measure BASE scene only; overlay never feeds telemetry it draws.
         rec.begin_frame();
-        neon::DrawOpts opts;
-        opts.hud = true;
-        opts.tech_hud = tech_hud || cli.headless;
-        opts.xray = xray;
-        opts.tile_mode = gpu.backend() != BackendKind::Immediate;
-        opts.tile_size = cli.profile.tile_size ? cli.profile.tile_size : 32;
-        // Headless/capture must not bake live FPS into the framebuffer.
-        opts.host_fps = cli.headless ? 0.0 : host_fps;
-        // Telemetry from previous frame (1-frame lag). Single execute only —
-        // a second full re-render made X-Ray/tech HUD extremely slow.
-        const auto tel_view = gpu.telemetry().view();
-        opts.tel = &tel_view;
-        neon::render_frame(rec, assets, sim, scfg, opts);
+        neon::render_scene_base(rec, assets, sim, scfg);
         rec.present();
-
         if (!gpu.execute_frame(rec.commands())) {
-            std::fprintf(stderr, "execute_frame failed fault=0x%X\n", gpu.last_fault());
+            std::fprintf(stderr, "execute_frame(base) failed fault=0x%X\n", gpu.last_fault());
             return 1;
+        }
+        // Authoritative BASE telemetry snapshot (before any overlay execute).
+        base_tel = gpu.telemetry();
+
+        const bool want_overlay = true;  // gameplay HUD; tech/X-Ray via flags
+        if (want_overlay) {
+            neon::DrawOpts opts;
+            opts.hud = true;
+            opts.tech_hud = tech_hud || cli.headless;
+            opts.xray = xray;
+            opts.tile_mode = gpu.backend() != BackendKind::Immediate;
+            opts.tile_size = cli.profile.tile_size ? cli.profile.tile_size : 32;
+            opts.host_fps = cli.headless ? 0.0 : host_fps;
+            const auto base_view = base_tel.view();
+            opts.tel = &base_view;
+            rec.begin_frame();
+            neon::render_debug_overlay(rec, assets, sim, scfg, opts);
+            rec.present();
+            if (!gpu.execute_frame(rec.commands())) {
+                std::fprintf(stderr, "execute_frame(overlay) failed fault=0x%X\n",
+                             gpu.last_fault());
+                return 1;
+            }
+            // Overlay telemetry is discarded for X-Ray; keep base_tel as source.
         }
 
         const u8* fb = gpu.framebuffer();
@@ -489,9 +502,10 @@ int main(int argc, char** argv) {
         }
     }
 
-    const auto& tel = gpu.telemetry();
+    // Report authoritative BASE telemetry (not overlay-contaminated).
+    const auto& tel = base_tel;
     std::printf(
-        "gpu2d_demo done backend=%s scene=%u cmds=%u sprites=%u tiles=%u/%u wrefs=%u "
+        "gpu2d_demo done backend=%s scene=%u base_cmds=%u base_sprites=%u tiles=%u/%u wrefs=%u "
         "max_od=%u\n",
         gpu.backend() == BackendKind::Immediate ? "immediate" : "tile",
         static_cast<u32>(sim.scene), tel.command_count, tel.sprite_count, tel.tiles_active,

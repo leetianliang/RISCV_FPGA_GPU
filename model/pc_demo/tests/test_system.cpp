@@ -89,6 +89,30 @@ struct App {
         }
         return ok;
     }
+
+    // R2-01: base execute → snapshot telemetry → overlay-only execute.
+    bool step_base_overlay(bool xray, TelemetrySnapshot& out_base_tel) {
+        neon::sim_step(sim, cfg, rng, nullptr, true);
+        rec.begin_frame();
+        neon::render_scene_base(rec, assets, sim, cfg);
+        rec.present();
+        if (!gpu.execute_frame(rec.commands())) {
+            return false;
+        }
+        out_base_tel = gpu.telemetry();
+        neon::DrawOpts opts;
+        opts.hud = true;
+        opts.tech_hud = true;
+        opts.xray = xray;
+        opts.tile_mode = gpu.backend() != BackendKind::Immediate;
+        opts.tile_size = 32;
+        const auto view = out_base_tel.view();
+        opts.tel = &view;
+        rec.begin_frame();
+        neon::render_debug_overlay(rec, assets, sim, cfg, opts);
+        rec.present();
+        return gpu.execute_frame(rec.commands());
+    }
 };
 
 u32 hash_fb(const GoldenBackend& g) {
@@ -318,6 +342,39 @@ int main() {
         CHECK(a.gpu.execute_frame(rec.commands()));
         // overlay changes pixels
         CHECK(hash_fb(a.gpu) != fb0);
+    }
+
+    // R2-01: X-Ray overlay must not contaminate BASE telemetry across frames
+    {
+        App off, on;
+        CHECK(off.init(160, 90, 55, BackendKind::Tile32));
+        CHECK(on.init(160, 90, 55, BackendKind::Tile32));
+        for (int f = 0; f < 25; ++f) {
+            TelemetrySnapshot t_off, t_on;
+            CHECK(off.step_base_overlay(false, t_off));
+            CHECK(on.step_base_overlay(true, t_on));
+            if (t_off.workref_count != t_on.workref_count ||
+                t_off.tiles_active != t_on.tiles_active ||
+                t_off.max_overdraw != t_on.max_overdraw ||
+                t_off.command_count != t_on.command_count) {
+                std::printf(
+                    "R2-01 frame %d base tel drift: off wref=%u act=%u od=%u cmds=%u | "
+                    "on wref=%u act=%u od=%u cmds=%u\n",
+                    f, t_off.workref_count, t_off.tiles_active, t_off.max_overdraw,
+                    t_off.command_count, t_on.workref_count, t_on.tiles_active,
+                    t_on.max_overdraw, t_on.command_count);
+                ++g_fail;
+                break;
+            }
+            // Overlay execute must not be treated as next X-Ray source: on.gpu.telemetry()
+            // after overlay is contaminated; we compare base snapshots only (above).
+        }
+        // After many X-Ray frames, base tiles_active must not equal tiles_total solely
+        // due to grid lines covering every tile (overlay isolation).
+        TelemetrySnapshot tfin;
+        CHECK(on.step_base_overlay(true, tfin));
+        std::printf("R2-01 final base tiles %u/%u wref=%u (overlay isolated)\n",
+                    tfin.tiles_active, tfin.tiles_total, tfin.workref_count);
     }
 
     if (g_fail) {
