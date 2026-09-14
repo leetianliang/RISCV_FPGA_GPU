@@ -117,20 +117,34 @@ private:
 };
 
 // Helper for pixel-center scale coefficients (frozen formula).
+// src_w - dst_w must be signed: u32 subtraction underflows on scale-up and
+// produced a huge positive u0 (entire sprite sampled from texel 0 / black).
 inline void compute_axis_aligned_uv(u32 src_x, u32 src_w, u32 dst_w, i32& u0,
                                     i32& du_dx) {
+    if (dst_w == 0) {
+        du_dx = 0;
+        u0 = static_cast<i32>(static_cast<i64>(src_x) << 16);
+        return;
+    }
     du_dx = static_cast<i32>(round_div_signed(static_cast<i64>(src_w) * 65536, dst_w));
+    const i64 sw = static_cast<i64>(src_w);
+    const i64 dw = static_cast<i64>(dst_w);
     u0 = static_cast<i32>((static_cast<i64>(src_x) << 16) +
-                          round_div_signed(static_cast<i64>(src_w - dst_w) * 32768,
-                                           dst_w));
+                          round_div_signed((sw - dw) * 32768, dw));
 }
 
 inline void compute_axis_aligned_uv_v(u32 src_y, u32 src_h, u32 dst_h, i32& v0,
                                       i32& dv_dy) {
+    if (dst_h == 0) {
+        dv_dy = 0;
+        v0 = static_cast<i32>(static_cast<i64>(src_y) << 16);
+        return;
+    }
     dv_dy = static_cast<i32>(round_div_signed(static_cast<i64>(src_h) * 65536, dst_h));
+    const i64 sh = static_cast<i64>(src_h);
+    const i64 dh = static_cast<i64>(dst_h);
     v0 = static_cast<i32>((static_cast<i64>(src_y) << 16) +
-                          round_div_signed(static_cast<i64>(src_h - dst_h) * 32768,
-                                           dst_h));
+                          round_div_signed((sh - dh) * 32768, dh));
 }
 
 }  // namespace golden

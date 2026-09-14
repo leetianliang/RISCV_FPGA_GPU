@@ -360,11 +360,18 @@ bool GoldenBackend::run_immediate(const std::vector<RecCommand>& cmds) {
                             profile_.height, ext_next, d, need_ext);
             if (need_ext) {
                 const auto ext = golden::make_draw2d_ext_v1(d);
-                gpu.memory().write_block(d.ext_ptr, ext.data(), ext.size());
+                const auto wst = gpu.memory().write_block(d.ext_ptr, ext.data(), ext.size());
+                if (wst.status != golden::MemAccessStatus::OK) {
+                    last_fault_ = 0xFFFE;
+                    return false;
+                }
                 auto cmd = golden::make_blit_ext_cmd(d);
                 const i32 dw = c.sp.scale_w ? c.sp.scale_w : static_cast<i32>(d.w);
                 const i32 dh = c.sp.scale_h ? c.sp.scale_h : static_cast<i32>(d.h);
                 if (dw != static_cast<i32>(d.w) || dh != static_cast<i32>(d.h)) {
+                    // Match Stage-004: cmd[10]=src, cmd[11]=dest
+                    cmd[10] = (static_cast<golden::u32>(d.h) << 16) |
+                              static_cast<golden::u32>(d.w);
                     cmd[11] = (static_cast<golden::u32>(dh & 0xFFFF) << 16) |
                               static_cast<golden::u32>(dw & 0xFFFF);
                 }

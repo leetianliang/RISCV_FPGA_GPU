@@ -1,4 +1,6 @@
 #include "golden_renderer.hpp"
+#include "golden/command_decoder.hpp"
+#include "golden/golden_gpu.hpp"
 #include "gpu2d/renderer.hpp"
 #include "neon/assets.hpp"
 #include "neon/sim.hpp"
@@ -347,6 +349,74 @@ int main() {
         CHECK(r.gpu.execute_frame(rec.commands()));
         const auto& t = r.gpu.telemetry();
         CHECK(t.tile_size == 32);
+    }
+
+    // Diagnose Heavy-like bilinear scale COPY (black-box bug)
+    {
+        Rig r;
+        CHECK(make_rig(r, BackendKind::Immediate));
+        auto sample_after = [&](const char* tag, FilterMode filt, i32 sw, i32 sh,
+                                bool add) {
+            CommandRecorder rec;
+            rec.begin_frame();
+            rec.fill_rect(0, 0, 64, 64, Color::rgb(0, 40, 0));
+            SpriteParams sp;
+            sp.tex = r.a.enemy_h;
+            sp.w = 20;
+            sp.h = 20;
+            sp.dst_x = 20;
+            sp.dst_y = 20;
+            sp.filter = filt;
+            if (sw) {
+                sp.scale_w = sw;
+                sp.scale_h = sh;
+            }
+            if (add) {
+                sp.blend = BlendMode::AddSat;
+            }
+            rec.draw_sprite(sp);
+            rec.present();
+            const bool ok = r.gpu.execute_frame(rec.commands());
+            const u32 c = sample(r.gpu, 32, 32);
+            const u32 e = sample(r.gpu, 24, 24);
+            std::printf("%s ok=%d center=%06X near=%06X\n", tag, ok ? 1 : 0, c, e);
+        };
+        sample_after("near 1:1", FilterMode::Nearest, 0, 0, false);
+        sample_after("bil 1:1", FilterMode::Bilinear, 0, 0, false);
+        sample_after("near scale", FilterMode::Nearest, 24, 24, false);
+        sample_after("bil scale", FilterMode::Bilinear, 24, 24, false);
+        sample_after("bil scale add", FilterMode::Bilinear, 24, 24, true);
+    }
+
+    // Scale-up UV must not underflow (black-sprite bug)
+    {
+        Rig r;
+        CHECK(make_rig(r, BackendKind::Immediate));
+        CommandRecorder rec;
+        rec.begin_frame();
+        rec.fill_rect(0, 0, 64, 64, Color::rgb(0, 40, 0));
+        SpriteParams sp;
+        sp.tex = r.a.enemy_h;
+        sp.w = 20;
+        sp.h = 20;
+        sp.scale_w = 24;
+        sp.scale_h = 24;
+        sp.dst_x = 20;
+        sp.dst_y = 20;
+        sp.filter = FilterMode::Nearest;
+        rec.draw_sprite(sp);
+        rec.present();
+        CHECK(r.gpu.execute_frame(rec.commands()));
+        const u32 c = sample(r.gpu, 32, 32);
+        if ((c & 0xFFFFFF) == 0) {
+            std::printf("FAIL scaled sprite center black (%06X)\n", c);
+            ++g_fail;
+        }
+        golden::i32 u0 = 0, du = 0, v0 = 0, dv = 0;
+        golden::compute_axis_aligned_uv(0, 20, 24, u0, du);
+        golden::compute_axis_aligned_uv_v(0, 20, 24, v0, dv);
+        CHECK(u0 < 0);
+        CHECK(du > 0 && du < 65536);
     }
 
     if (g_fail) {
