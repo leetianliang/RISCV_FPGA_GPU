@@ -291,57 +291,106 @@ int main() {
         }
     }
 
-    // XR G-T1..G-T4
+    // XR G-T1..G-T4 + R2-02 sparse fixture: inactive / low / high all >= 1
     {
         App a;
         CHECK(a.init(160, 90, 42, BackendKind::Tile32));
-        a.sim.scene = neon::SceneId::Game;
-        for (int f = 0; f < 40; ++f) {
-            CHECK(a.step_render());
+        // Sparse architecture fixture — NO full-screen background (that forces
+        // every tile active). Draw only in selected tiles.
+        // Grid 5x3 tile32. Tile (0,0) low work; tile (2,1) high work; rest empty.
+        a.rec.begin_frame();
+        // low: one 2x2 pixel in tile (0,0)
+        a.rec.fill_rect(4, 4, 2, 2, Color::rgb(255, 0, 0));
+        // high: many overlapping fills in tile (2,1) = pixel x 64..95, y 32..63
+        for (int i = 0; i < 16; ++i) {
+            a.rec.fill_rect(70 + (i % 3), 40 + (i % 2), 8, 8,
+                            Color::rgb(static_cast<u8>(10 * i), 80, 200));
         }
+        a.rec.present();
+        CHECK(a.gpu.execute_frame(a.rec.commands()));
         const auto& t = a.gpu.telemetry();
         // G-T1: known grid for 160x90 tile32 → 5 x 3
         CHECK(t.grid_w == 5);
         CHECK(t.grid_h == 3);
         CHECK(t.tile_size == 32);
-        // G-T2: inactive / low / high work tiles
-        if (t.has_workref_map && !t.tile_workrefs.empty()) {
-            u32 zero = 0, low = 0, high = 0;
-            const size_t n = static_cast<size_t>(t.grid_w) * t.grid_h;
-            for (size_t i = 0; i < n; ++i) {
-                const u16 wc = t.tile_workrefs[i];
-                if (wc == 0) {
-                    ++zero;
-                } else if (wc <= 4) {
-                    ++low;
-                } else if (wc >= 10) {
-                    ++high;
-                }
+        CHECK(t.tiles_total == 15);
+        CHECK(t.has_workref_map && !t.tile_workrefs.empty());
+        u32 zero = 0, low = 0, high = 0;
+        for (size_t i = 0; i < t.tile_workrefs.size(); ++i) {
+            const u16 wc = t.tile_workrefs[i];
+            if (wc == 0) {
+                ++zero;
+            } else if (wc <= 4) {
+                ++low;
+            } else if (wc >= 8) {
+                ++high;
             }
-            std::printf("xray grid %ux%u zero=%u low=%u high=%u\n", t.grid_w, t.grid_h, zero,
-                        low, high);
-            CHECK(zero >= 1 || low >= 1);  // corners often empty
-            CHECK(low + high >= 1);
+            std::printf("  tile[%zu]=%u%s", i, wc, ((i + 1) % 5 == 0) ? "\n" : " ");
         }
-        // G-T3: X-Ray does not alter sim
+        std::printf("xray sparse zero=%u low=%u high=%u active=%u wref=%u\n", zero, low, high,
+                    t.tiles_active, t.workref_count);
+        // G-T2 exact matrix — do not weaken
+        CHECK(zero >= 1);
+        CHECK(low >= 1);
+        CHECK(high >= 1);
+
+        // G-T3: X-Ray overlay draw does not alter sim hash
         const u32 h0 = neon::hash_sim(a.sim);
+        const u32 fb_base = hash_fb(a.gpu);
+        neon::DrawOpts ov;
+        ov.hud = true;
+        ov.tech_hud = true;
+        ov.xray = true;
+        ov.tile_mode = true;
+        ov.tile_size = 32;
+        const auto telv = a.gpu.telemetry().view();
+        ov.tel = &telv;
+        CommandRecorder rec2;
+        rec2.begin_frame();
+        neon::render_debug_overlay(rec2, a.assets, a.sim, a.cfg, ov);
+        CHECK(neon::hash_sim(a.sim) == h0);
+        rec2.present();
+        CHECK(a.gpu.execute_frame(rec2.commands()));
+        // G-T4: overlay changes pixels
+        CHECK(hash_fb(a.gpu) != fb_base);
+    }
+
+    // G-T4 exact: base frame X-Ray OFF == base frame before overlay ON
+    {
+        auto sparse = [](App& app) {
+            app.rec.begin_frame();
+            app.rec.fill_rect(4, 4, 2, 2, Color::rgb(255, 0, 0));
+            for (int i = 0; i < 16; ++i) {
+                app.rec.fill_rect(70 + (i % 3), 40 + (i % 2), 8, 8, Color::rgb(200, 80, 40));
+            }
+            app.rec.present();
+            return app.gpu.execute_frame(app.rec.commands());
+        };
+        App off, on;
+        CHECK(off.init(160, 90, 7, BackendKind::Tile32));
+        CHECK(on.init(160, 90, 7, BackendKind::Tile32));
+        CHECK(sparse(off));
+        CHECK(sparse(on));
+        const u32 h_off = hash_fb(off.gpu);
+        const u32 h_on_base = hash_fb(on.gpu);
+        CHECK(h_off == h_on_base);
+        // now overlay only on 'on'
+        neon::DrawOpts ov;
+        ov.xray = true;
+        ov.tech_hud = true;
+        ov.hud = true;
+        ov.tile_size = 32;
+        ov.tile_mode = true;
+        const auto telv = on.gpu.telemetry().view();
+        ov.tel = &telv;
         CommandRecorder rec;
         rec.begin_frame();
-        neon::DrawOpts opts;
-        opts.hud = true;
-        opts.xray = true;
-        opts.tile_size = 32;
-        opts.tile_mode = true;
-        const auto tel = a.gpu.telemetry().view();
-        opts.tel = &tel;
-        neon::render_frame(rec, a.assets, a.sim, a.cfg, opts);
-        CHECK(neon::hash_sim(a.sim) == h0);
-        // G-T4: base scene FB before overlay execute unchanged after sim-only
-        const u32 fb0 = hash_fb(a.gpu);
+        neon::render_debug_overlay(rec, on.assets, on.sim, on.cfg, ov);
         rec.present();
-        CHECK(a.gpu.execute_frame(rec.commands()));
-        // overlay changes pixels
-        CHECK(hash_fb(a.gpu) != fb0);
+        CHECK(on.gpu.execute_frame(rec.commands()));
+        CHECK(hash_fb(on.gpu) != h_off);
+        // off without overlay unchanged
+        CHECK(hash_fb(off.gpu) == h_off);
     }
 
     // R2-01: X-Ray overlay must not contaminate BASE telemetry across frames
