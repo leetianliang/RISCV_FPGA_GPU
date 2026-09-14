@@ -1,8 +1,8 @@
 {
   "package": "facility_omega_runtime",
-  "version": "0.1",
-  "source_intake": "assets/facility_omega/source (immutable)",
-  "sprite_count": 41,
+  "version": "0.2",
+  "argb_byte_order": "BGRA",
+  "sprite_count": 45,
   "sprites": [
     {
       "name": "engineer_a0",
@@ -19,9 +19,10 @@
       "stride": 128,
       "anchor_x": 16,
       "anchor_y": 28,
+      "role": "sprite",
       "runtime_file": "argb8888/engineer_a0.argb",
       "preview_file": "processed/png/engineer_a0.png",
-      "sha256": "2b91f1342cccd0ea90a81af034e01a31cf92fe3e3e2734a626722a8017bb57de"
+      "sha256": "d233dc074331a5d711feab18155045350d74ea2043d6a34388e8a6227e964a15"
     },
     {
       "name": "engineer_a1",
@@ -38,9 +39,10 @@
       "stride": 128,
       "anchor_x": 16,
       "anchor_y": 28,
+      "role": "sprite",
       "runtime_file": "argb8888/engineer_a1.argb",
       "preview_file": "processed/png/engineer_a1.png",
-      "sha256": "28fb88c09417bd21d9c934af9836acb676489053b3b2a99a91bc87bde911362e"
+      "sha256": "e3771c1b3381019d3141468718015c7398187095eebb8d51c3800e50e0106366"
     },
     {
       "name": "engineer_b0",
@@ -57,9 +59,10 @@
       "stride": 128,
       "anchor_x": 16,
       "anchor_y": 28,
+      "role": "sprite",
       "runtime_file": "argb8888/engineer_b0.argb",
       "preview_file": "processed/png/engineer_b0.png",
-      "sha256": "e0802e343a271e0a32fbc43a727c3b070a02ae42f78cdf0da59491953f816ab6"
+      "sha256": "b08db6b42d9aa4d3edc7a9c9e7ea0d3b84f8889a80c83b52f1fe5582cb1db1e3"
     },
     {
       "name": "engineer_b1",
@@ -76,9 +79,10 @@
       "stride": 128,
       "anchor_x": 16,
       "anchor_y": 28,
+      "role": "sprite",
       "runtime_file": "argb8888/engineer_b1.argb",
       "preview_file": "processed/png/engineer_b1.png",
-      "sha256": "613aa977effcceae62207a893fae4db16e186220c4d8d3a1f89b9d18341db10a"
+      "sha256": "4ab19fb925a37c2a07830febc2b749e26f941dac9226e5ba47f3da1393130d8a"
     },
     {
       "name": "engineer_c0",
@@ -95,9 +99,10 @@
       "stride": 128,
       "anchor_x": 16,
       "anchor_y": 28,
+      "role": "sprite",
       "runtime_file": "argb8888/engineer_c0.argb",
       "preview_file": "processed/png/engineer_c0.png",
-      "sha256": "7e12843fd17be4538d12a2b3fe4cf58b3dd2db2d84d2cf4bc82f308e454bf8de"
+      "sha256": "3fbf1b9756149c73db074b760fe6b7ae26b2b80916e57ff5848e28e0cb3d12d2"
     },
     {
       "name": "engineer_c1",
@@ -114,9 +119,10 @@
       "stride": 128,
       "anchor_x": 16,
       "anchor_y": 28,
+      "role": "sprite",
       "runtime_file": "argb8888/engineer_c1.argb",
       "preview_file": "processed/png/engineer_c1.png",
-      "sha256": "431c47303c8adda74df0837489415f7533121fce324fa75ac0727815ba29ddf7"
+      "sha256": "331f11e3a5d2cf73d5eb789d0c50c3da074d49ead6a15a96951cbff19d22c5da"
     },
     {
       "name": "engineer_d0",
@@ -133,9 +139,10 @@
       "stride": 128,
       "anchor_x": 16,
       "anchor_y": 28,
+      "role": "sprite",
       "runtime_file": "argb8888/engineer_d0.argb",
       "preview_file": "processed/png/engineer_d0.png",
-      "sha256": "a51d25c220e072d8c7db70191371737ab619ba7f858f49b76788d9856522b5b0"
+      "sha256": "72dba89dcd42c1a8f5ae0243f8db102d29bb4e1e577975b391d5d2e271fd68ee"
     },
     {
       "name": "engineer_d1",
@@ -152,9 +159,10 @@
       "stride": 128,
       "anchor_x": 16,
       "anchor_y": 28,
+      "role": "sprite",
       "runtime_file": "argb8888/engineer_d1.argb",
       "preview_file": "processed/png/engineer_d1.png",
-      "sha256": "2390ca79911c7005d94be9699552034fea4ffb853b76e0f15931719af4850789"
+      "sha256": "84bd6943fb3868eb9c1d0e992b206cd744afc6a18732ad531b87956e7a6a7ef9"
     },
     {
       "name": "engineer_idle",
@@ -171,9 +179,10 @@
       "stride": 128,
       "anchor_x": 16,
       "anchor_y": 28,
+      "role": "sprite",
       "runtime_file": "argb8888/engineer_idle.argb",
       "preview_file": "processed/png/engineer_idle.png",
-      "sha256": "c540131a7dc6e7585d12ea558f45c7dfced67c30ee547287aab4cecc1b1738a3"
+      "sha256": "48b3bd451e91122822360c36cc3366ca22a8cc0edd3b93ba309d9e11e326aaa0"
     },
     {
       "name": "engineer_hurt",
@@ -190,9 +199,10 @@
       "stride": 128,
       "anchor_x": 16,
       "anchor_y": 28,
+      "role": "sprite",
       "runtime_file": "argb8888/engineer_hurt.argb",
       "preview_file": "processed/png/engineer_hurt.png",
-      "sha256": "751a2cdcc8802badbf5b8e318954d8dd715f9b091e0a402401c0718eadc302ff"
+      "sha256": "7007fe3851ddffc3dd627ab516d2ef078df8e5f6380f45099c4b741583567b19"
     },
     {
       "name": "drone_0",
@@ -200,18 +210,39 @@
       "source_box": [
         67,
         90,
-        386,
+        190,
         200
       ],
       "format": "argb8888",
-      "width": 24,
-      "height": 24,
-      "stride": 96,
-      "anchor_x": 12,
-      "anchor_y": 12,
+      "width": 28,
+      "height": 28,
+      "stride": 112,
+      "anchor_x": 14,
+      "anchor_y": 14,
+      "role": "sprite",
       "runtime_file": "argb8888/drone_0.argb",
       "preview_file": "processed/png/drone_0.png",
-      "sha256": "20e4f61b66a6358f4c68d2cf73b44c20b5b59fa4fc822f1f10674a14350b6734"
+      "sha256": "7af600b2a7063ca0a56c0996531188098f64f028e3e8d0521c9b9e69e61ece9b"
+    },
+    {
+      "name": "drone_1",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        260,
+        90,
+        190,
+        200
+      ],
+      "format": "argb8888",
+      "width": 28,
+      "height": 28,
+      "stride": 112,
+      "anchor_x": 14,
+      "anchor_y": 14,
+      "role": "sprite",
+      "runtime_file": "argb8888/drone_1.argb",
+      "preview_file": "processed/png/drone_1.png",
+      "sha256": "7325f9499f6e6d7241aa528e1669d0261bf76303f24db1b67fee72cbe70219c1"
     },
     {
       "name": "crawler_0",
@@ -219,18 +250,39 @@
       "source_box": [
         495,
         90,
-        463,
+        225,
         200
       ],
       "format": "argb8888",
-      "width": 28,
-      "height": 28,
-      "stride": 112,
-      "anchor_x": 14,
-      "anchor_y": 20,
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 22,
+      "role": "sprite",
       "runtime_file": "argb8888/crawler_0.argb",
       "preview_file": "processed/png/crawler_0.png",
-      "sha256": "9acc3a97d1eea6ff1958b6c4a6afb104f6da87cd7f7d7b0e5f01d940bba7182a"
+      "sha256": "0ddbe66363c203a7e3d93089eec4221497e6b8473f73dbb9c3e32d08f083456f"
+    },
+    {
+      "name": "crawler_1",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        730,
+        90,
+        225,
+        200
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 22,
+      "role": "sprite",
+      "runtime_file": "argb8888/crawler_1.argb",
+      "preview_file": "processed/png/crawler_1.png",
+      "sha256": "64a58257e57372b6d2f0f59ef2320e7974b7d952f1f94c386f20804a8d0a2d6d"
     },
     {
       "name": "runner_0",
@@ -238,18 +290,39 @@
       "source_box": [
         1028,
         90,
-        365,
+        175,
         200
       ],
       "format": "argb8888",
-      "width": 28,
-      "height": 28,
-      "stride": 112,
-      "anchor_x": 14,
-      "anchor_y": 20,
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 22,
+      "role": "sprite",
       "runtime_file": "argb8888/runner_0.argb",
       "preview_file": "processed/png/runner_0.png",
-      "sha256": "102b78b66dbd1189a3f0bd1f32f407db9ff9916e31c0bc1e8520cf8fd082e744"
+      "sha256": "6aa472210e8c98c628a4ace496e2f61b6a42e2f7063d80484a267e26f7aa0a2b"
+    },
+    {
+      "name": "runner_1",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        1210,
+        90,
+        175,
+        200
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 22,
+      "role": "sprite",
+      "runtime_file": "argb8888/runner_1.argb",
+      "preview_file": "processed/png/runner_1.png",
+      "sha256": "4c4dde50abe19e72b1678d1ffa1ca8f83679eefc1a0f534a3257906810f55d18"
     },
     {
       "name": "tank_0",
@@ -257,7 +330,7 @@
       "source_box": [
         39,
         390,
-        712,
+        345,
         330
       ],
       "format": "argb8888",
@@ -265,10 +338,31 @@
       "height": 48,
       "stride": 192,
       "anchor_x": 24,
-      "anchor_y": 28,
+      "anchor_y": 32,
+      "role": "sprite",
       "runtime_file": "argb8888/tank_0.argb",
       "preview_file": "processed/png/tank_0.png",
-      "sha256": "f9c73ecfdc898f31626b292675641907cc49aa71aa37caaf1d4afb6846a36e08"
+      "sha256": "9cac715a350703913e4149f851d65340843c9d1d50175310307dcc446b615a0f"
+    },
+    {
+      "name": "tank_1",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        395,
+        390,
+        345,
+        330
+      ],
+      "format": "argb8888",
+      "width": 48,
+      "height": 48,
+      "stride": 192,
+      "anchor_x": 24,
+      "anchor_y": 32,
+      "role": "sprite",
+      "runtime_file": "argb8888/tank_1.argb",
+      "preview_file": "processed/png/tank_1.png",
+      "sha256": "00a0b45fbc8851953614f77381ed857000196bbffcae2b5f89ed9cf3eef7ee0d"
     },
     {
       "name": "elite_0",
@@ -276,7 +370,7 @@
       "source_box": [
         811,
         390,
-        603,
+        290,
         330
       ],
       "format": "argb8888",
@@ -284,19 +378,40 @@
       "height": 48,
       "stride": 192,
       "anchor_x": 24,
-      "anchor_y": 28,
+      "anchor_y": 32,
+      "role": "sprite",
       "runtime_file": "argb8888/elite_0.argb",
       "preview_file": "processed/png/elite_0.png",
-      "sha256": "7a8fdb148b383fc4ed86fb600a0004d3183d6453ee751071ea150bfdc2fcd633"
+      "sha256": "ae21f4bf3beeb86f9318fea1c1c0e98112d0aa78a9e421af552b9f48fb0c354d"
+    },
+    {
+      "name": "elite_1",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        1110,
+        390,
+        290,
+        330
+      ],
+      "format": "argb8888",
+      "width": 48,
+      "height": 48,
+      "stride": 192,
+      "anchor_x": 24,
+      "anchor_y": 32,
+      "role": "sprite",
+      "runtime_file": "argb8888/elite_1.argb",
+      "preview_file": "processed/png/elite_1.png",
+      "sha256": "3c32197b6f074c35420151f32dac1b6b8debe2487b71db6be8da87e9e250a4d4"
     },
     {
       "name": "pulse_shot",
       "source_sheet": "weapons_pickups_source.png",
       "source_box": [
         21,
-        20,
-        301,
-        100
+        55,
+        90,
+        70
       ],
       "format": "argb8888",
       "width": 8,
@@ -304,18 +419,19 @@
       "stride": 32,
       "anchor_x": 4,
       "anchor_y": 4,
+      "role": "sprite",
       "runtime_file": "argb8888/pulse_shot.argb",
       "preview_file": "processed/png/pulse_shot.png",
-      "sha256": "861295ffd10a493b96be7708d95517c50beafbe436d72197403cc00a30fed731"
+      "sha256": "2a23497c0c4c1a95f36488e4bd7084b6f438785875e2b57ab2d66b19dbc1909d"
     },
     {
       "name": "enemy_bullet",
       "source_sheet": "weapons_pickups_source.png",
       "source_box": [
-        342,
-        20,
-        140,
-        100
+        850,
+        55,
+        90,
+        70
       ],
       "format": "argb8888",
       "width": 8,
@@ -323,37 +439,19 @@
       "stride": 32,
       "anchor_x": 4,
       "anchor_y": 4,
+      "role": "sprite",
       "runtime_file": "argb8888/enemy_bullet.argb",
       "preview_file": "processed/png/enemy_bullet.png",
-      "sha256": "718e3cd4de420e19560757472a64893c67912bf2b48b64a9bc4fe1073157dc36"
-    },
-    {
-      "name": "orbit_drone",
-      "source_sheet": "weapons_pickups_source.png",
-      "source_box": [
-        795,
-        20,
-        235,
-        100
-      ],
-      "format": "argb8888",
-      "width": 12,
-      "height": 12,
-      "stride": 48,
-      "anchor_x": 6,
-      "anchor_y": 6,
-      "runtime_file": "argb8888/orbit_drone.argb",
-      "preview_file": "processed/png/orbit_drone.png",
-      "sha256": "04389dbf46b28d429d250d7102804933427ef1f3adffcc65e3e3e2185196cd86"
+      "sha256": "2955f70cf3abf35f201c18e68f98c49da4c2a27c354bab2eb553990dc21b7283"
     },
     {
       "name": "xp_small",
       "source_sheet": "weapons_pickups_source.png",
       "source_box": [
-        21,
-        895,
-        304,
-        150
+        25,
+        780,
+        70,
+        70
       ],
       "format": "argb8888",
       "width": 8,
@@ -361,18 +459,19 @@
       "stride": 32,
       "anchor_x": 4,
       "anchor_y": 4,
+      "role": "sprite",
       "runtime_file": "argb8888/xp_small.argb",
       "preview_file": "processed/png/xp_small.png",
-      "sha256": "ddb2c39374c775bf43ea37d3d7e1353907731fbb7fb28bc6359df4cca1bdc202"
+      "sha256": "52fd6d949f034fabfe359c92873040b9ac798dab0d6f3cfe868dee11890008bf"
     },
     {
       "name": "xp_large",
       "source_sheet": "weapons_pickups_source.png",
       "source_box": [
-        364,
-        895,
-        310,
-        150
+        370,
+        755,
+        100,
+        110
       ],
       "format": "argb8888",
       "width": 12,
@@ -380,18 +479,19 @@
       "stride": 48,
       "anchor_x": 6,
       "anchor_y": 6,
+      "role": "sprite",
       "runtime_file": "argb8888/xp_large.argb",
       "preview_file": "processed/png/xp_large.png",
-      "sha256": "e536da0771fff9fdf7c7ce81aa4d76c0015e864560a4d68db9b43b352aa6c989"
+      "sha256": "c29ea42374dfc27607ea8643ed777e3576caebce7a3867c26909276d3d4a826a"
     },
     {
       "name": "repair_pickup",
       "source_sheet": "weapons_pickups_source.png",
       "source_box": [
-        733,
-        895,
-        323,
-        150
+        1090,
+        760,
+        90,
+        90
       ],
       "format": "argb8888",
       "width": 16,
@@ -399,37 +499,19 @@
       "stride": 64,
       "anchor_x": 8,
       "anchor_y": 8,
+      "role": "sprite",
       "runtime_file": "argb8888/repair_pickup.argb",
       "preview_file": "processed/png/repair_pickup.png",
-      "sha256": "33ab0f48a259e57e156bfbd0f3f917d65086a3370f813adfa455ced88eaa6304"
-    },
-    {
-      "name": "spark",
-      "source_sheet": "fx_source.png",
-      "source_box": [
-        20,
-        50,
-        180,
-        180
-      ],
-      "format": "argb8888",
-      "width": 8,
-      "height": 8,
-      "stride": 32,
-      "anchor_x": 4,
-      "anchor_y": 4,
-      "runtime_file": "argb8888/spark.argb",
-      "preview_file": "processed/png/spark.png",
-      "sha256": "c1ea6a59eb20c02821c6e7e9a9ca859a0f6e7e6488e2c7d5ae8b88121d5acae7"
+      "sha256": "733dac8aa40d1e603f9cd46c3d826264143cd03167c084f567da5212187e28d5"
     },
     {
       "name": "glow_small",
       "source_sheet": "fx_source.png",
       "source_box": [
-        220,
+        40,
         50,
-        220,
-        220
+        160,
+        160
       ],
       "format": "argb8888",
       "width": 16,
@@ -437,18 +519,19 @@
       "stride": 64,
       "anchor_x": 8,
       "anchor_y": 8,
+      "role": "sprite",
       "runtime_file": "argb8888/glow_small.argb",
       "preview_file": "processed/png/glow_small.png",
-      "sha256": "a6f1754e263ddcf0b39c9834d4174ca8ee6b9c3f210e0168b7662312ed8c03cb"
+      "sha256": "5d9bcbf3109e16dd42f994de52a41b900da6d4cf093a06b219c8d16e68313d86"
     },
     {
       "name": "glow_large",
       "source_sheet": "fx_source.png",
       "source_box": [
-        460,
-        50,
         280,
-        280
+        40,
+        220,
+        220
       ],
       "format": "argb8888",
       "width": 32,
@@ -456,35 +539,37 @@
       "stride": 128,
       "anchor_x": 16,
       "anchor_y": 16,
+      "role": "sprite",
       "runtime_file": "argb8888/glow_large.argb",
       "preview_file": "processed/png/glow_large.png",
-      "sha256": "14ed3aba16926106c90e94ed463e11d361adb29c784474726f1299f40ee6c8f6"
+      "sha256": "7815c5c61b27e21deacabaded25c6196fa0fe503378132f5ebb15b31f774d635"
     },
     {
-      "name": "ring",
+      "name": "spark",
       "source_sheet": "fx_source.png",
       "source_box": [
-        760,
+        620,
         50,
-        300,
-        300
+        180,
+        180
       ],
       "format": "argb8888",
-      "width": 32,
-      "height": 32,
-      "stride": 128,
-      "anchor_x": 16,
-      "anchor_y": 16,
-      "runtime_file": "argb8888/ring.argb",
-      "preview_file": "processed/png/ring.png",
-      "sha256": "c0a042b8a64d14a146aaea1e73dc82f456aeb33b13a7909596fc908e53086427"
+      "width": 16,
+      "height": 16,
+      "stride": 64,
+      "anchor_x": 8,
+      "anchor_y": 8,
+      "role": "sprite",
+      "runtime_file": "argb8888/spark.argb",
+      "preview_file": "processed/png/spark.png",
+      "sha256": "ea7681c55487c0d18d54b99e2db7739bb993b45903a90caf4eea0c9434e657ec"
     },
     {
       "name": "explosion",
       "source_sheet": "fx_source.png",
       "source_box": [
-        20,
-        380,
+        320,
+        620,
         280,
         280
       ],
@@ -494,28 +579,50 @@
       "stride": 128,
       "anchor_x": 16,
       "anchor_y": 16,
+      "role": "sprite",
       "runtime_file": "argb8888/explosion.argb",
       "preview_file": "processed/png/explosion.png",
-      "sha256": "2ffba175dea9ae2cade5be5648af685c507ef4ecf5e25c9ac1ec7e26ccd33429"
+      "sha256": "838352a2641c4a96c9a871f6f2867b95b82687edccbc6143dd2a02600cb9893a"
+    },
+    {
+      "name": "ring",
+      "source_sheet": "fx_source.png",
+      "source_box": [
+        980,
+        380,
+        220,
+        220
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 16,
+      "role": "sprite",
+      "runtime_file": "argb8888/ring.argb",
+      "preview_file": "processed/png/ring.png",
+      "sha256": "b3d853cb340048c4b2cb0c504844e316aadd43781e08cf3b5c69e89dcfd735aa"
     },
     {
       "name": "trail",
       "source_sheet": "fx_source.png",
       "source_box": [
-        320,
-        380,
-        160,
-        160
+        20,
+        400,
+        280,
+        130
       ],
       "format": "argb8888",
-      "width": 8,
+      "width": 16,
       "height": 8,
-      "stride": 32,
-      "anchor_x": 4,
+      "stride": 64,
+      "anchor_x": 8,
       "anchor_y": 4,
+      "role": "sprite",
       "runtime_file": "argb8888/trail.argb",
       "preview_file": "processed/png/trail.png",
-      "sha256": "177382a7a311e6753bc668f175daf75d3a61af326e14d4af7cd0074a00204bf0"
+      "sha256": "33aa67fbbdc107126971ce74fbca68f7efba8f57c01e522afc77483e51b4ab68"
     },
     {
       "name": "floor_00",
@@ -532,6 +639,7 @@
       "stride": 64,
       "anchor_x": 0,
       "anchor_y": 0,
+      "role": "base",
       "runtime_file": "rgb565/floor_00.565",
       "preview_file": "processed/png/floor_00.png",
       "sha256": "b37d25c7b22ba7da340b45d3ce51861169ac59bf8e1d6afd9238c4721fd52406"
@@ -551,12 +659,53 @@
       "stride": 64,
       "anchor_x": 0,
       "anchor_y": 0,
+      "role": "base",
       "runtime_file": "rgb565/floor_01.565",
       "preview_file": "processed/png/floor_01.png",
       "sha256": "4b3350033016d0827b134d5de4d3b2c74da90c2b2be835e2747c92dd5a12e3fe"
     },
     {
       "name": "floor_02",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        600,
+        490,
+        140,
+        140
+      ],
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "role": "base",
+      "runtime_file": "rgb565/floor_02.565",
+      "preview_file": "processed/png/floor_02.png",
+      "sha256": "401b9050e8ee10851cc2fa28b94e88f8ee7431c099792796e7b96b6fb522c9cd"
+    },
+    {
+      "name": "floor_03",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        1000,
+        490,
+        140,
+        140
+      ],
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "role": "base",
+      "runtime_file": "rgb565/floor_03.565",
+      "preview_file": "processed/png/floor_03.png",
+      "sha256": "c2755304204e297c85e461113702401b85a941cadcb29feab16240edc4e5903b"
+    },
+    {
+      "name": "floor_04",
       "source_sheet": "environment_source.png",
       "source_box": [
         360,
@@ -570,12 +719,53 @@
       "stride": 64,
       "anchor_x": 0,
       "anchor_y": 0,
-      "runtime_file": "rgb565/floor_02.565",
-      "preview_file": "processed/png/floor_02.png",
+      "role": "special",
+      "runtime_file": "rgb565/floor_04.565",
+      "preview_file": "processed/png/floor_04.png",
       "sha256": "73684cf1695df8169775723bca155311bd783f54ed9eded3686299f7e8b010f8"
     },
     {
-      "name": "floor_03",
+      "name": "floor_05",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        800,
+        490,
+        140,
+        140
+      ],
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "role": "special",
+      "runtime_file": "rgb565/floor_05.565",
+      "preview_file": "processed/png/floor_05.png",
+      "sha256": "06c653f788d3af1bf4f245ec02b89f02a9b2956c71148b8c6dd28bbd766cdc1c"
+    },
+    {
+      "name": "floor_06",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        360,
+        280,
+        140,
+        140
+      ],
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "role": "special",
+      "runtime_file": "rgb565/floor_06.565",
+      "preview_file": "processed/png/floor_06.png",
+      "sha256": "6bd5308374d604bd91d9b05fc2f140879ce2f78a912ec77679ad8f2a74cc561d"
+    },
+    {
+      "name": "floor_07",
       "source_sheet": "environment_source.png",
       "source_box": [
         530,
@@ -589,94 +779,19 @@
       "stride": 64,
       "anchor_x": 0,
       "anchor_y": 0,
-      "runtime_file": "rgb565/floor_03.565",
-      "preview_file": "processed/png/floor_03.png",
-      "sha256": "50977cdf7a735adad4a223e8e4b63d0d8d220515ba205aecc3a49dfec45fa3b9"
-    },
-    {
-      "name": "floor_04",
-      "source_sheet": "environment_source.png",
-      "source_box": [
-        700,
-        70,
-        140,
-        140
-      ],
-      "format": "rgb565",
-      "width": 32,
-      "height": 32,
-      "stride": 64,
-      "anchor_x": 0,
-      "anchor_y": 0,
-      "runtime_file": "rgb565/floor_04.565",
-      "preview_file": "processed/png/floor_04.png",
-      "sha256": "dc4572ea5d2ad3b1cdaa658a02ea85e100fde0029da5f5c740e87b37239bdd9d"
-    },
-    {
-      "name": "floor_05",
-      "source_sheet": "environment_source.png",
-      "source_box": [
-        870,
-        70,
-        140,
-        140
-      ],
-      "format": "rgb565",
-      "width": 32,
-      "height": 32,
-      "stride": 64,
-      "anchor_x": 0,
-      "anchor_y": 0,
-      "runtime_file": "rgb565/floor_05.565",
-      "preview_file": "processed/png/floor_05.png",
-      "sha256": "b2699631b41756581ac70b5e73bd52c000d097ea1d93fc0e323fe36a31746692"
-    },
-    {
-      "name": "floor_06",
-      "source_sheet": "environment_source.png",
-      "source_box": [
-        1040,
-        70,
-        140,
-        140
-      ],
-      "format": "rgb565",
-      "width": 32,
-      "height": 32,
-      "stride": 64,
-      "anchor_x": 0,
-      "anchor_y": 0,
-      "runtime_file": "rgb565/floor_06.565",
-      "preview_file": "processed/png/floor_06.png",
-      "sha256": "95d5ebce1c968e5f9eff1d9a5a7ac5a11df8aa1d71953a45aaba7fce4104181c"
-    },
-    {
-      "name": "floor_07",
-      "source_sheet": "environment_source.png",
-      "source_box": [
-        19,
-        280,
-        140,
-        140
-      ],
-      "format": "rgb565",
-      "width": 32,
-      "height": 32,
-      "stride": 64,
-      "anchor_x": 0,
-      "anchor_y": 0,
+      "role": "decal",
       "runtime_file": "rgb565/floor_07.565",
       "preview_file": "processed/png/floor_07.png",
-      "sha256": "96e4090a4a30f38af0b6375133f936278765d80daef8dd11111ebc9de2185d93"
+      "sha256": "50977cdf7a735adad4a223e8e4b63d0d8d220515ba205aecc3a49dfec45fa3b9"
     },
     {
       "name": "hazard_stripe",
       "source_sheet": "environment_source.png",
       "source_box": [
-        30,
-        700,
-        110,
-        200
+        200,
+        1000,
+        200,
+        160
       ],
       "format": "rgb565",
       "width": 32,
@@ -684,18 +799,19 @@
       "stride": 64,
       "anchor_x": 0,
       "anchor_y": 0,
+      "role": "decal",
       "runtime_file": "rgb565/hazard_stripe.565",
       "preview_file": "processed/png/hazard_stripe.png",
-      "sha256": "c946733d0945b737873f5cd3a36528912f50788b9338ed114c0585bf5879244e"
+      "sha256": "5b8342e5033c5c40378e8d3b3aa9c7c6dc17690118bc925845bcd8c0cb97b883"
     },
     {
       "name": "grate",
       "source_sheet": "environment_source.png",
       "source_box": [
-        180,
-        700,
-        180,
-        220
+        360,
+        70,
+        140,
+        140
       ],
       "format": "rgb565",
       "width": 32,
@@ -703,18 +819,19 @@
       "stride": 64,
       "anchor_x": 0,
       "anchor_y": 0,
+      "role": "decal",
       "runtime_file": "rgb565/grate.565",
       "preview_file": "processed/png/grate.png",
-      "sha256": "af2e23cd457a55de6c16d6e221b280c6a40fe94f3e762f36cfff0b296383c3f1"
+      "sha256": "73684cf1695df8169775723bca155311bd783f54ed9eded3686299f7e8b010f8"
     },
     {
       "name": "barrel",
       "source_sheet": "environment_source.png",
       "source_box": [
         25,
-        985,
-        240,
-        200
+        680,
+        150,
+        220
       ],
       "format": "argb8888",
       "width": 24,
@@ -722,18 +839,19 @@
       "stride": 96,
       "anchor_x": 12,
       "anchor_y": 28,
+      "role": "sprite",
       "runtime_file": "argb8888/barrel.argb",
       "preview_file": "processed/png/barrel.png",
-      "sha256": "863f0a15c62addb3e3346b6463ffd236d11e1b9fd7ebfc053108ee4d0467bcb8"
+      "sha256": "24ce4f53469f8c8f49771eff665c3f510e6b611834aa14b4e41f3d72b750c72c"
     },
     {
       "name": "crate",
       "source_sheet": "environment_source.png",
       "source_box": [
-        300,
-        985,
-        240,
-        200
+        200,
+        700,
+        170,
+        180
       ],
       "format": "argb8888",
       "width": 28,
@@ -741,18 +859,19 @@
       "stride": 112,
       "anchor_x": 14,
       "anchor_y": 24,
+      "role": "sprite",
       "runtime_file": "argb8888/crate.argb",
       "preview_file": "processed/png/crate.png",
-      "sha256": "cdaad815bd74e350a3ad48dd6251260f57e0c26ae5788b7630b65e87c930d1e6"
+      "sha256": "58ae7c77d9311b3bd823d765ee75e76963d24c9df8634cf2acc560f6c1bb8519"
     },
     {
       "name": "console",
       "source_sheet": "environment_source.png",
       "source_box": [
-        570,
-        985,
-        190,
-        200
+        400,
+        680,
+        170,
+        220
       ],
       "format": "argb8888",
       "width": 28,
@@ -760,18 +879,19 @@
       "stride": 112,
       "anchor_x": 14,
       "anchor_y": 32,
+      "role": "sprite",
       "runtime_file": "argb8888/console.argb",
       "preview_file": "processed/png/console.png",
-      "sha256": "a0ce68b1464f0e84025ff315e0914329fa0c4ebc64e5323b2e616c9ecadc95cc"
+      "sha256": "e314c6f65903c4ed48f7933f86b1f87806f62fc01bf74b2e3272bd7e77c8cd3e"
     },
     {
       "name": "canister",
       "source_sheet": "environment_source.png",
       "source_box": [
-        790,
-        985,
-        170,
-        200
+        600,
+        680,
+        130,
+        220
       ],
       "format": "argb8888",
       "width": 20,
@@ -779,11 +899,11 @@
       "stride": 80,
       "anchor_x": 10,
       "anchor_y": 24,
+      "role": "sprite",
       "runtime_file": "argb8888/canister.argb",
       "preview_file": "processed/png/canister.png",
-      "sha256": "fb631f12192a7f316bfdce2d28934b813092ec94368c2ab51787e19d5d6fa353"
+      "sha256": "0060eb8bf2d6ccc54b6cafce63b7b9e7cde0b73484f5173b77f5a4945189309a"
     }
   ],
-  "contact_sheet": "processed/contact_sheet.png",
-  "notes": "Labels on source sheets are NOT part of runtime sprites."
+  "contact_sheet": "processed/contact_sheet.png"
 }

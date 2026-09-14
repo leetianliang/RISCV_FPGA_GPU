@@ -71,20 +71,22 @@ int main() {
     visible_map_range(s, 640, 360, 1, vtx0b, vty0b, vtx1b, vty1b);
     CHECK(vtx0b > vtx0);
 
-    // F: 4 directions
+    // F: 4 directions — a=UP b=DOWN c=LEFT d=RIGHT (source labels)
     {
         AppState p;
         sim_reset(p, 1);
         player_move(p, true, false, false, false);
         CHECK(p.player.dir == 1);
+        CHECK(std::string(player_sprite_name(p.player)).rfind("engineer_a", 0) == 0);
         player_move(p, false, true, false, false);
         CHECK(p.player.dir == 0);
+        CHECK(std::string(player_sprite_name(p.player)).rfind("engineer_b", 0) == 0);
         player_move(p, false, false, true, false);
         CHECK(p.player.dir == 2);
+        CHECK(std::string(player_sprite_name(p.player)).rfind("engineer_c", 0) == 0);
         player_move(p, false, false, false, true);
         CHECK(p.player.dir == 3);
-        CHECK(std::string(player_sprite_name(p.player)) == "engineer_d0" ||
-              std::string(player_sprite_name(p.player)) == "engineer_d1");
+        CHECK(std::string(player_sprite_name(p.player)).rfind("engineer_d", 0) == 0);
     }
     // F: idle
     {

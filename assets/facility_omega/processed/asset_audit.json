@@ -13,7 +13,8 @@
         32,
         32
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "engineer_a1",
@@ -28,7 +29,8 @@
         32,
         32
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "engineer_b0",
@@ -43,7 +45,8 @@
         32,
         32
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "engineer_b1",
@@ -58,7 +61,8 @@
         32,
         32
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "engineer_c0",
@@ -73,7 +77,8 @@
         32,
         32
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "engineer_c1",
@@ -88,7 +93,8 @@
         32,
         32
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "engineer_d0",
@@ -103,7 +109,8 @@
         32,
         32
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "engineer_d1",
@@ -118,7 +125,8 @@
         32,
         32
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "engineer_idle",
@@ -133,7 +141,8 @@
         32,
         32
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "engineer_hurt",
@@ -148,7 +157,8 @@
         32,
         32
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "drone_0",
@@ -156,14 +166,31 @@
       "box": [
         67,
         90,
-        386,
+        190,
         200
       ],
       "runtime_size": [
-        24,
-        24
+        28,
+        28
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
+    },
+    {
+      "name": "drone_1",
+      "source": "enemies_source.png",
+      "box": [
+        260,
+        90,
+        190,
+        200
+      ],
+      "runtime_size": [
+        28,
+        28
+      ],
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "crawler_0",
@@ -171,14 +198,31 @@
       "box": [
         495,
         90,
-        463,
+        225,
         200
       ],
       "runtime_size": [
-        28,
-        28
+        32,
+        32
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
+    },
+    {
+      "name": "crawler_1",
+      "source": "enemies_source.png",
+      "box": [
+        730,
+        90,
+        225,
+        200
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "runner_0",
@@ -186,14 +230,31 @@
       "box": [
         1028,
         90,
-        365,
+        175,
         200
       ],
       "runtime_size": [
-        28,
-        28
+        32,
+        32
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
+    },
+    {
+      "name": "runner_1",
+      "source": "enemies_source.png",
+      "box": [
+        1210,
+        90,
+        175,
+        200
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "tank_0",
@@ -201,14 +262,31 @@
       "box": [
         39,
         390,
-        712,
+        345,
         330
       ],
       "runtime_size": [
         48,
         48
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
+    },
+    {
+      "name": "tank_1",
+      "source": "enemies_source.png",
+      "box": [
+        395,
+        390,
+        345,
+        330
+      ],
+      "runtime_size": [
+        48,
+        48
+      ],
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "elite_0",
@@ -216,171 +294,166 @@
       "box": [
         811,
         390,
-        603,
+        290,
         330
       ],
       "runtime_size": [
         48,
         48
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
+    },
+    {
+      "name": "elite_1",
+      "source": "enemies_source.png",
+      "box": [
+        1110,
+        390,
+        290,
+        330
+      ],
+      "runtime_size": [
+        48,
+        48
+      ],
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "pulse_shot",
       "source": "weapons_pickups_source.png",
       "box": [
         21,
-        20,
-        301,
-        100
+        55,
+        90,
+        70
       ],
       "runtime_size": [
         8,
         8
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "enemy_bullet",
       "source": "weapons_pickups_source.png",
       "box": [
-        342,
-        20,
-        140,
-        100
+        850,
+        55,
+        90,
+        70
       ],
       "runtime_size": [
         8,
         8
       ],
-      "format": "argb8888"
-    },
-    {
-      "name": "orbit_drone",
-      "source": "weapons_pickups_source.png",
-      "box": [
-        795,
-        20,
-        235,
-        100
-      ],
-      "runtime_size": [
-        12,
-        12
-      ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "xp_small",
       "source": "weapons_pickups_source.png",
       "box": [
-        21,
-        895,
-        304,
-        150
+        25,
+        780,
+        70,
+        70
       ],
       "runtime_size": [
         8,
         8
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "xp_large",
       "source": "weapons_pickups_source.png",
       "box": [
-        364,
-        895,
-        310,
-        150
+        370,
+        755,
+        100,
+        110
       ],
       "runtime_size": [
         12,
         12
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "repair_pickup",
       "source": "weapons_pickups_source.png",
       "box": [
-        733,
-        895,
-        323,
-        150
+        1090,
+        760,
+        90,
+        90
       ],
       "runtime_size": [
         16,
         16
       ],
-      "format": "argb8888"
-    },
-    {
-      "name": "spark",
-      "source": "fx_source.png",
-      "box": [
-        20,
-        50,
-        180,
-        180
-      ],
-      "runtime_size": [
-        8,
-        8
-      ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "glow_small",
       "source": "fx_source.png",
       "box": [
-        220,
+        40,
         50,
-        220,
-        220
+        160,
+        160
       ],
       "runtime_size": [
         16,
         16
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "glow_large",
       "source": "fx_source.png",
       "box": [
-        460,
-        50,
         280,
-        280
+        40,
+        220,
+        220
       ],
       "runtime_size": [
         32,
         32
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
-      "name": "ring",
+      "name": "spark",
       "source": "fx_source.png",
       "box": [
-        760,
+        620,
         50,
-        300,
-        300
+        180,
+        180
       ],
       "runtime_size": [
-        32,
-        32
+        16,
+        16
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "explosion",
       "source": "fx_source.png",
       "box": [
-        20,
-        380,
+        320,
+        620,
         280,
         280
       ],
@@ -388,22 +461,40 @@
         32,
         32
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
+    },
+    {
+      "name": "ring",
+      "source": "fx_source.png",
+      "box": [
+        980,
+        380,
+        220,
+        220
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "trail",
       "source": "fx_source.png",
       "box": [
-        320,
-        380,
-        160,
-        160
+        20,
+        400,
+        280,
+        130
       ],
       "runtime_size": [
-        8,
+        16,
         8
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "floor_00",
@@ -418,7 +509,8 @@
         32,
         32
       ],
-      "format": "rgb565"
+      "format": "rgb565",
+      "role": "base"
     },
     {
       "name": "floor_01",
@@ -433,10 +525,43 @@
         32,
         32
       ],
-      "format": "rgb565"
+      "format": "rgb565",
+      "role": "base"
     },
     {
       "name": "floor_02",
+      "source": "environment_source.png",
+      "box": [
+        600,
+        490,
+        140,
+        140
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "format": "rgb565",
+      "role": "base"
+    },
+    {
+      "name": "floor_03",
+      "source": "environment_source.png",
+      "box": [
+        1000,
+        490,
+        140,
+        140
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "format": "rgb565",
+      "role": "base"
+    },
+    {
+      "name": "floor_04",
       "source": "environment_source.png",
       "box": [
         360,
@@ -448,10 +573,43 @@
         32,
         32
       ],
-      "format": "rgb565"
+      "format": "rgb565",
+      "role": "special"
     },
     {
-      "name": "floor_03",
+      "name": "floor_05",
+      "source": "environment_source.png",
+      "box": [
+        800,
+        490,
+        140,
+        140
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "format": "rgb565",
+      "role": "special"
+    },
+    {
+      "name": "floor_06",
+      "source": "environment_source.png",
+      "box": [
+        360,
+        280,
+        140,
+        140
+      ],
+      "runtime_size": [
+        32,
+        32
+      ],
+      "format": "rgb565",
+      "role": "special"
+    },
+    {
+      "name": "floor_07",
       "source": "environment_source.png",
       "box": [
         530,
@@ -463,157 +621,104 @@
         32,
         32
       ],
-      "format": "rgb565"
-    },
-    {
-      "name": "floor_04",
-      "source": "environment_source.png",
-      "box": [
-        700,
-        70,
-        140,
-        140
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
-      "format": "rgb565"
-    },
-    {
-      "name": "floor_05",
-      "source": "environment_source.png",
-      "box": [
-        870,
-        70,
-        140,
-        140
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
-      "format": "rgb565"
-    },
-    {
-      "name": "floor_06",
-      "source": "environment_source.png",
-      "box": [
-        1040,
-        70,
-        140,
-        140
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
-      "format": "rgb565"
-    },
-    {
-      "name": "floor_07",
-      "source": "environment_source.png",
-      "box": [
-        19,
-        280,
-        140,
-        140
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
-      "format": "rgb565"
+      "format": "rgb565",
+      "role": "decal"
     },
     {
       "name": "hazard_stripe",
       "source": "environment_source.png",
       "box": [
-        30,
-        700,
-        110,
-        200
+        200,
+        1000,
+        200,
+        160
       ],
       "runtime_size": [
         32,
         16
       ],
-      "format": "rgb565"
+      "format": "rgb565",
+      "role": "decal"
     },
     {
       "name": "grate",
       "source": "environment_source.png",
       "box": [
-        180,
-        700,
-        180,
-        220
+        360,
+        70,
+        140,
+        140
       ],
       "runtime_size": [
         32,
         32
       ],
-      "format": "rgb565"
+      "format": "rgb565",
+      "role": "decal"
     },
     {
       "name": "barrel",
       "source": "environment_source.png",
       "box": [
         25,
-        985,
-        240,
-        200
+        680,
+        150,
+        220
       ],
       "runtime_size": [
         24,
         32
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "crate",
       "source": "environment_source.png",
       "box": [
-        300,
-        985,
-        240,
-        200
+        200,
+        700,
+        170,
+        180
       ],
       "runtime_size": [
         28,
         28
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "console",
       "source": "environment_source.png",
       "box": [
-        570,
-        985,
-        190,
-        200
+        400,
+        680,
+        170,
+        220
       ],
       "runtime_size": [
         28,
         36
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     },
     {
       "name": "canister",
       "source": "environment_source.png",
       "box": [
-        790,
-        985,
-        170,
-        200
+        600,
+        680,
+        130,
+        220
       ],
       "runtime_size": [
         20,
         28
       ],
-      "format": "argb8888"
+      "format": "argb8888",
+      "role": "sprite"
     }
   ],
   "source_labels_are_runtime": false,

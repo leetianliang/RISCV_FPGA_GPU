@@ -98,18 +98,25 @@ void sim_reset(AppState& s, u32 seed) {
     s = AppState{};
     s.map_seed = seed ? seed : 1u;
     s.map.resize(static_cast<size_t>(kMapTiles) * kMapTiles);
-    // Deterministic facility floor mix (not random wall-clock).
+    // R7: base floors dominate; specials only sparse / authored.
     u32 x = s.map_seed;
-    for (u32 i = 0; i < s.map.size(); ++i) {
-        x = x * 1664525u + 1013904223u;
-        s.map[i] = static_cast<u8>((x >> 16) % 8u);
-    }
-    // Zone stamp: Power Test Area hazard ring near spawn
-    for (u32 ty = 60; ty < 68; ++ty) {
-        for (u32 tx = 60; tx < 68; ++tx) {
-            if (ty == 60 || ty == 67 || tx == 60 || tx == 67) {
-                s.map[static_cast<size_t>(ty) * kMapTiles + tx] = 7;  // reuse floor as marker
+    for (u32 ty = 0; ty < kMapTiles; ++ty) {
+        for (u32 tx = 0; tx < kMapTiles; ++tx) {
+            x = x * 1664525u + 1013904223u;
+            u8 t = 0;
+            const u32 r = (x >> 16) % 100u;
+            if (r < 88) {
+                t = static_cast<u8>((x >> 8) & 3u);  // base 0-3 quiet metals
+            } else if (r < 96) {
+                t = static_cast<u8>(4 + ((x >> 11) & 1u));  // grate/perforated sparse
+            } else {
+                t = 6;  // stain
             }
+            if (ty >= 60 && ty <= 67 && tx >= 60 && tx <= 67 &&
+                (ty == 60 || ty == 67 || tx == 60 || tx == 67)) {
+                t = 7;  // hazard ring around spawn
+            }
+            s.map[static_cast<size_t>(ty) * kMapTiles + tx] = t;
         }
     }
     s.player = Player{};
@@ -424,14 +431,14 @@ bool in_view(const AppState& s, i32 wx, i32 wy, i32 margin) {
 }
 
 const char* enemy_sprite_name(EnemyKind k, u32 anim) {
-    (void)anim;
+    const u32 f = (anim >> 4) & 1u;
     switch (k) {
         case EnemyKind::Drone:
-            return "drone_0";
+            return f ? "drone_1" : "drone_0";
         case EnemyKind::Crawler:
-            return "crawler_0";
+            return f ? "crawler_1" : "crawler_0";
         default:
-            return "tank_0";
+            return f ? "tank_1" : "tank_0";
     }
 }
 
@@ -511,14 +518,15 @@ const char* player_sprite_name(const Player& p) {
         return "engineer_idle";
     }
     const u32 f = player_walk_frame(p);
+    // Source labels: a=UP  b=DOWN  c=LEFT  d=RIGHT
     switch (p.dir) {
-        case 0:
-            return f ? "engineer_a1" : "engineer_a0";
-        case 1:
+        case 0:  // down
             return f ? "engineer_b1" : "engineer_b0";
-        case 2:
+        case 1:  // up
+            return f ? "engineer_a1" : "engineer_a0";
+        case 2:  // left
             return f ? "engineer_c1" : "engineer_c0";
-        default:
+        default:  // right
             return f ? "engineer_d1" : "engineer_d0";
     }
 }

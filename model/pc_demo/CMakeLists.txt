@@ -105,6 +105,10 @@ add_test(NAME gpu2d_test_assetc
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/facility_omega_assetc.py
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
+add_test(NAME gpu2d_test_argb_order
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/check_app2_argb_order.py
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
 
 add_executable(gpu2d_test_mutation tests/test_mutation.cpp)
 target_link_libraries(gpu2d_test_mutation PRIVATE golden_backend_lib neon_game)
