@@ -9,6 +9,30 @@
 namespace facility {
 namespace {
 
+// Binary restoring sqrt: bounded by 16 iterations for a 32-bit argument.
+u32 distance_root(u32 value) {
+    u32 result = 0, bit = 1u << 30;
+    while (bit > value) bit >>= 2;
+    while (bit != 0) {
+        if (value >= result + bit) {
+            value -= result + bit;
+            result = (result >> 1) + bit;
+        } else {
+            result >>= 1;
+        }
+        bit >>= 2;
+    }
+    return result ? result : 1;
+}
+
+void emit_effect(AppState& s, i32 x, i32 y, bool explosion) {
+    Effect fx{x, y, explosion ? 18u : 7u, explosion};
+    for (auto& old : s.effects) {
+        if (!old.life) { old = fx; return; }
+    }
+    if (s.effects.size() < 96) s.effects.push_back(fx);
+}
+
 u32 map_index(const AppState& s, u32 tx, u32 ty) {
     if (tx >= kMapTiles || ty >= kMapTiles) {
         return 0;
@@ -80,18 +104,43 @@ bool load_runtime_sprites(const std::string& runtime_dir, std::vector<SpriteBlob
         b.stride = grab_u32("\"stride\"");
         b.anchor_x = grab_u32("\"anchor_x\"");
         b.anchor_y = grab_u32("\"anchor_y\"");
+        b.atlas_file = grab_str("\"atlas_file\"");
+        b.atlas_width = grab_u32("\"atlas_width\"");
+        b.atlas_height = grab_u32("\"atlas_height\"");
+        b.atlas_stride = grab_u32("\"atlas_stride\"");
+        b.atlas_x = grab_u32("\"atlas_x\"");
+        b.atlas_y = grab_u32("\"atlas_y\"");
         const std::string fmt = grab_str("\"format\"");
         b.rgb565 = (fmt == "rgb565");
         b.indexed = (fmt == "index8");
         const std::string rf = grab_str("\"runtime_file\"");
         if (b.name.empty() || rf.empty() || !read_file(runtime_dir + "/" + rf, b.pixels)) {
-            pos = npos + 7;
-            continue;
+            return false;
         }
+        if (!b.width || !b.height || b.pixels.size() != static_cast<size_t>(b.stride)*b.height ||
+            b.atlas_x+b.width>b.atlas_width || b.atlas_y+b.height>b.atlas_height) return false;
         out.push_back(std::move(b));
         pos = npos + 7;
     }
     return !out.empty();
+}
+
+bool load_runtime_atlases(const std::string& dir, const std::vector<SpriteBlob>& sprites,
+                         std::vector<SpriteBlob>& atlases) {
+    atlases.clear();
+    for (const auto& s : sprites) {
+        bool found = false;
+        for (const auto& a : atlases) if (a.name == s.atlas_file) found = true;
+        if (found) continue;
+        SpriteBlob a;
+        a.name=s.atlas_file; a.width=s.atlas_width; a.height=s.atlas_height;
+        a.stride=s.atlas_stride; a.rgb565=s.rgb565;
+        if (a.name.empty() || !a.width || !a.height ||
+            !read_file(dir+"/"+a.name,a.pixels) || a.pixels.size()!=static_cast<size_t>(a.stride)*a.height)
+            return false;
+        atlases.push_back(std::move(a));
+    }
+    return !atlases.empty();
 }
 
 void sim_reset(AppState& s, u32 seed) {
@@ -105,17 +154,14 @@ void sim_reset(AppState& s, u32 seed) {
             x = x * 1664525u + 1013904223u;
             u8 t = 0;
             const u32 r = (x >> 16) % 100u;
-            if (r < 88) {
-                t = static_cast<u8>((x >> 8) & 3u);  // base 0-3 quiet metals
-            } else if (r < 96) {
-                t = static_cast<u8>(4 + ((x >> 11) & 1u));  // grate/perforated sparse
-            } else {
-                t = 6;  // stain
-            }
-            if (ty >= 60 && ty <= 67 && tx >= 60 && tx <= 67 &&
-                (ty == 60 || ty == 67 || tx == 60 || tx == 67)) {
-                t = 7;  // hazard ring around spawn
-            }
+            // Calm continuous panels; wear is uncommon, service grates form runs.
+            if (r > 96) t = 1;
+            else if (r > 94) t = 6;
+            else if (r > 92) t = 3;
+            if (ty % 32 == 8 || ty % 32 == 24) t = 2;
+            if ((tx % 32 == 7 || tx % 32 == 25) && ty % 32 >= 10 && ty % 32 <= 22)
+                t = (ty & 1u) ? 4 : 5;
+            if (ty % 32 == 10 && tx % 32 >= 14 && tx % 32 <= 17) t = 7;
             s.map[static_cast<size_t>(ty) * kMapTiles + tx] = t;
         }
     }
@@ -128,6 +174,7 @@ void sim_reset(AppState& s, u32 seed) {
     s.enemies.reserve(256);
     s.bullets.clear();
     s.bullets.reserve(256);
+    s.effects.reserve(96);
     s.spawn_timer = 0;
     s.enemy_count_target = 6;
     s.frame = 0;
@@ -195,6 +242,7 @@ void player_move(AppState& s, bool up, bool down, bool left, bool right, i32 spe
 
 void sim_step(AppState& s, const bool* keys) {
     ++s.frame;
+    for (auto& fx : s.effects) if (fx.life) --fx.life;
     player_move(s, keys && keys[0], keys && keys[1], keys && keys[2], keys && keys[3]);
     if (s.player.hurt_timer > 0) {
         --s.player.hurt_timer;
@@ -240,14 +288,13 @@ void sim_step(AppState& s, const bool* keys) {
         }
         // integer step toward player (deterministic, no float wall-clock)
         if (dist2 > 0) {
-            // step = speed * dx / approx_len
-            i32 len = 1;
-            // crude integer sqrt
-            while ((len + 1) * (len + 1) <= dist2 && len < 10000) {
-                ++len;
-            }
-            e.world_x += (dx * sp) / len;
-            e.world_y += (dy * sp) / len;
+            const i32 len = static_cast<i32>(distance_root(static_cast<u32>(dist2)));
+            e.motion_x += (dx * sp * 256) / len;
+            e.motion_y += (dy * sp * 256) / len;
+            e.world_x += e.motion_x / 256;
+            e.world_y += e.motion_y / 256;
+            e.motion_x %= 256;
+            e.motion_y %= 256;
         }
         ++e.anim;
         if (e.flash) {
@@ -286,6 +333,7 @@ void sim_step(AppState& s, const bool* keys) {
                 if (dx * dx + dy * dy < hit * hit) {
                     e.hp -= s.player.pulse_damage;
                     e.flash = 6;
+                    emit_effect(s, e.world_x, e.world_y, e.hp <= 0);
                     b.alive = false;
                     if (e.hp <= 0) {
                         e.alive = false;
@@ -400,11 +448,8 @@ void fire_pulse(AppState& s) {
     if (best) {
         const i32 dx = best->world_x - s.player.world_x;
         const i32 dy = best->world_y - s.player.world_y;
-        i32 len = 1;
         const i32 d2 = dx * dx + dy * dy;
-        while ((len + 1) * (len + 1) <= d2 && len < 10000) {
-            ++len;
-        }
+        const i32 len = static_cast<i32>(distance_root(static_cast<u32>(d2)));
         b.vx = (dx * 6) / len;
         b.vy = (dy * 6) / len;
     } else {
@@ -481,6 +526,8 @@ u32 hash_sim(const AppState& s) {
         mix(static_cast<u32>(e.world_y));
         mix(static_cast<u32>(e.hp));
         mix(static_cast<u32>(e.kind));
+        mix(static_cast<u32>(e.motion_x));
+        mix(static_cast<u32>(e.motion_y));
     }
     for (const auto& b : s.bullets) {
         if (!b.alive) {
@@ -540,12 +587,14 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
     for (i32 ty = ty0; ty <= ty1; ++ty) {
         for (i32 tx = tx0; tx <= tx1; ++tx) {
             const u32 idx = map_index(s, static_cast<u32>(tx), static_cast<u32>(ty));
-            const TexRef* t = tex.find(floor_name(idx));
+            static constexpr const char* panels[] = {
+                "floor_base_0", "floor_base_1", "floor_base_2", "floor_base_3"};
+            const TexRef* t = tex.find(idx == 0 ? panels[(ty & 1) * 2 + (tx & 1)] : floor_name(idx));
             if (!t) {
                 continue;
             }
             gpu2d::SpriteParams sp;
-            sp.tex = t->id;
+            sp.tex = t->id; sp.src_x = t->sx; sp.src_y = t->sy;
             sp.w = t->w;
             sp.h = t->h;
             sp.dst_x = tx * ts - s.cam.x;
@@ -553,35 +602,66 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
             api.draw_sprite(sp);
         }
     }
-    // Deterministic props across the facility (E-08, ≥6 types).
-    struct Prop {
-        const char* name;
-        i32 wx, wy;
-    };
-    static const Prop kProps[] = {
-        {"barrel", 2048, 2048}, {"crate", 2100, 2060},   {"console", 1980, 2100},
-        {"canister", 2200, 1980}, {"grate", 1900, 2200},  {"hazard_stripe", 2048, 1920},
-        {"barrel", 1000, 1000},  {"crate", 3000, 3000},   {"console", 3200, 1200},
-        {"canister", 800, 3400}, {"grate", 3600, 800},    {"hazard_stripe", 1500, 2800},
-    };
-    for (const auto& pr : kProps) {
-        const TexRef* t = tex.find(pr.name);
-        if (!t) {
-            continue;
-        }
-        const i32 sx = pr.wx - s.cam.x;
-        const i32 sy = pr.wy - s.cam.y;
-        if (sx < -64 || sy < -64 || sx > static_cast<i32>(view_w) ||
-            sy > static_cast<i32>(view_h)) {
-            continue;
-        }
+    // Authored service bays repeat across the large world; only visible art is submitted.
+    // These are visual landmarks, not newly introduced collision walls.
+    auto art = [&](const char* name, i32 wx, i32 wy, bool opaque = false,
+                   i32 scale = 1, gpu2d::BlendMode blend = gpu2d::BlendMode::StraightAlpha,
+                   u8 alpha = 255) {
+        const TexRef* t = tex.find(name);
+        if (!t) return;
+        const i32 sx = wx - s.cam.x - static_cast<i32>(t->ax) * scale;
+        const i32 sy = wy - s.cam.y - static_cast<i32>(t->ay) * scale;
+        const i32 w = static_cast<i32>(t->w) * scale, h = static_cast<i32>(t->h) * scale;
+        if (sx + w <= 0 || sy + h <= 0 || sx >= static_cast<i32>(view_w) || sy >= static_cast<i32>(view_h)) return;
         gpu2d::SpriteParams sp;
-        sp.tex = t->id;
-        sp.w = t->w;
-        sp.h = t->h;
-        sp.dst_x = sx - static_cast<i32>(t->ax);
-        sp.dst_y = sy - static_cast<i32>(t->ay);
+        sp.tex = t->id; sp.src_x = t->sx; sp.src_y = t->sy; sp.w = t->w; sp.h = t->h;
+        sp.dst_x = sx; sp.dst_y = sy;
+        sp.scale_w = w; sp.scale_h = h;
+        sp.blend = opaque ? gpu2d::BlendMode::Copy : blend;
+        sp.global_alpha = alpha;
         api.draw_sprite(sp);
+    };
+    auto world_rect = [&](i32 wx, i32 wy, u32 w, u32 h, gpu2d::Color color) {
+        if (wx + static_cast<i32>(w) > s.cam.x && wy + static_cast<i32>(h) > s.cam.y &&
+            wx < s.cam.x + static_cast<i32>(view_w) && wy < s.cam.y + static_cast<i32>(view_h))
+            api.fill_rect(wx - s.cam.x, wy - s.cam.y, w, h, color);
+    };
+    for (i32 cy = 512; cy <= 3584; cy += 768) {
+        for (i32 cx = 512; cx <= 3584; cx += 768) {
+            // North/south service islands frame an open fighting area with side exits.
+            for (i32 sign : {-1, 1}) {
+                const i32 y = cy + (sign < 0 ? -86 : 150);
+                world_rect(cx - 256, y - 28, 512, 58, gpu2d::Color::rgb(12, 22, 30));
+                world_rect(cx - 256, y + 30, 512, 3, gpu2d::Color::rgb(54, 73, 82));
+                world_rect(cx - 240, y + 19, 480, 3, gpu2d::Color::rgb(26, 63, 76));
+                for (i32 x = -240; x <= 224; x += 32) {
+                    if (x < -64 || x > 64) art("hazard_stripe", cx+x, y+34, true);
+                }
+                for (i32 x : {-224, -180, 164, 208}) {
+                    art("server", cx+x, y+18);
+                    world_rect(cx+x-5, y+22, 10, 2, gpu2d::Color::rgb(42, 126, 151));
+                }
+                art("pipe_elbow", cx-114, y+16);
+                art("console", cx+104, y+18);
+                art("power_panel", cx-32, y-42, true);
+                art("canister", cx-50, y+18);
+                art("canister", cx+50, y+18);
+            }
+            art("mark_a3", cx-204, cy-60, true);
+            art("mark_service", cx+138, cy+35, true);
+            art("warning_lamp", cx-270, cy-88);
+            art("warning_lamp", cx+270, cy+150);
+            art("barrier", cx-248, cy+104);
+            art("barrier", cx+250, cy-60);
+            art("stacked_crates", cx-262, cy+152);
+            art("crate", cx-214, cy+140);
+            art("barrel", cx+263, cy+42);
+            art("cable_spool", cx+228, cy+63);
+            // Inter-room landmarks preserve meaning after travelling > one viewport.
+            art("access_door", cx+448, cy-96);
+            art("power_cabinet", cx+404, cy-80);
+            art("machine_wreck", cx+464, cy+48);
+        }
     }
     // enemies (cull off-screen — G-05)
     for (const auto& e : s.enemies) {
@@ -596,7 +676,8 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
             continue;
         }
         gpu2d::SpriteParams sp;
-        sp.tex = et->id;
+        sp.blend = gpu2d::BlendMode::StraightAlpha;
+        sp.tex = et->id; sp.src_x = et->sx; sp.src_y = et->sy;
         sp.w = et->w;
         sp.h = et->h;
         sp.dst_x = e.world_x - s.cam.x - static_cast<i32>(et->ax);
@@ -615,7 +696,7 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
                 continue;
             }
             gpu2d::SpriteParams sp;
-            sp.tex = bt->id;
+            sp.tex = bt->id; sp.src_x = bt->sx; sp.src_y = bt->sy;
             sp.w = bt->w;
             sp.h = bt->h;
             sp.dst_x = b.world_x - s.cam.x - static_cast<i32>(bt->ax);
@@ -628,15 +709,44 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
     const TexRef* pt = tex.find(player_sprite_name(s.player));
     if (pt) {
         gpu2d::SpriteParams sp;
-        sp.tex = pt->id;
+        sp.blend = gpu2d::BlendMode::StraightAlpha;
+        sp.tex = pt->id; sp.src_x = pt->sx; sp.src_y = pt->sy;
         sp.w = pt->w;
         sp.h = pt->h;
-        sp.dst_x = s.player.world_x - s.cam.x - static_cast<i32>(pt->ax);
-        sp.dst_y = s.player.world_y - s.cam.y - static_cast<i32>(pt->ay);
+        // 32px source canvas, existing GPU scaling to 40px for player readability.
+        sp.scale_w = static_cast<i32>(pt->w) * 5 / 4;
+        sp.scale_h = static_cast<i32>(pt->h) * 5 / 4;
+        sp.dst_x = s.player.world_x - s.cam.x - static_cast<i32>(pt->ax) * 5 / 4;
+        sp.dst_y = s.player.world_y - s.cam.y - static_cast<i32>(pt->ay) * 5 / 4;
         if (s.player.hurt_timer > 0) {
             sp.color_mod = true;
             sp.mod = gpu2d::Color::rgb(255, 80, 80);
         }
+        api.draw_sprite(sp);
+    }
+    // Short-lived world-space feedback, drawn above bodies. No permanent glow veil.
+    for (const auto& fx : s.effects) {
+        if (!fx.life) continue;
+        art(fx.explosion ? "explosion" : "spark", fx.world_x, fx.world_y, false, 1,
+            gpu2d::BlendMode::AddSat, static_cast<u8>(fx.explosion ? fx.life * 14 : fx.life * 36));
+    }
+    // Industrial HUD foundation. Text stays in the existing bitmap-font presenter.
+    api.fill_rect(0, 0, view_w, 32, gpu2d::Color::rgb(5, 13, 21));
+    api.fill_rect(0, 31, view_w, 1, gpu2d::Color::rgb(43, 97, 119));
+    api.fill_rect(10, 9, 3, 14, gpu2d::Color::rgb(245, 149, 43));
+    api.fill_rect(155, 9, 116, 14, gpu2d::Color::rgb(48, 65, 77));
+    api.fill_rect(157, 11, 112, 10, gpu2d::Color::rgb(17, 25, 34));
+    const u32 hpw = static_cast<u32>(s.player.hp > 0 ? s.player.hp : 0) * 112 / 100;
+    if (hpw) {
+        api.fill_rect(157, 11, hpw, 10, gpu2d::Color::rgb(195, 52, 50));
+        api.fill_rect(157, 11, hpw, 2, gpu2d::Color::rgb(247, 102, 75));
+    }
+    const TexRef* icon = tex.find("weapon_icon");
+    if (icon) {
+        gpu2d::SpriteParams sp;
+        sp.tex=icon->id; sp.src_x=icon->sx; sp.src_y=icon->sy; sp.w=icon->w; sp.h=icon->h;
+        sp.dst_x=static_cast<i32>(view_w)-35; sp.dst_y=4;
+        sp.blend=gpu2d::BlendMode::StraightAlpha;
         api.draw_sprite(sp);
     }
 }

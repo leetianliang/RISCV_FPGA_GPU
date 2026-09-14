@@ -1,0 +1,1047 @@
+{
+  "engineer_a0": {
+    "sheet": "player",
+    "box": [
+      510,
+      32,
+      155,
+      214
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 28,
+    "feet": true
+  },
+  "engineer_a1": {
+    "sheet": "player",
+    "box": [
+      788,
+      32,
+      154,
+      214
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 28,
+    "feet": true
+  },
+  "engineer_b0": {
+    "sheet": "player",
+    "box": [
+      516,
+      286,
+      149,
+      200
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 28,
+    "feet": true
+  },
+  "engineer_b1": {
+    "sheet": "player",
+    "box": [
+      790,
+      286,
+      153,
+      200
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 28,
+    "feet": true
+  },
+  "engineer_c0": {
+    "sheet": "player",
+    "box": [
+      299,
+      529,
+      204,
+      204
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 28,
+    "feet": true
+  },
+  "engineer_c1": {
+    "sheet": "player",
+    "box": [
+      530,
+      529,
+      187,
+      204
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 28,
+    "feet": true
+  },
+  "engineer_d0": {
+    "sheet": "player",
+    "box": [
+      784,
+      529,
+      193,
+      204
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 28,
+    "feet": true
+  },
+  "engineer_d1": {
+    "sheet": "player",
+    "box": [
+      990,
+      529,
+      204,
+      204
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 28,
+    "feet": true
+  },
+  "engineer_idle": {
+    "sheet": "player",
+    "box": [
+      248,
+      797,
+      146,
+      216
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 28,
+    "feet": true
+  },
+  "engineer_hurt": {
+    "sheet": "player",
+    "box": [
+      537,
+      800,
+      160,
+      213
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 28,
+    "feet": true
+  },
+  "drone_0": {
+    "sheet": "enemies",
+    "box": [
+      61,
+      89,
+      202,
+      177
+    ],
+    "tw": 28,
+    "th": 28,
+    "fmt": "argb8888",
+    "ax": 14,
+    "ay": 14
+  },
+  "drone_1": {
+    "sheet": "enemies",
+    "box": [
+      279,
+      87,
+      182,
+      187
+    ],
+    "tw": 28,
+    "th": 28,
+    "fmt": "argb8888",
+    "ax": 14,
+    "ay": 14
+  },
+  "crawler_0": {
+    "sheet": "enemies",
+    "box": [
+      489,
+      78,
+      231,
+      207
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 22
+  },
+  "crawler_1": {
+    "sheet": "enemies",
+    "box": [
+      724,
+      92,
+      244,
+      193
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 22
+  },
+  "runner_0": {
+    "sheet": "enemies",
+    "box": [
+      1023,
+      77,
+      177,
+      208
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 22
+  },
+  "runner_1": {
+    "sheet": "enemies",
+    "box": [
+      1209,
+      78,
+      203,
+      207
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 22
+  },
+  "tank_0": {
+    "sheet": "enemies",
+    "box": [
+      20,
+      395,
+      348,
+      316
+    ],
+    "tw": 48,
+    "th": 48,
+    "fmt": "argb8888",
+    "ax": 24,
+    "ay": 32
+  },
+  "tank_1": {
+    "sheet": "enemies",
+    "box": [
+      377,
+      397,
+      384,
+      319
+    ],
+    "tw": 48,
+    "th": 48,
+    "fmt": "argb8888",
+    "ax": 24,
+    "ay": 32
+  },
+  "elite_0": {
+    "sheet": "enemies",
+    "box": [
+      801,
+      374,
+      276,
+      342
+    ],
+    "tw": 48,
+    "th": 48,
+    "fmt": "argb8888",
+    "ax": 24,
+    "ay": 32
+  },
+  "elite_1": {
+    "sheet": "enemies",
+    "box": [
+      1116,
+      386,
+      310,
+      330
+    ],
+    "tw": 48,
+    "th": 48,
+    "fmt": "argb8888",
+    "ax": 24,
+    "ay": 32
+  },
+  "pulse_shot": {
+    "sheet": "weapons",
+    "box": [
+      28,
+      75,
+      56,
+      47
+    ],
+    "tw": 12,
+    "th": 8,
+    "fmt": "argb8888",
+    "ax": 6,
+    "ay": 4
+  },
+  "enemy_bullet": {
+    "sheet": "weapons",
+    "box": [
+      802,
+      76,
+      46,
+      47
+    ],
+    "tw": 8,
+    "th": 8,
+    "fmt": "argb8888",
+    "ax": 4,
+    "ay": 4
+  },
+  "xp_small": {
+    "sheet": "weapons",
+    "box": [
+      39,
+      797,
+      47,
+      57
+    ],
+    "tw": 8,
+    "th": 8,
+    "fmt": "argb8888",
+    "ax": 4,
+    "ay": 4
+  },
+  "xp_large": {
+    "sheet": "weapons",
+    "box": [
+      391,
+      751,
+      103,
+      131
+    ],
+    "tw": 12,
+    "th": 12,
+    "fmt": "argb8888",
+    "ax": 6,
+    "ay": 6
+  },
+  "repair_pickup": {
+    "sheet": "weapons",
+    "box": [
+      882,
+      766,
+      81,
+      103
+    ],
+    "tw": 16,
+    "th": 16,
+    "fmt": "argb8888",
+    "ax": 8,
+    "ay": 8
+  },
+  "glow_small": {
+    "sheet": "fx",
+    "box": [
+      36,
+      101,
+      241,
+      218
+    ],
+    "tw": 16,
+    "th": 16,
+    "fmt": "argb8888",
+    "ax": 8,
+    "ay": 8
+  },
+  "glow_large": {
+    "sheet": "fx",
+    "box": [
+      286,
+      18,
+      310,
+      339
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 16
+  },
+  "spark": {
+    "sheet": "fx",
+    "box": [
+      610,
+      30,
+      306,
+      321
+    ],
+    "tw": 24,
+    "th": 24,
+    "fmt": "argb8888",
+    "ax": 12,
+    "ay": 12
+  },
+  "explosion": {
+    "sheet": "fx",
+    "box": [
+      319,
+      619,
+      310,
+      317
+    ],
+    "tw": 48,
+    "th": 48,
+    "fmt": "argb8888",
+    "ax": 24,
+    "ay": 24
+  },
+  "ring": {
+    "sheet": "fx",
+    "box": [
+      953,
+      334,
+      301,
+      292
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 16
+  },
+  "trail": {
+    "sheet": "fx",
+    "box": [
+      9,
+      400,
+      329,
+      163
+    ],
+    "tw": 16,
+    "th": 8,
+    "fmt": "argb8888",
+    "ax": 8,
+    "ay": 4
+  },
+  "floor_00": {
+    "sheet": "environment",
+    "box": [
+      24,
+      73,
+      188,
+      182
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "base",
+    "tone": 0.7
+  },
+  "floor_01": {
+    "sheet": "environment",
+    "box": [
+      233,
+      73,
+      184,
+      182
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "variation",
+    "tone": 0.7
+  },
+  "floor_02": {
+    "sheet": "environment",
+    "box": [
+      641,
+      478,
+      182,
+      174
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "base",
+    "tone": 0.7
+  },
+  "floor_03": {
+    "sheet": "environment",
+    "box": [
+      1044,
+      477,
+      186,
+      176
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "variation",
+    "tone": 0.7
+  },
+  "floor_04": {
+    "sheet": "environment",
+    "box": [
+      440,
+      74,
+      182,
+      181
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "grate",
+    "tone": 0.7
+  },
+  "floor_05": {
+    "sheet": "environment",
+    "box": [
+      839,
+      478,
+      188,
+      174
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "grate",
+    "tone": 0.7
+  },
+  "floor_06": {
+    "sheet": "environment",
+    "box": [
+      439,
+      278,
+      182,
+      180
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "variation",
+    "tone": 0.7
+  },
+  "floor_07": {
+    "sheet": "environment",
+    "box": [
+      643,
+      74,
+      178,
+      182
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "hazard",
+    "tone": 0.85
+  },
+  "hazard_stripe": {
+    "sheet": "environment",
+    "box": [
+      644,
+      106,
+      177,
+      56
+    ],
+    "tw": 32,
+    "th": 8,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "decal",
+    "feet": false,
+    "tone": 0.8
+  },
+  "grate": {
+    "sheet": "environment",
+    "box": [
+      441,
+      75,
+      180,
+      178
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "decal",
+    "feet": false,
+    "tone": 0.8
+  },
+  "barrel": {
+    "sheet": "environment",
+    "box": [
+      19,
+      690,
+      140,
+      252
+    ],
+    "tw": 32,
+    "th": 48,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 44,
+    "role": "prop",
+    "feet": true
+  },
+  "crate": {
+    "sheet": "environment",
+    "box": [
+      166,
+      731,
+      214,
+      207
+    ],
+    "tw": 40,
+    "th": 40,
+    "fmt": "argb8888",
+    "ax": 20,
+    "ay": 36,
+    "role": "prop",
+    "feet": true
+  },
+  "console": {
+    "sheet": "environment",
+    "box": [
+      389,
+      697,
+      208,
+      247
+    ],
+    "tw": 44,
+    "th": 52,
+    "fmt": "argb8888",
+    "ax": 22,
+    "ay": 48,
+    "role": "prop",
+    "feet": true
+  },
+  "canister": {
+    "sheet": "environment",
+    "box": [
+      599,
+      702,
+      133,
+      245
+    ],
+    "tw": 28,
+    "th": 48,
+    "fmt": "argb8888",
+    "ax": 14,
+    "ay": 44,
+    "role": "prop",
+    "feet": true
+  },
+  "mark_a3": {
+    "sheet": "environment",
+    "box": [
+      25,
+      277,
+      187,
+      182
+    ],
+    "tw": 64,
+    "th": 64,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "decal",
+    "feet": false,
+    "tone": 0.8
+  },
+  "mark_service": {
+    "sheet": "environment",
+    "box": [
+      232,
+      277,
+      185,
+      181
+    ],
+    "tw": 64,
+    "th": 64,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "decal",
+    "feet": false,
+    "tone": 0.8
+  },
+  "power_panel": {
+    "sheet": "environment",
+    "box": [
+      1043,
+      73,
+      185,
+      180
+    ],
+    "tw": 64,
+    "th": 64,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "decal",
+    "feet": false,
+    "tone": 0.8
+  },
+  "cable_spool": {
+    "sheet": "environment",
+    "box": [
+      737,
+      737,
+      193,
+      207
+    ],
+    "tw": 40,
+    "th": 40,
+    "fmt": "argb8888",
+    "ax": 20,
+    "ay": 36,
+    "role": "prop",
+    "feet": true
+  },
+  "machine_wreck": {
+    "sheet": "environment",
+    "box": [
+      932,
+      737,
+      308,
+      213
+    ],
+    "tw": 64,
+    "th": 44,
+    "fmt": "argb8888",
+    "ax": 32,
+    "ay": 40,
+    "role": "prop",
+    "feet": true
+  },
+  "warning_lamp": {
+    "sheet": "environment",
+    "box": [
+      13,
+      974,
+      119,
+      239
+    ],
+    "tw": 28,
+    "th": 56,
+    "fmt": "argb8888",
+    "ax": 14,
+    "ay": 52,
+    "role": "prop",
+    "feet": true
+  },
+  "power_cabinet": {
+    "sheet": "environment",
+    "box": [
+      135,
+      995,
+      151,
+      199
+    ],
+    "tw": 40,
+    "th": 56,
+    "fmt": "argb8888",
+    "ax": 20,
+    "ay": 52,
+    "role": "prop",
+    "feet": true
+  },
+  "barrier": {
+    "sheet": "environment",
+    "box": [
+      293,
+      1031,
+      258,
+      167
+    ],
+    "tw": 64,
+    "th": 40,
+    "fmt": "argb8888",
+    "ax": 32,
+    "ay": 36,
+    "role": "prop",
+    "feet": true
+  },
+  "stacked_crates": {
+    "sheet": "environment",
+    "box": [
+      555,
+      1023,
+      209,
+      173
+    ],
+    "tw": 56,
+    "th": 48,
+    "fmt": "argb8888",
+    "ax": 28,
+    "ay": 44,
+    "role": "prop",
+    "feet": true
+  },
+  "pipe_elbow": {
+    "sheet": "environment",
+    "box": [
+      779,
+      982,
+      191,
+      224
+    ],
+    "tw": 56,
+    "th": 64,
+    "fmt": "argb8888",
+    "ax": 28,
+    "ay": 60,
+    "role": "prop",
+    "feet": true
+  },
+  "server": {
+    "sheet": "environment",
+    "box": [
+      974,
+      993,
+      117,
+      211
+    ],
+    "tw": 32,
+    "th": 60,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 56,
+    "role": "prop",
+    "feet": true
+  },
+  "access_door": {
+    "sheet": "environment",
+    "box": [
+      1094,
+      978,
+      147,
+      234
+    ],
+    "tw": 48,
+    "th": 72,
+    "fmt": "argb8888",
+    "ax": 24,
+    "ay": 68,
+    "role": "prop",
+    "feet": true
+  },
+  "orbit_drone": {
+    "sheet": "weapons",
+    "box": [
+      785,
+      222,
+      91,
+      89
+    ],
+    "tw": 20,
+    "th": 20,
+    "fmt": "argb8888",
+    "ax": 10,
+    "ay": 10,
+    "role": "sprite",
+    "feet": false
+  },
+  "plasma_orb": {
+    "sheet": "weapons",
+    "box": [
+      29,
+      217,
+      73,
+      94
+    ],
+    "tw": 20,
+    "th": 20,
+    "fmt": "argb8888",
+    "ax": 10,
+    "ay": 10,
+    "role": "sprite",
+    "feet": false
+  },
+  "energy_field_core": {
+    "sheet": "weapons",
+    "box": [
+      31,
+      403,
+      76,
+      103
+    ],
+    "tw": 20,
+    "th": 28,
+    "fmt": "argb8888",
+    "ax": 10,
+    "ay": 14,
+    "role": "sprite",
+    "feet": false
+  },
+  "chain_arc_node": {
+    "sheet": "weapons",
+    "box": [
+      817,
+      409,
+      96,
+      104
+    ],
+    "tw": 20,
+    "th": 20,
+    "fmt": "argb8888",
+    "ax": 10,
+    "ay": 10,
+    "role": "sprite",
+    "feet": false
+  },
+  "meteor_marker": {
+    "sheet": "weapons",
+    "box": [
+      23,
+      576,
+      113,
+      119
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 16,
+    "role": "sprite",
+    "feet": false
+  },
+  "skill_frame": {
+    "sheet": "ui",
+    "box": [
+      35,
+      194,
+      135,
+      99
+    ],
+    "tw": 32,
+    "th": 28,
+    "fmt": "argb8888",
+    "ax": 16,
+    "ay": 14,
+    "role": "ui",
+    "feet": false
+  },
+  "weapon_icon": {
+    "sheet": "ui",
+    "box": [
+      40,
+      891,
+      142,
+      124
+    ],
+    "tw": 24,
+    "th": 24,
+    "fmt": "argb8888",
+    "ax": 12,
+    "ay": 12,
+    "role": "ui",
+    "feet": false
+  },
+  "floor_base_0": {
+    "sheet": "environment",
+    "box": [
+      24,
+      73,
+      94,
+      91
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "base",
+    "feet": false,
+    "tone": 0.68
+  },
+  "floor_base_1": {
+    "sheet": "environment",
+    "box": [
+      118,
+      73,
+      94,
+      91
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "base",
+    "feet": false,
+    "tone": 0.68
+  },
+  "floor_base_2": {
+    "sheet": "environment",
+    "box": [
+      24,
+      164,
+      94,
+      91
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "base",
+    "feet": false,
+    "tone": 0.68
+  },
+  "floor_base_3": {
+    "sheet": "environment",
+    "box": [
+      118,
+      164,
+      94,
+      91
+    ],
+    "tw": 32,
+    "th": 32,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "base",
+    "feet": false,
+    "tone": 0.68
+  }
+}

@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 GAME_DIRS = [
     ROOT / "software" / "applications" / "neon_survivor",
+    ROOT / "software" / "applications" / "facility_omega",
 ]
 FORBIDDEN = (
     "golden/",

@@ -110,6 +110,17 @@ add_test(NAME gpu2d_test_argb_order
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 
+add_test(NAME gpu2d_test_asset_pipeline
+    COMMAND ${Python3_EXECUTABLE} -B ${CMAKE_SOURCE_DIR}/scripts/check_app2_asset_pipeline.py
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+add_executable(gpu2d_test_facility_visual tests/test_facility_visual.cpp)
+target_link_libraries(gpu2d_test_facility_visual PRIVATE facility_omega golden_backend_lib)
+target_compile_options(gpu2d_test_facility_visual PRIVATE ${GOLDEN_WARN_FLAGS})
+add_test(NAME gpu2d_test_facility_visual COMMAND gpu2d_test_facility_visual
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+
 add_executable(gpu2d_test_mutation tests/test_mutation.cpp)
 target_link_libraries(gpu2d_test_mutation PRIVATE golden_backend_lib neon_game)
 target_compile_options(gpu2d_test_mutation PRIVATE ${GOLDEN_WARN_FLAGS})

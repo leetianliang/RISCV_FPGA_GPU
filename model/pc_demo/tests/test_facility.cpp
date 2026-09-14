@@ -231,6 +231,35 @@ int main() {
         CHECK(k.player.kills > kills0);
     }
 
+    // R2 regression: one-pixel speed must accumulate both diagonal components.
+    for (EnemyKind kind : {EnemyKind::Crawler, EnemyKind::Tank}) {
+        for (int sx : {-1, 1}) for (int sy : {-1, 1}) {
+            AppState p;
+            sim_reset(p, 99);
+            p.enemy_count_target = 0;
+            p.player.fire_cooldown = 10000;
+            Enemy e;
+            e.kind = kind; e.alive = true; e.hp = 100;
+            e.world_x = 2048 + sx * 300; e.world_y = 2048 + sy * 200;
+            p.enemies.push_back(e);
+            for (int i = 0; i < 100; ++i) sim_step(p, nullptr);
+            const int moved_x = sx * (e.world_x - p.enemies[0].world_x);
+            const int moved_y = sy * (e.world_y - p.enemies[0].world_y);
+            CHECK(moved_x >= 81 && moved_x <= 85);
+            CHECK(moved_y >= 53 && moved_y <= 57);
+        }
+        AppState axis;
+        sim_reset(axis, 7);
+        axis.enemy_count_target = 0; axis.player.fire_cooldown = 10000;
+        Enemy e;
+        e.kind = kind; e.alive = true; e.hp = 100;
+        e.world_x = 2348; e.world_y = 2048;
+        axis.enemies.push_back(e);
+        for (int i = 0; i < 100; ++i) sim_step(axis, nullptr);
+        CHECK(axis.enemies[0].world_x == 2248);
+        CHECK(axis.enemies[0].world_y == 2048);
+    }
+
     // deterministic reset + map
     AppState a, b;
     sim_reset(a, 99);

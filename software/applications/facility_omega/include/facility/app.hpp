@@ -31,6 +31,9 @@ struct SpriteBlob {
     bool rgb565 = false;
     bool indexed = false;
     std::vector<u8> pixels;
+    std::string atlas_file;
+    u32 atlas_width = 0, atlas_height = 0, atlas_stride = 0;
+    u32 atlas_x = 0, atlas_y = 0;
 };
 
 struct TexRef {
@@ -39,6 +42,7 @@ struct TexRef {
     u32 h = 0;
     u32 ax = 0;
     u32 ay = 0;
+    u32 sx = 0, sy = 0;
 };
 
 class TexBank {
@@ -64,6 +68,8 @@ private:
 
 // Load processed runtime blobs (no PNG). Returns false on IO error.
 bool load_runtime_sprites(const std::string& runtime_dir, std::vector<SpriteBlob>& out);
+bool load_runtime_atlases(const std::string& runtime_dir, const std::vector<SpriteBlob>& sprites,
+                         std::vector<SpriteBlob>& atlases);
 
 // Deterministic xorshift32 (same family as NEON; independent state).
 class Rng {
@@ -103,6 +109,15 @@ struct Enemy {
     bool alive = false;
     u8 flash = 0;
     u16 anim = 0;
+    // Application-local Q8 displacement remainder; GPU coordinates stay integer.
+    i32 motion_x = 0;
+    i32 motion_y = 0;
+};
+
+struct Effect {
+    i32 world_x = 0, world_y = 0;
+    u32 life = 0;
+    bool explosion = false;
 };
 
 struct Bullet {
@@ -147,6 +162,7 @@ struct AppState {
     std::vector<u8> map;
     std::vector<Enemy> enemies;
     std::vector<Bullet> bullets;
+    std::vector<Effect> effects;
     u32 spawn_timer = 0;
     u32 enemy_count_target = 8;
     bool ready = false;

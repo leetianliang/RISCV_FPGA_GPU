@@ -1,0 +1,120 @@
+[
+  {
+    "name": "quiet_001",
+    "kind": "normal gameplay, idle input",
+    "command": [
+      "C:\\Users\\123\\Desktop\\code\\FPGA_2D_GPU\\build\\stage0045\\model\\pc_demo\\gpu2d_demo.exe",
+      "--app",
+      "facility",
+      "--headless",
+      "--frames",
+      "1",
+      "--seed",
+      "1234",
+      "--backend",
+      "immediate",
+      "--profile",
+      "interactive",
+      "--capture",
+      "C:\\Users\\123\\Desktop\\code\\FPGA_2D_GPU\\results\\facility_omega\\rework_r2\\quiet_001.raw"
+    ],
+    "stdout": "captured C:\\Users\\123\\Desktop\\code\\FPGA_2D_GPU\\results\\facility_omega\\rework_r2\\quiet_001.raw (+ppm)\ngpu2d_demo done backend=immediate scene=0 base_cmds=437 base_sprites=416 tiles=0/0 wrefs=0 max_od=0\n",
+    "width": 640,
+    "height": 360,
+    "frame": 1,
+    "seed": 1234,
+    "sha256": "fc2d35b1e4f0bb40eb78a4e158a5d794a73c0e15cc045089cff31920d47c368a"
+  },
+  {
+    "name": "normal_180",
+    "kind": "normal gameplay, idle input",
+    "command": [
+      "C:\\Users\\123\\Desktop\\code\\FPGA_2D_GPU\\build\\stage0045\\model\\pc_demo\\gpu2d_demo.exe",
+      "--app",
+      "facility",
+      "--headless",
+      "--frames",
+      "180",
+      "--seed",
+      "1234",
+      "--backend",
+      "immediate",
+      "--profile",
+      "interactive",
+      "--capture",
+      "C:\\Users\\123\\Desktop\\code\\FPGA_2D_GPU\\results\\facility_omega\\rework_r2\\normal_180.raw"
+    ],
+    "stdout": "captured C:\\Users\\123\\Desktop\\code\\FPGA_2D_GPU\\results\\facility_omega\\rework_r2\\normal_180.raw (+ppm)\ngpu2d_demo done backend=immediate scene=0 base_cmds=441 base_sprites=420 tiles=0/0 wrefs=0 max_od=0\n",
+    "width": 640,
+    "height": 360,
+    "frame": 180,
+    "seed": 1234,
+    "sha256": "dd0cd053ffe361f1405d5630cc1717587d5ac7d48280392a2f40abcb9130ba48"
+  },
+  {
+    "name": "normal_600",
+    "kind": "normal gameplay, idle input",
+    "command": [
+      "C:\\Users\\123\\Desktop\\code\\FPGA_2D_GPU\\build\\stage0045\\model\\pc_demo\\gpu2d_demo.exe",
+      "--app",
+      "facility",
+      "--headless",
+      "--frames",
+      "600",
+      "--seed",
+      "1234",
+      "--backend",
+      "immediate",
+      "--profile",
+      "interactive",
+      "--capture",
+      "C:\\Users\\123\\Desktop\\code\\FPGA_2D_GPU\\results\\facility_omega\\rework_r2\\normal_600.raw"
+    ],
+    "stdout": "captured C:\\Users\\123\\Desktop\\code\\FPGA_2D_GPU\\results\\facility_omega\\rework_r2\\normal_600.raw (+ppm)\ngpu2d_demo done backend=immediate scene=0 base_cmds=442 base_sprites=421 tiles=0/0 wrefs=0 max_od=0\n",
+    "width": 640,
+    "height": 360,
+    "frame": 600,
+    "seed": 1234,
+    "sha256": "ec2a15034e0219b452f97cfe36f273d500e1d2e6a6805815674947abdcd24261"
+  },
+  {
+    "name": "scroll_600",
+    "kind": "normal gameplay with scripted input",
+    "command": [
+      "C:\\Users\\123\\Desktop\\code\\FPGA_2D_GPU\\build\\stage0045\\model\\pc_demo\\gpu2d_demo.exe",
+      "--app",
+      "facility",
+      "--headless",
+      "--frames",
+      "600",
+      "--seed",
+      "1234",
+      "--backend",
+      "immediate",
+      "--profile",
+      "interactive",
+      "--capture",
+      "C:\\Users\\123\\Desktop\\code\\FPGA_2D_GPU\\results\\facility_omega\\rework_r2\\scroll_600.raw",
+      "--facility-route"
+    ],
+    "stdout": "captured C:\\Users\\123\\Desktop\\code\\FPGA_2D_GPU\\results\\facility_omega\\rework_r2\\scroll_600.raw (+ppm)\ngpu2d_demo done backend=immediate scene=0 base_cmds=396 base_sprites=379 tiles=0/0 wrefs=0 max_od=0\n",
+    "width": 640,
+    "height": 360,
+    "frame": 600,
+    "seed": 1234,
+    "sha256": "52f66cb93cfe6e11bef98a9422edd22076481793c8ded73151d00fb1c97259e3"
+  },
+  {
+    "name": "combat_fixture",
+    "kind": "synthetic regression fixture; four prescribed enemies, actual simulation and rendering",
+    "command": [
+      "C:\\Users\\123\\Desktop\\code\\FPGA_2D_GPU\\build\\stage0045\\model\\pc_demo\\gpu2d_test_facility_visual.exe",
+      "C:\\Users\\123\\Desktop\\code\\FPGA_2D_GPU\\results\\facility_omega\\rework_r2\\combat_fixture"
+    ],
+    "stdout": "fixture capture frame=5 seed=1234 size=640x360 C:\\Users\\123\\Desktop\\code\\FPGA_2D_GPU\\results\\facility_omega\\rework_r2\\combat_fixture.raw\nFACILITY visual pixels + transparent draws + 60 frame equality: PASS\n",
+    "width": 640,
+    "height": 360,
+    "seed": 1234,
+    "sha256": "bffe2536293e645f31955c6216f7e609d66a197a16453d471c90eac54e16b140"
+  }
+]

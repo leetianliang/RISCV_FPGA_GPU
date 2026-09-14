@@ -36,6 +36,7 @@ struct Cli {
     std::string capture;
     bool show_help = false;
     bool xray = false;
+    bool facility_route = false;
     std::string app = "neon";  // neon | facility
 };
 
@@ -46,7 +47,7 @@ Usage:
              [--backend immediate|tile|tile16|tile64]
              [--profile interactive|showcase]
              [--scene game|sprite|alpha|bullet|scale|overdraw]
-             [--capture <path.raw>] [--xray] [--help]
+             [--capture <path.raw>] [--xray] [--facility-route] [--help]
 
 Controls:
   WASD move | F1-F5 stress (neon) | F6 Immediate | F7 Tile32
@@ -72,6 +73,8 @@ bool parse_args(int argc, char** argv, Cli& cli) {
         };
         if (a == "--headless") {
             cli.headless = true;
+        } else if (a == "--facility-route") {
+            cli.facility_route = true;
         } else if (a == "--app") {
             cli.app = need("--app");
             if (cli.app != "neon" && cli.app != "facility") {
@@ -260,24 +263,24 @@ int main(int argc, char** argv) {
     if (cli.app == "facility" || !cli.headless) {
         std::vector<facility::SpriteBlob> blobs_fo;
         if (facility::load_runtime_sprites(fo_rt, blobs_fo)) {
-            for (const auto& b : blobs_fo) {
+            std::vector<facility::SpriteBlob> atlases;
+            if (!facility::load_runtime_atlases(fo_rt, blobs_fo, atlases)) {
+                std::fprintf(stderr, "failed to load FACILITY runtime atlases\n");
+                return 1;
+            }
+            for (const auto& a : atlases) {
                 gpu2d::TextureDesc d;
-                d.width = b.width;
-                d.height = b.height;
-                d.stride = b.stride;
-                d.format = b.indexed ? gpu2d::PixelFormat::INDEX8
-                                     : (b.rgb565 ? gpu2d::PixelFormat::RGB565
-                                                 : gpu2d::PixelFormat::ARGB8888);
-                d.pixels = b.pixels.data();
-                auto id = gpu.create_texture(d);
-                facility::TexRef tr;
-                tr.id = id;
-                tr.w = b.width;
-                tr.h = b.height;
-                tr.ax = b.anchor_x;
-                tr.ay = b.anchor_y;
-                if (id.valid()) {
-                    fo_tex.put(b.name, tr);
+                d.width=a.width; d.height=a.height; d.stride=a.stride;
+                d.format=a.rgb565 ? gpu2d::PixelFormat::RGB565 : gpu2d::PixelFormat::ARGB8888;
+                d.pixels=a.pixels.data();
+                auto id=gpu.create_texture(d);
+                if (!id.valid()) {
+                    std::fprintf(stderr,"FACILITY atlas upload failed: %s\n",a.name.c_str());
+                    return 1;
+                }
+                for (const auto& b : blobs_fo) {
+                    if (b.atlas_file != a.name) continue;
+                    fo_tex.put(b.name,{id,b.width,b.height,b.anchor_x,b.anchor_y,b.atlas_x,b.atlas_y});
                 }
             }
             facility::sim_reset(fo, cli.seed);
@@ -318,7 +321,7 @@ int main(int argc, char** argv) {
 
     gpu2d::CommandRecorder rec;
     host::InputState input;
-    bool tech_hud = true;
+    bool tech_hud = !use_facility;
     bool xray = cli.xray;
     u32 frame_limit = cli.frames;
     u64 frames_run = 0;
@@ -393,6 +396,7 @@ int main(int argc, char** argv) {
                 } else if (input.edge_2) {
                     if (fo.ready) {
                         use_facility = true;
+                        tech_hud = false;
                         screen = AppScreen::Game;
                         facility::set_viewport(fo, cli.profile.width, cli.profile.height);
                     } else {
@@ -521,24 +525,34 @@ int main(int argc, char** argv) {
             input.clear_edges();
         }
 
-        const bool keys[4] = {input.up, input.down, input.left, input.right};
+        bool keys[4] = {input.up, input.down, input.left, input.right};
+        // Deterministic review route: 768 px right, then 768 px down, then idle.
+        if (cli.headless && use_facility && cli.facility_route) {
+            keys[0] = false; keys[2] = false;
+            keys[3] = frames_run < 256;
+            keys[1] = frames_run >= 256 && frames_run < 512;
+        }
         rec.begin_frame();
         if (use_facility) {
             facility::set_viewport(fo, cli.profile.width, cli.profile.height);
             facility::sim_step(fo, keys);
             facility::camera_follow(fo, cli.profile.width, cli.profile.height);
             facility::render_scene(rec, fo, fo_tex, cli.profile.width, cli.profile.height);
-            // simple HUD
             char hud[128];
-            std::snprintf(hud, sizeof(hud),
-                          "FACILITY-O  LV %u HP %d KILLS %u EN %u BL %u",
-                          fo.player.level, fo.player.hp, fo.player.kills,
-                          facility::live_enemy_count(fo),
-                          facility::live_bullet_count(fo));
-            neon::draw_text_pal(rec, assets, 4, 3, hud, Color::rgb(180, 255, 255));
-            std::snprintf(hud, sizeof(hud), "CAM %d,%d  P %d,%d", fo.cam.x, fo.cam.y,
-                          fo.player.world_x, fo.player.world_y);
-            neon::draw_text_pal(rec, assets, 4, 16, hud, Color::rgb(255, 200, 80));
+            neon::draw_text_pal(rec, assets, 20, 7, "FACILITY-O", Color::rgb(211, 229, 234));
+            neon::draw_text_pal(rec, assets, 20, 19, "POWER TEST / A-3", Color::rgb(85, 146, 170));
+            neon::draw_text_pal(rec, assets, 134, 13, "HP", Color::rgb(197, 220, 225));
+            std::snprintf(hud, sizeof(hud), "%02u:%02u", static_cast<u32>(fo.frame / 3600),
+                          static_cast<u32>((fo.frame / 60) % 60));
+            neon::draw_text_pal(rec, assets, 294, 13, hud, Color::rgb(188, 230, 244));
+            std::snprintf(hud, sizeof(hud), "KILLS %u", fo.player.kills);
+            neon::draw_text_pal(rec, assets, 378, 13, hud, Color::rgb(218, 231, 237));
+            neon::draw_text_pal(rec, assets, cli.profile.width - 113, 13, "PULSE SHOT", Color::rgb(92, 199, 236));
+            if (tech_hud) {
+                std::snprintf(hud, sizeof(hud), "CAM %d,%d EN %u BL %u", fo.cam.x, fo.cam.y,
+                              facility::live_enemy_count(fo), facility::live_bullet_count(fo));
+                neon::draw_text_pal(rec, assets, 5, cli.profile.height - 12, hud, Color::rgb(147, 190, 199));
+            }
             rec.present();
             if (!gpu.execute_frame(rec.commands())) {
                 std::fprintf(stderr, "facility execute fault=0x%X\n", gpu.last_fault());

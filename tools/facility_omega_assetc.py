@@ -9,11 +9,13 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import sys
+import zipfile
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageEnhance
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "assets" / "facility_omega" / "source" / "source_sheets"
@@ -21,114 +23,10 @@ OUT = ROOT / "assets" / "facility_omega" / "runtime"
 PREV = ROOT / "assets" / "facility_omega" / "processed"
 AUDIT = ROOT / "assets" / "facility_omega" / "processed" / "asset_audit.json"
 
-# Visual-review crop table. Each entry is ONE isolated object.
-# box = (x, y, w, h) on source sheet; trim_bottom drops label strip.
-CROPS: dict[str, dict] = {
-    # Player: a=UP b=DOWN c=LEFT d=RIGHT (see source labels)
-    "engineer_a0": {"sheet": "player", "box": (516, 40, 142, 200), "tw": 32, "th": 32,
-                    "fmt": "argb8888", "ax": 16, "ay": 28, "trim_bottom": 0.22},
-    "engineer_a1": {"sheet": "player", "box": (794, 40, 142, 200), "tw": 32, "th": 32,
-                    "fmt": "argb8888", "ax": 16, "ay": 28, "trim_bottom": 0.22},
-    "engineer_b0": {"sheet": "player", "box": (524, 295, 131, 190), "tw": 32, "th": 32,
-                    "fmt": "argb8888", "ax": 16, "ay": 28, "trim_bottom": 0.22},
-    "engineer_b1": {"sheet": "player", "box": (798, 295, 134, 190), "tw": 32, "th": 32,
-                    "fmt": "argb8888", "ax": 16, "ay": 28, "trim_bottom": 0.22},
-    "engineer_c0": {"sheet": "player", "box": (307, 535, 192, 200), "tw": 32, "th": 32,
-                    "fmt": "argb8888", "ax": 16, "ay": 28, "trim_bottom": 0.22},
-    "engineer_c1": {"sheet": "player", "box": (539, 535, 175, 200), "tw": 32, "th": 32,
-                    "fmt": "argb8888", "ax": 16, "ay": 28, "trim_bottom": 0.22},
-    "engineer_d0": {"sheet": "player", "box": (792, 535, 176, 200), "tw": 32, "th": 32,
-                    "fmt": "argb8888", "ax": 16, "ay": 28, "trim_bottom": 0.22},
-    "engineer_d1": {"sheet": "player", "box": (999, 535, 184, 200), "tw": 32, "th": 32,
-                    "fmt": "argb8888", "ax": 16, "ay": 28, "trim_bottom": 0.22},
-    "engineer_idle": {"sheet": "player", "box": (236, 808, 176, 200), "tw": 32, "th": 32,
-                      "fmt": "argb8888", "ax": 16, "ay": 28, "trim_bottom": 0.22},
-    "engineer_hurt": {"sheet": "player", "box": (519, 808, 191, 200), "tw": 32, "th": 32,
-                      "fmt": "argb8888", "ax": 16, "ay": 28, "trim_bottom": 0.22},
-    # Enemies: split left/right pose in each labeled cell
-    "drone_0": {"sheet": "enemies", "box": (67, 90, 190, 200), "tw": 28, "th": 28,
-                "fmt": "argb8888", "ax": 14, "ay": 14, "trim_bottom": 0.18},
-    "drone_1": {"sheet": "enemies", "box": (260, 90, 190, 200), "tw": 28, "th": 28,
-                "fmt": "argb8888", "ax": 14, "ay": 14, "trim_bottom": 0.18},
-    "crawler_0": {"sheet": "enemies", "box": (495, 90, 225, 200), "tw": 32, "th": 32,
-                  "fmt": "argb8888", "ax": 16, "ay": 22, "trim_bottom": 0.18},
-    "crawler_1": {"sheet": "enemies", "box": (730, 90, 225, 200), "tw": 32, "th": 32,
-                  "fmt": "argb8888", "ax": 16, "ay": 22, "trim_bottom": 0.18},
-    "runner_0": {"sheet": "enemies", "box": (1028, 90, 175, 200), "tw": 32, "th": 32,
-                 "fmt": "argb8888", "ax": 16, "ay": 22, "trim_bottom": 0.18},
-    "runner_1": {"sheet": "enemies", "box": (1210, 90, 175, 200), "tw": 32, "th": 32,
-                 "fmt": "argb8888", "ax": 16, "ay": 22, "trim_bottom": 0.18},
-    "tank_0": {"sheet": "enemies", "box": (39, 390, 345, 330), "tw": 48, "th": 48,
-               "fmt": "argb8888", "ax": 24, "ay": 32, "trim_bottom": 0.12},
-    "tank_1": {"sheet": "enemies", "box": (395, 390, 345, 330), "tw": 48, "th": 48,
-               "fmt": "argb8888", "ax": 24, "ay": 32, "trim_bottom": 0.12},
-    "elite_0": {"sheet": "enemies", "box": (811, 390, 290, 330), "tw": 48, "th": 48,
-                "fmt": "argb8888", "ax": 24, "ay": 32, "trim_bottom": 0.12},
-    "elite_1": {"sheet": "enemies", "box": (1110, 390, 290, 330), "tw": 48, "th": 48,
-                "fmt": "argb8888", "ax": 24, "ay": 32, "trim_bottom": 0.12},
-    # Weapons — single projectile / crystal / pickup
-    "pulse_shot": {"sheet": "weapons", "box": (21, 55, 90, 70), "tw": 8, "th": 8,
-                   "fmt": "argb8888", "ax": 4, "ay": 4},
-    "enemy_bullet": {"sheet": "weapons", "box": (850, 55, 90, 70), "tw": 8, "th": 8,
-                     "fmt": "argb8888", "ax": 4, "ay": 4},
-    "xp_small": {"sheet": "weapons", "box": (25, 780, 70, 70), "tw": 8, "th": 8,
-                 "fmt": "argb8888", "ax": 4, "ay": 4},
-    "xp_large": {"sheet": "weapons", "box": (370, 755, 100, 110), "tw": 12, "th": 12,
-                 "fmt": "argb8888", "ax": 6, "ay": 6},
-    "repair_pickup": {"sheet": "weapons", "box": (1090, 760, 90, 90), "tw": 16, "th": 16,
-                      "fmt": "argb8888", "ax": 8, "ay": 8},
-    # FX — isolated single effects
-    "glow_small": {"sheet": "fx", "box": (40, 50, 160, 160), "tw": 16, "th": 16,
-                   "fmt": "argb8888", "ax": 8, "ay": 8},
-    "glow_large": {"sheet": "fx", "box": (280, 40, 220, 220), "tw": 32, "th": 32,
-                   "fmt": "argb8888", "ax": 16, "ay": 16},
-    "spark": {"sheet": "fx", "box": (620, 50, 180, 180), "tw": 16, "th": 16,
-              "fmt": "argb8888", "ax": 8, "ay": 8},
-    "explosion": {"sheet": "fx", "box": (320, 620, 280, 280), "tw": 32, "th": 32,
-                  "fmt": "argb8888", "ax": 16, "ay": 16},
-    "ring": {"sheet": "fx", "box": (980, 380, 220, 220), "tw": 32, "th": 32,
-             "fmt": "argb8888", "ax": 16, "ay": 16},
-    "trail": {"sheet": "fx", "box": (20, 400, 280, 130), "tw": 16, "th": 8,
-              "fmt": "argb8888", "ax": 8, "ay": 4},
-    # Environment — base floors (quiet metals) vs specials (sparse)
-    "floor_00": {"sheet": "environment", "box": (19, 70, 140, 140), "tw": 32, "th": 32,
-                 "fmt": "rgb565", "ax": 0, "ay": 0, "role": "base"},
-    "floor_01": {"sheet": "environment", "box": (190, 70, 140, 140), "tw": 32, "th": 32,
-                 "fmt": "rgb565", "ax": 0, "ay": 0, "role": "base"},
-    "floor_02": {"sheet": "environment", "box": (600, 490, 140, 140), "tw": 32, "th": 32,
-                 "fmt": "rgb565", "ax": 0, "ay": 0, "role": "base"},
-    "floor_03": {"sheet": "environment", "box": (1000, 490, 140, 140), "tw": 32, "th": 32,
-                 "fmt": "rgb565", "ax": 0, "ay": 0, "role": "base"},
-    "floor_04": {"sheet": "environment", "box": (360, 70, 140, 140), "tw": 32, "th": 32,
-                 "fmt": "rgb565", "ax": 0, "ay": 0, "role": "special"},
-    "floor_05": {"sheet": "environment", "box": (800, 490, 140, 140), "tw": 32, "th": 32,
-                 "fmt": "rgb565", "ax": 0, "ay": 0, "role": "special"},
-    "floor_06": {"sheet": "environment", "box": (360, 280, 140, 140), "tw": 32, "th": 32,
-                 "fmt": "rgb565", "ax": 0, "ay": 0, "role": "special"},
-    "floor_07": {"sheet": "environment", "box": (530, 70, 140, 140), "tw": 32, "th": 32,
-                 "fmt": "rgb565", "ax": 0, "ay": 0, "role": "decal"},
-    "hazard_stripe": {"sheet": "environment", "box": (200, 1000, 200, 160), "tw": 32, "th": 16,
-                      "fmt": "rgb565", "ax": 0, "ay": 0, "role": "decal"},
-    "grate": {"sheet": "environment", "box": (360, 70, 140, 140), "tw": 32, "th": 32,
-              "fmt": "rgb565", "ax": 0, "ay": 0, "role": "decal"},
-    "barrel": {"sheet": "environment", "box": (25, 680, 150, 220), "tw": 24, "th": 32,
-               "fmt": "argb8888", "ax": 12, "ay": 28, "trim_bottom": 0.05},
-    "crate": {"sheet": "environment", "box": (200, 700, 170, 180), "tw": 28, "th": 28,
-              "fmt": "argb8888", "ax": 14, "ay": 24, "trim_bottom": 0.05},
-    "console": {"sheet": "environment", "box": (400, 680, 170, 220), "tw": 28, "th": 36,
-                "fmt": "argb8888", "ax": 14, "ay": 32, "trim_bottom": 0.05},
-    "canister": {"sheet": "environment", "box": (600, 680, 130, 220), "tw": 20, "th": 28,
-                 "fmt": "argb8888", "ax": 10, "ay": 24, "trim_bottom": 0.05},
-}
-
-SHEET_FILES = {
-    "player": "player_source.png",
-    "enemies": "enemies_source.png",
-    "weapons": "weapons_pickups_source.png",
-    "fx": "fx_source.png",
-    "environment": "environment_source.png",
-    "ui": "ui_source.png",
-}
+CROPS = json.loads((Path(__file__).with_name("facility_omega_crops.json")).read_text(encoding="utf-8"))
+PLAYER_BOXES = {n.removeprefix("engineer_"): s["box"] for n,s in CROPS.items() if n.startswith("engineer_")}
+SHEET_FILES = {k: k + "_source.png" for k in ("player", "enemies", "fx", "environment", "ui")}
+SHEET_FILES["weapons"] = "weapons_pickups_source.png"
 
 
 def pack_rgb565(im: Image.Image) -> bytes:
@@ -150,116 +48,162 @@ def pack_argb8888_bgra(im: Image.Image) -> bytes:
     return im.tobytes("raw", "BGRA")
 
 
-def process_one(name: str, spec: dict, sheets: dict[str, Image.Image], update: bool) -> dict:
-    sh = sheets[spec["sheet"]]
-    x, y, w, h = spec["box"]
-    crop = sh.crop((x, y, x + w, y + h)).convert("RGBA")
-    tb = float(spec.get("trim_bottom", 0.0))
-    if tb > 0:
-        crop = crop.crop((0, 0, crop.width, max(1, int(crop.height * (1.0 - tb)))))
-    a = crop.getchannel("A")
-    bbox = a.getbbox()
-    if bbox:
-        crop = crop.crop(bbox)
-    tw, th = spec["tw"], spec["th"]
-    crop = crop.resize((tw, th), Image.Resampling.LANCZOS)
-    fmt = spec["fmt"]
-    if fmt == "rgb565":
-        bg = Image.new("RGBA", crop.size, (8, 12, 20, 255))
+def png_bytes(im):
+    stream=io.BytesIO()
+    im.save(stream,format='PNG',optimize=False)
+    return stream.getvalue()
+
+
+def process_one(spec, sheets):
+    sh=sheets[spec['sheet']]
+    x,y,w,h=spec['box']
+    if min(x,y)<0 or x+w>sh.width or y+h>sh.height:
+        raise ValueError('crop outside source')
+    crop=sh.crop((x,y,x+w,y+h)).convert('RGBA')
+    tw,th=spec['tw'],spec['th']
+    if spec['fmt']=='rgb565':
+        crop=crop.resize((tw,th),Image.Resampling.LANCZOS)
+        bg=Image.new('RGBA',(tw,th),(12,18,24,255))
         bg.alpha_composite(crop)
-        crop = bg.convert("RGB").convert("RGBA")
-        raw = pack_rgb565(crop)
-        ext = "565"
-        bpp = 2
-    else:
-        raw = pack_argb8888_bgra(crop)
-        ext = "argb"
-        bpp = 4
-    rel = Path(fmt) / f"{name}.{ext}"
-    outp = OUT / rel
-    outp.parent.mkdir(parents=True, exist_ok=True)
-    prev = PREV / "png" / f"{name}.png"
-    prev.parent.mkdir(parents=True, exist_ok=True)
-    crop.save(prev, format="PNG", optimize=False)
-    if not outp.exists() or update:
-        outp.write_bytes(raw)
-    return {
-        "name": name,
-        "source_sheet": SHEET_FILES[spec["sheet"]],
-        "source_box": [x, y, w, h],
-        "format": fmt,
-        "width": tw,
-        "height": th,
-        "stride": tw * bpp,
-        "anchor_x": spec["ax"],
-        "anchor_y": spec["ay"],
-        "role": spec.get("role", "sprite"),
-        "runtime_file": str(rel).replace("\\", "/"),
-        "preview_file": f"processed/png/{name}.png",
-        "sha256": hashlib.sha256(raw).hexdigest(),
-    }
+        return ImageEnhance.Brightness(bg.convert('RGB')).enhance(spec.get('tone',1)).convert('RGBA')
+    bbox=crop.getchannel('A').getbbox()
+    if not bbox:
+        raise ValueError('empty crop')
+    crop=crop.crop(bbox)
+    maxh=spec['ay']-1 if spec.get('feet') else th-2
+    factor=min((tw-2)/crop.width,maxh/crop.height)
+    nw,nh=max(1,round(crop.width*factor)),max(1,round(crop.height*factor))
+    crop=crop.resize((nw,nh),Image.Resampling.LANCZOS)
+    dst=Image.new('RGBA',(tw,th))
+    dst.alpha_composite(crop,((tw-nw)//2,spec['ay']-nh if spec.get('feet') else (th-nh)//2))
+    return dst
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--update", action="store_true")
-    args = ap.parse_args()
-    if not SRC.is_dir():
-        print("missing source/", file=sys.stderr)
+def verify_source():
+    prefix='FACILITY_OMEGA_First_Asset_Pack_V0.1/'
+    with zipfile.ZipFile(ROOT/'docs/tasks/FACILITY_OMEGA_First_Asset_Pack_V0.1.zip') as z:
+        manifest=json.loads(z.read(prefix+'MANIFEST.json'))
+        for f in manifest['files']:
+            data=z.read(prefix+f['path'])
+            if hashlib.sha256(data).hexdigest()!=f['sha256'] or len(data)!=f['bytes']:
+                raise ValueError('package integrity: '+f['path'])
+            if (SRC.parent/f['path']).read_bytes()!=data:
+                raise ValueError('source changed: '+f['path'])
+
+
+def build_outputs():
+    verify_source()
+    sheets={k:Image.open(SRC/fn).convert('RGBA') for k,fn in SHEET_FILES.items()}
+    outputs,items,images={},{},{}
+    for name,spec in CROPS.items():
+        im=process_one(spec,sheets)
+        images[name]=im
+        opaque=spec['fmt']=='rgb565'
+        raw=pack_rgb565(im) if opaque else pack_argb8888_bgra(im)
+        rel=spec['fmt']+'/'+name+('.565' if opaque else '.argb')
+        outputs[OUT/rel]=raw
+        outputs[PREV/'png'/(name+'.png')]=png_bytes(im)
+        items[name]=dict(name=name,format=spec['fmt'],width=im.width,height=im.height,
+            stride=im.width*(2 if opaque else 4),anchor_x=spec['ax'],anchor_y=spec['ay'],
+            runtime_file=rel,sha256=hashlib.sha256(raw).hexdigest(),role=spec.get('role','sprite'),
+            source_sheet=SHEET_FILES[spec['sheet']],source_box=list(spec['box']),
+            source_size=list(sheets[spec['sheet']].size),source_has_alpha=True,
+            preview_file='processed/png/'+name+'.png')
+    # Two shelf-packed atlases keep runtime resource use below the existing
+    # backend texture-slot limit. Individual raws remain audit/inspection outputs.
+    atlas_records=[]
+    for fmt in ('rgb565','argb8888'):
+        selected=[n for n in items if items[n]['format']==fmt]
+        positions={}
+        x=y=row_h=0
+        for name in selected:
+            im=images[name]
+            if x+im.width>512:
+                x=0; y+=row_h; row_h=0
+            positions[name]=(x,y)
+            x+=im.width; row_h=max(row_h,im.height)
+        height=y+row_h
+        atlas=Image.new('RGBA',(512,height),(0,0,0,255) if fmt=='rgb565' else (0,0,0,0))
+        for name in selected:
+            atlas.paste(images[name],positions[name])
+        rel='atlases/'+fmt+('.565' if fmt=='rgb565' else '.argb')
+        outputs[OUT/rel]=pack_rgb565(atlas) if fmt=='rgb565' else pack_argb8888_bgra(atlas)
+        atlas_records.append(dict(file=rel,format=fmt,width=512,height=height,
+            stride=512*(2 if fmt=='rgb565' else 4),sha256=hashlib.sha256(outputs[OUT/rel]).hexdigest()))
+        outputs[PREV/('atlas_'+fmt+'.png')]=png_bytes(atlas)
+        for name in selected:
+            # Atlas fields precede the longer audit-only source fields.
+            original=items[name]
+            leading={k:original[k] for k in ('name','format','width','height','stride','anchor_x','anchor_y','runtime_file')}
+            leading.update(atlas_file=rel,atlas_width=512,atlas_height=height,
+                           atlas_stride=512*(2 if fmt=='rgb565' else 4),
+                           atlas_x=positions[name][0],atlas_y=positions[name][1])
+            leading.update({k:v for k,v in original.items() if k not in leading})
+            items[name]=leading
+    cw,ch,cols=240,202,4
+    contact=Image.new('RGBA',(cw*cols,ch*((len(items)+cols-1)//cols)),(18,26,36,255))
+    draw=ImageDraw.Draw(contact)
+    for i,(name,it) in enumerate(items.items()):
+        x,y=i%cols*cw,i//cols*ch
+        im=images[name]
+        draw.rectangle((x+120,y+4,x+236,y+143),fill=(113,124,137))
+        factor=max(1,min(3,110//im.width,136//im.height))
+        enlarged=im.resize((im.width*factor,im.height*factor),Image.Resampling.NEAREST)
+        contact.alpha_composite(im,(x+4,y+8))
+        contact.alpha_composite(enlarged,(x+122,y+6))
+        draw.text((x+5,y+148),name,fill='white')
+        draw.text((x+5,y+164),f'{im.width}x{im.height} '+it['format'],fill='#89b8cb')
+        draw.text((x+5,y+180),f'pivot {it["anchor_x"]},{it["anchor_y"]} / {it["role"]}',fill='#89b8cb')
+    outputs[PREV/'contact_sheet.png']=png_bytes(contact)
+    frames=[]
+    for tick in range(2):
+        frame=Image.new('RGBA',(320,128),(25,36,47))
+        d=ImageDraw.Draw(frame)
+        for j,direction in enumerate('abcd'):
+            frame.alpha_composite(images[f'engineer_{direction}{tick}'].resize((64,64),Image.Resampling.NEAREST),(j*80+8,20))
+            d.line((j*80,76,j*80+79,76),fill='#557080')
+            d.text((j*80+10,95),['UP','DOWN','LEFT','RIGHT'][j],fill='white')
+        frames.append(frame.convert('RGB'))
+    buf=io.BytesIO()
+    frames[0].save(buf,format='GIF',save_all=True,append_images=frames[1:],duration=200,loop=0)
+    outputs[PREV/'player_walk.gif']=buf.getvalue()
+    manifest=dict(package='facility_omega_runtime',version='0.3',argb_byte_order='BGRA',
+        sprite_count=len(items),sprites=list(items.values()),atlases=atlas_records,contact_sheet='processed/contact_sheet.png')
+    outputs[OUT/'facility_omega_assets.json']=(json.dumps(manifest,indent=2)+'\n').encode()
+    audit=dict(candidates=list(items.values()),source_labels_are_runtime=False,
+        open_candidates=['HP frame','XP frame','time panel','kills panel','level-up panel/card','main menu panel/button'],
+        note='Baked UI sample values need separate cleanup; full Block A remains OPEN.')
+    outputs[AUDIT]=(json.dumps(audit,indent=2)+'\n').encode()
+    return outputs
+
+
+def check_or_write(outputs, update=False):
+    bad=[]
+    for path,payload in outputs.items():
+        if update:
+            path.parent.mkdir(parents=True,exist_ok=True)
+            path.write_bytes(payload)
+        elif not path.is_file() or path.read_bytes()!=payload:
+            bad.append(str(path))
+    return bad
+
+
+def main():
+    ap=argparse.ArgumentParser(description='Default: read-only verify. --update: regenerate checked assets.')
+    ap.add_argument('--update',action='store_true')
+    args=ap.parse_args()
+    try:
+        outputs=build_outputs()
+        bad=check_or_write(outputs,args.update)
+    except (OSError,ValueError,zipfile.BadZipFile) as exc:
+        print(str(exc),file=sys.stderr)
         return 1
-    sheets = {}
-    for key, fn in SHEET_FILES.items():
-        p = SRC / fn
-        if not p.is_file():
-            print(f"missing {p}", file=sys.stderr)
-            return 1
-        sheets[key] = Image.open(p).convert("RGBA")
-    OUT.mkdir(parents=True, exist_ok=True)
-    PREV.mkdir(parents=True, exist_ok=True)
-    items = [process_one(n, s, sheets, args.update) for n, s in CROPS.items()]
-    # labeled contact sheet for human review
-    cols = 6
-    cell = 80
-    rows = (len(items) + cols - 1) // cols
-    sheet = Image.new("RGBA", (cols * cell, rows * (cell + 14)), (24, 28, 36, 255))
-    for i, it in enumerate(items):
-        png = PREV / "png" / f"{it['name']}.png"
-        im = Image.open(png).convert("RGBA")
-        im.thumbnail((cell - 8, cell - 8), Image.Resampling.NEAREST)
-        cx = (i % cols) * cell + (cell - im.width) // 2
-        cy = (i // cols) * (cell + 14) + 2
-        sheet.alpha_composite(im, (cx, cy))
-        # label bar (placeholder name strip — not part of runtime)
-        ImageDraw_stub = None
-        del ImageDraw_stub
-    contact = PREV / "contact_sheet.png"
-    sheet.save(contact, format="PNG")
-    man = {
-        "package": "facility_omega_runtime",
-        "version": "0.2",
-        "argb_byte_order": "BGRA",
-        "sprite_count": len(items),
-        "sprites": items,
-        "contact_sheet": "processed/contact_sheet.png",
-    }
-    manp = OUT / "facility_omega_assets.json"
-    manp.write_text(json.dumps(man, indent=2) + "\n", encoding="utf-8")
-    audit = {
-        "candidates": [
-            {"name": it["name"], "source": it["source_sheet"], "box": it["source_box"],
-             "runtime_size": [it["width"], it["height"]], "format": it["format"],
-             "role": it.get("role", "sprite")}
-            for it in items
-        ],
-        "source_labels_are_runtime": False,
-        "contact_sheet": "processed/contact_sheet.png",
-    }
-    AUDIT.write_text(json.dumps(audit, indent=2) + "\n", encoding="utf-8")
-    print(f"wrote {len(items)} sprites → {OUT}")
-    print(f"manifest {manp}")
-    print(f"contact {contact}")
+    if bad:
+        print('VERIFY FAILED (no writes):\n'+'\n'.join(bad),file=sys.stderr)
+        return 1
+    print(f'{"UPDATED" if args.update else "VERIFIED"}: {len(CROPS)} sprites, {len(outputs)} files; source integrity PASS')
     return 0
 
 
-if __name__ == "__main__":
+if __name__=='__main__':
     sys.exit(main())

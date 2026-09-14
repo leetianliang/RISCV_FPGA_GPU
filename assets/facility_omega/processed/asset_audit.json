@@ -2,725 +2,2121 @@
   "candidates": [
     {
       "name": "engineer_a0",
-      "source": "player_source.png",
-      "box": [
-        516,
-        40,
-        142,
-        200
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_a0.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 0,
+      "atlas_y": 0,
+      "sha256": "2212cebd45cdb4db55d1e604b756a74e42dff8287390e591495329e4f37dff2c",
+      "role": "sprite",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        510,
+        32,
+        155,
+        214
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/engineer_a0.png"
     },
     {
       "name": "engineer_a1",
-      "source": "player_source.png",
-      "box": [
-        794,
-        40,
-        142,
-        200
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_a1.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 32,
+      "atlas_y": 0,
+      "sha256": "c559a358499158547986b8671dfc3ced7e7d3913830cb876cc8d1b8b2de7b40b",
+      "role": "sprite",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        788,
+        32,
+        154,
+        214
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/engineer_a1.png"
     },
     {
       "name": "engineer_b0",
-      "source": "player_source.png",
-      "box": [
-        524,
-        295,
-        131,
-        190
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_b0.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 64,
+      "atlas_y": 0,
+      "sha256": "0333f1d9c1d28a2f432174a6513ac4e44e73a9f49e7b7dd1f9fbfbdac52e60eb",
+      "role": "sprite",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        516,
+        286,
+        149,
+        200
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/engineer_b0.png"
     },
     {
       "name": "engineer_b1",
-      "source": "player_source.png",
-      "box": [
-        798,
-        295,
-        134,
-        190
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_b1.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 96,
+      "atlas_y": 0,
+      "sha256": "d2a6d086c3120354631e8ad5adf0922303c716d21c9f42590d0f53f917023581",
+      "role": "sprite",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        790,
+        286,
+        153,
+        200
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/engineer_b1.png"
     },
     {
       "name": "engineer_c0",
-      "source": "player_source.png",
-      "box": [
-        307,
-        535,
-        192,
-        200
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_c0.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 128,
+      "atlas_y": 0,
+      "sha256": "2b3faee8aecaac2d342f45244f9e508b7cf6c915821d2b1e4d5994f71f5cba9b",
+      "role": "sprite",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        299,
+        529,
+        204,
+        204
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/engineer_c0.png"
     },
     {
       "name": "engineer_c1",
-      "source": "player_source.png",
-      "box": [
-        539,
-        535,
-        175,
-        200
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_c1.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 160,
+      "atlas_y": 0,
+      "sha256": "390aeacdbec8086090fd119be99f5280c8d73a62cb7d8a4f079629ce419e317a",
+      "role": "sprite",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        530,
+        529,
+        187,
+        204
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/engineer_c1.png"
     },
     {
       "name": "engineer_d0",
-      "source": "player_source.png",
-      "box": [
-        792,
-        535,
-        176,
-        200
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_d0.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 192,
+      "atlas_y": 0,
+      "sha256": "e3d70255f05473a8391e9cf5ea70756f68f7224b29d002671009434d56812bfd",
+      "role": "sprite",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        784,
+        529,
+        193,
+        204
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/engineer_d0.png"
     },
     {
       "name": "engineer_d1",
-      "source": "player_source.png",
-      "box": [
-        999,
-        535,
-        184,
-        200
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_d1.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 224,
+      "atlas_y": 0,
+      "sha256": "0ecce52a75d360aefbf980e5f976180ee18a689557b5dd9fcc563bf33e74e2e4",
+      "role": "sprite",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        990,
+        529,
+        204,
+        204
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/engineer_d1.png"
     },
     {
       "name": "engineer_idle",
-      "source": "player_source.png",
-      "box": [
-        236,
-        808,
-        176,
-        200
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_idle.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 256,
+      "atlas_y": 0,
+      "sha256": "e49d0120f3d2b34d164fea9107920904f778aad1fef2a27597d114c36d0ab5c1",
+      "role": "sprite",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        248,
+        797,
+        146,
+        216
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/engineer_idle.png"
     },
     {
       "name": "engineer_hurt",
-      "source": "player_source.png",
-      "box": [
-        519,
-        808,
-        191,
-        200
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_hurt.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 288,
+      "atlas_y": 0,
+      "sha256": "f43fbaaf1e76eb93a899d1302be573e399ec7f665544aaaa0f92ac8ac6305dcc",
+      "role": "sprite",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        537,
+        800,
+        160,
+        213
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/engineer_hurt.png"
     },
     {
       "name": "drone_0",
-      "source": "enemies_source.png",
-      "box": [
-        67,
-        90,
-        190,
-        200
-      ],
-      "runtime_size": [
-        28,
-        28
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 28,
+      "height": 28,
+      "stride": 112,
+      "anchor_x": 14,
+      "anchor_y": 14,
+      "runtime_file": "argb8888/drone_0.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 320,
+      "atlas_y": 0,
+      "sha256": "667764cc4fa89d2f985369352def4d62ceb8d70870c70a6bc7aee87b3c3670bc",
+      "role": "sprite",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        61,
+        89,
+        202,
+        177
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/drone_0.png"
     },
     {
       "name": "drone_1",
-      "source": "enemies_source.png",
-      "box": [
-        260,
-        90,
-        190,
-        200
-      ],
-      "runtime_size": [
-        28,
-        28
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 28,
+      "height": 28,
+      "stride": 112,
+      "anchor_x": 14,
+      "anchor_y": 14,
+      "runtime_file": "argb8888/drone_1.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 348,
+      "atlas_y": 0,
+      "sha256": "f973a1dc4651ddd98a9cc05f91d2f6419b0342d6dc89097ce24a8857e27852cc",
+      "role": "sprite",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        279,
+        87,
+        182,
+        187
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/drone_1.png"
     },
     {
       "name": "crawler_0",
-      "source": "enemies_source.png",
-      "box": [
-        495,
-        90,
-        225,
-        200
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 22,
+      "runtime_file": "argb8888/crawler_0.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 376,
+      "atlas_y": 0,
+      "sha256": "ebd3a419330da1d4fafd3c442211e60bc57258f761200250b2972b1ed6e13785",
+      "role": "sprite",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        489,
+        78,
+        231,
+        207
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/crawler_0.png"
     },
     {
       "name": "crawler_1",
-      "source": "enemies_source.png",
-      "box": [
-        730,
-        90,
-        225,
-        200
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 22,
+      "runtime_file": "argb8888/crawler_1.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 408,
+      "atlas_y": 0,
+      "sha256": "3c8b5c164fdc69db4d32ce6002b48c0ef6db10e4ea73cb651bc67ac04e1c2c94",
+      "role": "sprite",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        724,
+        92,
+        244,
+        193
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/crawler_1.png"
     },
     {
       "name": "runner_0",
-      "source": "enemies_source.png",
-      "box": [
-        1028,
-        90,
-        175,
-        200
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 22,
+      "runtime_file": "argb8888/runner_0.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 440,
+      "atlas_y": 0,
+      "sha256": "f8905d411f39d7d12d9ed8f9f814ce083056fe75a98dbd79ea2f9ea3babf44d7",
+      "role": "sprite",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        1023,
+        77,
+        177,
+        208
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/runner_0.png"
     },
     {
       "name": "runner_1",
-      "source": "enemies_source.png",
-      "box": [
-        1210,
-        90,
-        175,
-        200
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 22,
+      "runtime_file": "argb8888/runner_1.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 472,
+      "atlas_y": 0,
+      "sha256": "b2248d6ecdf004eb8b1d431efbfd712eb6da4cb2b024c83b4bc59c7b8c6c1728",
+      "role": "sprite",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        1209,
+        78,
+        203,
+        207
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/runner_1.png"
     },
     {
       "name": "tank_0",
-      "source": "enemies_source.png",
-      "box": [
-        39,
-        390,
-        345,
-        330
-      ],
-      "runtime_size": [
-        48,
-        48
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 48,
+      "height": 48,
+      "stride": 192,
+      "anchor_x": 24,
+      "anchor_y": 32,
+      "runtime_file": "argb8888/tank_0.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 0,
+      "atlas_y": 32,
+      "sha256": "fb7dfbbc4c558580606c3a393c7ee08ef77db2f5b8bcee373086bbcba7b6b1f0",
+      "role": "sprite",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        20,
+        395,
+        348,
+        316
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/tank_0.png"
     },
     {
       "name": "tank_1",
-      "source": "enemies_source.png",
-      "box": [
-        395,
-        390,
-        345,
-        330
-      ],
-      "runtime_size": [
-        48,
-        48
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 48,
+      "height": 48,
+      "stride": 192,
+      "anchor_x": 24,
+      "anchor_y": 32,
+      "runtime_file": "argb8888/tank_1.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 48,
+      "atlas_y": 32,
+      "sha256": "0be49be2881163a0edb9d61827417ff1853ef7faf07e8063a978258a58869194",
+      "role": "sprite",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        377,
+        397,
+        384,
+        319
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/tank_1.png"
     },
     {
       "name": "elite_0",
-      "source": "enemies_source.png",
-      "box": [
-        811,
-        390,
-        290,
-        330
-      ],
-      "runtime_size": [
-        48,
-        48
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 48,
+      "height": 48,
+      "stride": 192,
+      "anchor_x": 24,
+      "anchor_y": 32,
+      "runtime_file": "argb8888/elite_0.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 96,
+      "atlas_y": 32,
+      "sha256": "7aaad34e4b4f9e721c69773acf62fae3569b52040c9e9f96acd29afea4acdcc4",
+      "role": "sprite",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        801,
+        374,
+        276,
+        342
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/elite_0.png"
     },
     {
       "name": "elite_1",
-      "source": "enemies_source.png",
-      "box": [
-        1110,
-        390,
-        290,
+      "format": "argb8888",
+      "width": 48,
+      "height": 48,
+      "stride": 192,
+      "anchor_x": 24,
+      "anchor_y": 32,
+      "runtime_file": "argb8888/elite_1.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 144,
+      "atlas_y": 32,
+      "sha256": "dd63a84ccdc5c485a50313630189f93fb65e17eb77b9f6f554b9d1d3db6b4944",
+      "role": "sprite",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        1116,
+        386,
+        310,
         330
       ],
-      "runtime_size": [
-        48,
-        48
+      "source_size": [
+        1448,
+        1086
       ],
-      "format": "argb8888",
-      "role": "sprite"
+      "source_has_alpha": true,
+      "preview_file": "processed/png/elite_1.png"
     },
     {
       "name": "pulse_shot",
-      "source": "weapons_pickups_source.png",
-      "box": [
-        21,
-        55,
-        90,
-        70
-      ],
-      "runtime_size": [
-        8,
-        8
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 12,
+      "height": 8,
+      "stride": 48,
+      "anchor_x": 6,
+      "anchor_y": 4,
+      "runtime_file": "argb8888/pulse_shot.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 192,
+      "atlas_y": 32,
+      "sha256": "2a2111bf947746f34b9d9fab61a04d9e4e609e276028f310a9eabea21530e5b6",
+      "role": "sprite",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        28,
+        75,
+        56,
+        47
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/pulse_shot.png"
     },
     {
       "name": "enemy_bullet",
-      "source": "weapons_pickups_source.png",
-      "box": [
-        850,
-        55,
-        90,
-        70
-      ],
-      "runtime_size": [
-        8,
-        8
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 8,
+      "height": 8,
+      "stride": 32,
+      "anchor_x": 4,
+      "anchor_y": 4,
+      "runtime_file": "argb8888/enemy_bullet.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 204,
+      "atlas_y": 32,
+      "sha256": "62d72fdce5098dd58295a35fd7b8a4d1bb993c0e7e9a10642a0e5659496468ad",
+      "role": "sprite",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        802,
+        76,
+        46,
+        47
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/enemy_bullet.png"
     },
     {
       "name": "xp_small",
-      "source": "weapons_pickups_source.png",
-      "box": [
-        25,
-        780,
-        70,
-        70
-      ],
-      "runtime_size": [
-        8,
-        8
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 8,
+      "height": 8,
+      "stride": 32,
+      "anchor_x": 4,
+      "anchor_y": 4,
+      "runtime_file": "argb8888/xp_small.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 212,
+      "atlas_y": 32,
+      "sha256": "02e49a71d2a168864e79ab74203e7e8813b76dd9112ee6f7e96d0dad4c53b75c",
+      "role": "sprite",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        39,
+        797,
+        47,
+        57
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/xp_small.png"
     },
     {
       "name": "xp_large",
-      "source": "weapons_pickups_source.png",
-      "box": [
-        370,
-        755,
-        100,
-        110
-      ],
-      "runtime_size": [
-        12,
-        12
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 12,
+      "height": 12,
+      "stride": 48,
+      "anchor_x": 6,
+      "anchor_y": 6,
+      "runtime_file": "argb8888/xp_large.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 220,
+      "atlas_y": 32,
+      "sha256": "928fd41fabe730957b0d2e0a4c6e9aa3f50eba2e8ac7372893033e97cd0a24f3",
+      "role": "sprite",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        391,
+        751,
+        103,
+        131
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/xp_large.png"
     },
     {
       "name": "repair_pickup",
-      "source": "weapons_pickups_source.png",
-      "box": [
-        1090,
-        760,
-        90,
-        90
-      ],
-      "runtime_size": [
-        16,
-        16
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 16,
+      "height": 16,
+      "stride": 64,
+      "anchor_x": 8,
+      "anchor_y": 8,
+      "runtime_file": "argb8888/repair_pickup.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 232,
+      "atlas_y": 32,
+      "sha256": "7fe82df8832f2b1489a2af5038fb59fa06daba705378c78b30c11629a21a65d8",
+      "role": "sprite",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        882,
+        766,
+        81,
+        103
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/repair_pickup.png"
     },
     {
       "name": "glow_small",
-      "source": "fx_source.png",
-      "box": [
-        40,
-        50,
-        160,
-        160
-      ],
-      "runtime_size": [
-        16,
-        16
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 16,
+      "height": 16,
+      "stride": 64,
+      "anchor_x": 8,
+      "anchor_y": 8,
+      "runtime_file": "argb8888/glow_small.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 248,
+      "atlas_y": 32,
+      "sha256": "7876402bf13de590de9bed1d2f23e72b80cb73f986639d23c9148f057df3f73e",
+      "role": "sprite",
+      "source_sheet": "fx_source.png",
+      "source_box": [
+        36,
+        101,
+        241,
+        218
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/glow_small.png"
     },
     {
       "name": "glow_large",
-      "source": "fx_source.png",
-      "box": [
-        280,
-        40,
-        220,
-        220
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 16,
+      "runtime_file": "argb8888/glow_large.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 264,
+      "atlas_y": 32,
+      "sha256": "a2b83357457ae667e61e8d0a60394671b8250373ce847ddcbcf85d8370566077",
+      "role": "sprite",
+      "source_sheet": "fx_source.png",
+      "source_box": [
+        286,
+        18,
+        310,
+        339
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/glow_large.png"
     },
     {
       "name": "spark",
-      "source": "fx_source.png",
-      "box": [
-        620,
-        50,
-        180,
-        180
-      ],
-      "runtime_size": [
-        16,
-        16
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 24,
+      "height": 24,
+      "stride": 96,
+      "anchor_x": 12,
+      "anchor_y": 12,
+      "runtime_file": "argb8888/spark.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 296,
+      "atlas_y": 32,
+      "sha256": "c2eb1ad65c388266f858090ca86e8ccbc491da866c76003a811e3bd7bd390d86",
+      "role": "sprite",
+      "source_sheet": "fx_source.png",
+      "source_box": [
+        610,
+        30,
+        306,
+        321
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/spark.png"
     },
     {
       "name": "explosion",
-      "source": "fx_source.png",
-      "box": [
-        320,
-        620,
-        280,
-        280
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 48,
+      "height": 48,
+      "stride": 192,
+      "anchor_x": 24,
+      "anchor_y": 24,
+      "runtime_file": "argb8888/explosion.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 320,
+      "atlas_y": 32,
+      "sha256": "27a2972351f9109db813a809e7305b3cef1be8ed67f5d70ae104ef387b86fb01",
+      "role": "sprite",
+      "source_sheet": "fx_source.png",
+      "source_box": [
+        319,
+        619,
+        310,
+        317
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/explosion.png"
     },
     {
       "name": "ring",
-      "source": "fx_source.png",
-      "box": [
-        980,
-        380,
-        220,
-        220
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 16,
+      "runtime_file": "argb8888/ring.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 368,
+      "atlas_y": 32,
+      "sha256": "c23d5d82f70030e6284387f8447b726ad9725fbea4cd587b66abf0c0b1876021",
+      "role": "sprite",
+      "source_sheet": "fx_source.png",
+      "source_box": [
+        953,
+        334,
+        301,
+        292
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/ring.png"
     },
     {
       "name": "trail",
-      "source": "fx_source.png",
-      "box": [
-        20,
-        400,
-        280,
-        130
-      ],
-      "runtime_size": [
-        16,
-        8
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 16,
+      "height": 8,
+      "stride": 64,
+      "anchor_x": 8,
+      "anchor_y": 4,
+      "runtime_file": "argb8888/trail.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 400,
+      "atlas_y": 32,
+      "sha256": "5c6c77f61a8ad53566c3d38a3e8c2c143ca90cb3ff122198b8fc398ef1cf1e04",
+      "role": "sprite",
+      "source_sheet": "fx_source.png",
+      "source_box": [
+        9,
+        400,
+        329,
+        163
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/trail.png"
     },
     {
       "name": "floor_00",
-      "source": "environment_source.png",
-      "box": [
-        19,
-        70,
-        140,
-        140
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "rgb565",
-      "role": "base"
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_00.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 0,
+      "atlas_y": 0,
+      "sha256": "bf2724f54a352f31993e4fd3799e5fb27cd6758dfdfbda473e8edc80dd506c7b",
+      "role": "base",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        24,
+        73,
+        188,
+        182
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/floor_00.png"
     },
     {
       "name": "floor_01",
-      "source": "environment_source.png",
-      "box": [
-        190,
-        70,
-        140,
-        140
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "rgb565",
-      "role": "base"
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_01.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 32,
+      "atlas_y": 0,
+      "sha256": "c943b8b64f8142b9b234cc475e2f94806e01538980fae4a0aa9dccedb52648fb",
+      "role": "variation",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        233,
+        73,
+        184,
+        182
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/floor_01.png"
     },
     {
       "name": "floor_02",
-      "source": "environment_source.png",
-      "box": [
-        600,
-        490,
-        140,
-        140
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "rgb565",
-      "role": "base"
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_02.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 64,
+      "atlas_y": 0,
+      "sha256": "762de2cc11b1d30270f57b2cf382237334009b263cab54915178ae314f6ab47a",
+      "role": "base",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        641,
+        478,
+        182,
+        174
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/floor_02.png"
     },
     {
       "name": "floor_03",
-      "source": "environment_source.png",
-      "box": [
-        1000,
-        490,
-        140,
-        140
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "rgb565",
-      "role": "base"
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_03.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 96,
+      "atlas_y": 0,
+      "sha256": "7e83fa3f326b471f5b2e3951aa2824f60bbfc85c11b549217c31dbe2c0ae85d5",
+      "role": "variation",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        1044,
+        477,
+        186,
+        176
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/floor_03.png"
     },
     {
       "name": "floor_04",
-      "source": "environment_source.png",
-      "box": [
-        360,
-        70,
-        140,
-        140
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "rgb565",
-      "role": "special"
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_04.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 128,
+      "atlas_y": 0,
+      "sha256": "eff6524b697eacf740c6e988184c3d874e440e1f949efcabecb64726340aa3c1",
+      "role": "grate",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        440,
+        74,
+        182,
+        181
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/floor_04.png"
     },
     {
       "name": "floor_05",
-      "source": "environment_source.png",
-      "box": [
-        800,
-        490,
-        140,
-        140
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "rgb565",
-      "role": "special"
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_05.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 160,
+      "atlas_y": 0,
+      "sha256": "285f23cbe5bcb55aca9df0e1052d2c3656bea8df8f34126bc83453006c289396",
+      "role": "grate",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        839,
+        478,
+        188,
+        174
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/floor_05.png"
     },
     {
       "name": "floor_06",
-      "source": "environment_source.png",
-      "box": [
-        360,
-        280,
-        140,
-        140
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "rgb565",
-      "role": "special"
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_06.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 192,
+      "atlas_y": 0,
+      "sha256": "c9a1aaf7c8272b25551dcba0e3d26b4016382f6177f65c94f4722bffc41a2591",
+      "role": "variation",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        439,
+        278,
+        182,
+        180
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/floor_06.png"
     },
     {
       "name": "floor_07",
-      "source": "environment_source.png",
-      "box": [
-        530,
-        70,
-        140,
-        140
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "rgb565",
-      "role": "decal"
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_07.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 224,
+      "atlas_y": 0,
+      "sha256": "ad4cfd27aef2438955b145e31b53839219b33de64ee49f8576dc804c45d93839",
+      "role": "hazard",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        643,
+        74,
+        178,
+        182
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/floor_07.png"
     },
     {
       "name": "hazard_stripe",
-      "source": "environment_source.png",
-      "box": [
-        200,
-        1000,
-        200,
-        160
-      ],
-      "runtime_size": [
-        32,
-        16
-      ],
       "format": "rgb565",
-      "role": "decal"
+      "width": 32,
+      "height": 8,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/hazard_stripe.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 256,
+      "atlas_y": 0,
+      "sha256": "8983b80e2a7a30413cfe0752686342ba836e02d77b8241ab5da862b6954ff6a4",
+      "role": "decal",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        644,
+        106,
+        177,
+        56
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/hazard_stripe.png"
     },
     {
       "name": "grate",
-      "source": "environment_source.png",
-      "box": [
-        360,
-        70,
-        140,
-        140
-      ],
-      "runtime_size": [
-        32,
-        32
-      ],
       "format": "rgb565",
-      "role": "decal"
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/grate.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 288,
+      "atlas_y": 0,
+      "sha256": "2c993c1ebb4e1ec51944081eedd4b6e0eff09eca1d0a453641721a1e37939b8e",
+      "role": "decal",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        441,
+        75,
+        180,
+        178
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/grate.png"
     },
     {
       "name": "barrel",
-      "source": "environment_source.png",
-      "box": [
-        25,
-        680,
-        150,
-        220
-      ],
-      "runtime_size": [
-        24,
-        32
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 32,
+      "height": 48,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 44,
+      "runtime_file": "argb8888/barrel.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 416,
+      "atlas_y": 32,
+      "sha256": "7f9a6e13e47be43ec9d4734e8c3cdd1daa029ecc6c51e79cb274429a5aaf1976",
+      "role": "prop",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        19,
+        690,
+        140,
+        252
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/barrel.png"
     },
     {
       "name": "crate",
-      "source": "environment_source.png",
-      "box": [
-        200,
-        700,
-        170,
-        180
-      ],
-      "runtime_size": [
-        28,
-        28
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 40,
+      "height": 40,
+      "stride": 160,
+      "anchor_x": 20,
+      "anchor_y": 36,
+      "runtime_file": "argb8888/crate.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 448,
+      "atlas_y": 32,
+      "sha256": "66b0417415ec58a97bceb1b4d19015b6bc4dacc2bc3eb4adabdd2d620c8f80a3",
+      "role": "prop",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        166,
+        731,
+        214,
+        207
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/crate.png"
     },
     {
       "name": "console",
-      "source": "environment_source.png",
-      "box": [
-        400,
-        680,
-        170,
-        220
-      ],
-      "runtime_size": [
-        28,
-        36
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 44,
+      "height": 52,
+      "stride": 176,
+      "anchor_x": 22,
+      "anchor_y": 48,
+      "runtime_file": "argb8888/console.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 0,
+      "atlas_y": 80,
+      "sha256": "131035a7d640797d1a97915452d0f60ab7e89138cffe731c0ac1418940778650",
+      "role": "prop",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        389,
+        697,
+        208,
+        247
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/console.png"
     },
     {
       "name": "canister",
-      "source": "environment_source.png",
-      "box": [
-        600,
-        680,
-        130,
-        220
-      ],
-      "runtime_size": [
-        20,
-        28
-      ],
       "format": "argb8888",
-      "role": "sprite"
+      "width": 28,
+      "height": 48,
+      "stride": 112,
+      "anchor_x": 14,
+      "anchor_y": 44,
+      "runtime_file": "argb8888/canister.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 44,
+      "atlas_y": 80,
+      "sha256": "137dbda0833271a648a6bafcd67cf1dfa1b303de5e753f6dea66fa88dbc60327",
+      "role": "prop",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        599,
+        702,
+        133,
+        245
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/canister.png"
+    },
+    {
+      "name": "mark_a3",
+      "format": "rgb565",
+      "width": 64,
+      "height": 64,
+      "stride": 128,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/mark_a3.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 320,
+      "atlas_y": 0,
+      "sha256": "435e6d766cab676b0d180b245c68692eb6a470981d0a39822d6ad071dbd95674",
+      "role": "decal",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        25,
+        277,
+        187,
+        182
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/mark_a3.png"
+    },
+    {
+      "name": "mark_service",
+      "format": "rgb565",
+      "width": 64,
+      "height": 64,
+      "stride": 128,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/mark_service.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 384,
+      "atlas_y": 0,
+      "sha256": "13a7b44bf28adb7ddcc9fb345e3813350c028c67eb51df786ddb061e84781895",
+      "role": "decal",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        232,
+        277,
+        185,
+        181
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/mark_service.png"
+    },
+    {
+      "name": "power_panel",
+      "format": "rgb565",
+      "width": 64,
+      "height": 64,
+      "stride": 128,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/power_panel.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 448,
+      "atlas_y": 0,
+      "sha256": "953bdc60cb0bc6d75a5bd41e01237b505fde2648212aec8630b5a05a3b92ac32",
+      "role": "decal",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        1043,
+        73,
+        185,
+        180
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/power_panel.png"
+    },
+    {
+      "name": "cable_spool",
+      "format": "argb8888",
+      "width": 40,
+      "height": 40,
+      "stride": 160,
+      "anchor_x": 20,
+      "anchor_y": 36,
+      "runtime_file": "argb8888/cable_spool.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 72,
+      "atlas_y": 80,
+      "sha256": "701069b7a34f80efa946563935dad8c246c87e67f4dc052da9572a23692660c3",
+      "role": "prop",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        737,
+        737,
+        193,
+        207
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/cable_spool.png"
+    },
+    {
+      "name": "machine_wreck",
+      "format": "argb8888",
+      "width": 64,
+      "height": 44,
+      "stride": 256,
+      "anchor_x": 32,
+      "anchor_y": 40,
+      "runtime_file": "argb8888/machine_wreck.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 112,
+      "atlas_y": 80,
+      "sha256": "abf53a839b41cb8f54789a990091480ee27cf4d297d2e2f66c0c55de12f7b39d",
+      "role": "prop",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        932,
+        737,
+        308,
+        213
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/machine_wreck.png"
+    },
+    {
+      "name": "warning_lamp",
+      "format": "argb8888",
+      "width": 28,
+      "height": 56,
+      "stride": 112,
+      "anchor_x": 14,
+      "anchor_y": 52,
+      "runtime_file": "argb8888/warning_lamp.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 176,
+      "atlas_y": 80,
+      "sha256": "e9aeaa353d999d08102ff137c6f560d5651586822ce88f5bd5d18ac906f26760",
+      "role": "prop",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        13,
+        974,
+        119,
+        239
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/warning_lamp.png"
+    },
+    {
+      "name": "power_cabinet",
+      "format": "argb8888",
+      "width": 40,
+      "height": 56,
+      "stride": 160,
+      "anchor_x": 20,
+      "anchor_y": 52,
+      "runtime_file": "argb8888/power_cabinet.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 204,
+      "atlas_y": 80,
+      "sha256": "211f59bfc3b6f1416af181720ddc46aad20acb147e9b217d384148305cdde051",
+      "role": "prop",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        135,
+        995,
+        151,
+        199
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/power_cabinet.png"
+    },
+    {
+      "name": "barrier",
+      "format": "argb8888",
+      "width": 64,
+      "height": 40,
+      "stride": 256,
+      "anchor_x": 32,
+      "anchor_y": 36,
+      "runtime_file": "argb8888/barrier.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 244,
+      "atlas_y": 80,
+      "sha256": "524f6ecf7ce279b1fa5a423f4c9d8cd4513c91e93d9f2e3a948360361737ec0d",
+      "role": "prop",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        293,
+        1031,
+        258,
+        167
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/barrier.png"
+    },
+    {
+      "name": "stacked_crates",
+      "format": "argb8888",
+      "width": 56,
+      "height": 48,
+      "stride": 224,
+      "anchor_x": 28,
+      "anchor_y": 44,
+      "runtime_file": "argb8888/stacked_crates.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 308,
+      "atlas_y": 80,
+      "sha256": "84c9f6da43603547e4bc4e0b4bdaafe843df88a9e1108ef030c90d33f7a66673",
+      "role": "prop",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        555,
+        1023,
+        209,
+        173
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/stacked_crates.png"
+    },
+    {
+      "name": "pipe_elbow",
+      "format": "argb8888",
+      "width": 56,
+      "height": 64,
+      "stride": 224,
+      "anchor_x": 28,
+      "anchor_y": 60,
+      "runtime_file": "argb8888/pipe_elbow.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 364,
+      "atlas_y": 80,
+      "sha256": "7bd60036fdadd3c56fc356ce28162dcb038d15dbb1d118dcf39b1334055d2e86",
+      "role": "prop",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        779,
+        982,
+        191,
+        224
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/pipe_elbow.png"
+    },
+    {
+      "name": "server",
+      "format": "argb8888",
+      "width": 32,
+      "height": 60,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 56,
+      "runtime_file": "argb8888/server.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 420,
+      "atlas_y": 80,
+      "sha256": "616acbac155300d918554514d759dce0ddf58b473c5a35a0141291299f90e972",
+      "role": "prop",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        974,
+        993,
+        117,
+        211
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/server.png"
+    },
+    {
+      "name": "access_door",
+      "format": "argb8888",
+      "width": 48,
+      "height": 72,
+      "stride": 192,
+      "anchor_x": 24,
+      "anchor_y": 68,
+      "runtime_file": "argb8888/access_door.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 452,
+      "atlas_y": 80,
+      "sha256": "ba26c052cd2af06fd3f883e7d40722ad9e442128d43cdbdb5aab304df4d90140",
+      "role": "prop",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        1094,
+        978,
+        147,
+        234
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/access_door.png"
+    },
+    {
+      "name": "orbit_drone",
+      "format": "argb8888",
+      "width": 20,
+      "height": 20,
+      "stride": 80,
+      "anchor_x": 10,
+      "anchor_y": 10,
+      "runtime_file": "argb8888/orbit_drone.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 0,
+      "atlas_y": 152,
+      "sha256": "efaef44bef3c7e2348630c4568e4876a03d2dd5394279574a1210f72b62553c5",
+      "role": "sprite",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        785,
+        222,
+        91,
+        89
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/orbit_drone.png"
+    },
+    {
+      "name": "plasma_orb",
+      "format": "argb8888",
+      "width": 20,
+      "height": 20,
+      "stride": 80,
+      "anchor_x": 10,
+      "anchor_y": 10,
+      "runtime_file": "argb8888/plasma_orb.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 20,
+      "atlas_y": 152,
+      "sha256": "9627c79beb1464a47dd06f7c9fb59d5b9c450b843dcd8fc52a91c6322da067cb",
+      "role": "sprite",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        29,
+        217,
+        73,
+        94
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/plasma_orb.png"
+    },
+    {
+      "name": "energy_field_core",
+      "format": "argb8888",
+      "width": 20,
+      "height": 28,
+      "stride": 80,
+      "anchor_x": 10,
+      "anchor_y": 14,
+      "runtime_file": "argb8888/energy_field_core.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 40,
+      "atlas_y": 152,
+      "sha256": "678f4728eb634716e186de13fbd9ec5a6ca1199a15884edb189209bcc6bbb1ea",
+      "role": "sprite",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        31,
+        403,
+        76,
+        103
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/energy_field_core.png"
+    },
+    {
+      "name": "chain_arc_node",
+      "format": "argb8888",
+      "width": 20,
+      "height": 20,
+      "stride": 80,
+      "anchor_x": 10,
+      "anchor_y": 10,
+      "runtime_file": "argb8888/chain_arc_node.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 60,
+      "atlas_y": 152,
+      "sha256": "9bf81c116bd8e32f80c940457330b273c1ac9479ef6b07351dfbd1f92718d479",
+      "role": "sprite",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        817,
+        409,
+        96,
+        104
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/chain_arc_node.png"
+    },
+    {
+      "name": "meteor_marker",
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 16,
+      "runtime_file": "argb8888/meteor_marker.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 80,
+      "atlas_y": 152,
+      "sha256": "60f430cece3a6ede3225c49bb5f3739bd44be46ae0f8dc941a1205d1b4f7997a",
+      "role": "sprite",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        23,
+        576,
+        113,
+        119
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/meteor_marker.png"
+    },
+    {
+      "name": "skill_frame",
+      "format": "argb8888",
+      "width": 32,
+      "height": 28,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 14,
+      "runtime_file": "argb8888/skill_frame.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 112,
+      "atlas_y": 152,
+      "sha256": "cfe38f31902def6b20ba98526735c3736d2a935f05293a05d2e075ea63b94962",
+      "role": "ui",
+      "source_sheet": "ui_source.png",
+      "source_box": [
+        35,
+        194,
+        135,
+        99
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/skill_frame.png"
+    },
+    {
+      "name": "weapon_icon",
+      "format": "argb8888",
+      "width": 24,
+      "height": 24,
+      "stride": 96,
+      "anchor_x": 12,
+      "anchor_y": 12,
+      "runtime_file": "argb8888/weapon_icon.argb",
+      "atlas_file": "atlases/argb8888.argb",
+      "atlas_width": 512,
+      "atlas_height": 184,
+      "atlas_stride": 2048,
+      "atlas_x": 144,
+      "atlas_y": 152,
+      "sha256": "026f6f6de6d03d9bdef4acadba7d5dbb74b0e713935767b13d88c1472796d977",
+      "role": "ui",
+      "source_sheet": "ui_source.png",
+      "source_box": [
+        40,
+        891,
+        142,
+        124
+      ],
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/weapon_icon.png"
+    },
+    {
+      "name": "floor_base_0",
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_base_0.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 0,
+      "atlas_y": 64,
+      "sha256": "a0c34480adfbd517dbfd27811e77e0d7ba58347cf810b7a1e0d8b6533107313d",
+      "role": "base",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        24,
+        73,
+        94,
+        91
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/floor_base_0.png"
+    },
+    {
+      "name": "floor_base_1",
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_base_1.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 32,
+      "atlas_y": 64,
+      "sha256": "214c824fa9efa637c24a1cdbd766cddb68b66073afaf241d9d32c1f2e1e9e005",
+      "role": "base",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        118,
+        73,
+        94,
+        91
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/floor_base_1.png"
+    },
+    {
+      "name": "floor_base_2",
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_base_2.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 64,
+      "atlas_y": 64,
+      "sha256": "3b4c28bc3f11188030c0b94526459c687389cc7dbcc36204ab277ad9986265be",
+      "role": "base",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        24,
+        164,
+        94,
+        91
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/floor_base_2.png"
+    },
+    {
+      "name": "floor_base_3",
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_base_3.565",
+      "atlas_file": "atlases/rgb565.565",
+      "atlas_width": 512,
+      "atlas_height": 96,
+      "atlas_stride": 1024,
+      "atlas_x": 96,
+      "atlas_y": 64,
+      "sha256": "48992fb414285939cc730935523c77ab3f397e3efea7061e5022413d9b21edd2",
+      "role": "base",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        118,
+        164,
+        94,
+        91
+      ],
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_has_alpha": true,
+      "preview_file": "processed/png/floor_base_3.png"
     }
   ],
   "source_labels_are_runtime": false,
-  "contact_sheet": "processed/contact_sheet.png"
+  "open_candidates": [
+    "HP frame",
+    "XP frame",
+    "time panel",
+    "kills panel",
+    "level-up panel/card",
+    "main menu panel/button"
+  ],
+  "note": "Baked UI sample values need separate cleanup; full Block A remains OPEN."
 }
