@@ -9,6 +9,8 @@
 namespace facility {
 
 using gpu2d::i32;
+using gpu2d::i64;
+using gpu2d::u16;
 using gpu2d::u32;
 using gpu2d::u64;
 using gpu2d::u8;
@@ -63,7 +65,56 @@ private:
 // Load processed runtime blobs (no PNG). Returns false on IO error.
 bool load_runtime_sprites(const std::string& runtime_dir, std::vector<SpriteBlob>& out);
 
-// App state: world + camera + player (vertical slice skeleton).
+// Deterministic xorshift32 (same family as NEON; independent state).
+class Rng {
+public:
+    explicit Rng(u32 seed = 1234u) : s_(seed ? seed : 1u) {}
+    u32 next() {
+        u32 x = s_;
+        x ^= x << 13;
+        x ^= x >> 17;
+        x ^= x << 5;
+        s_ = x;
+        return s_;
+    }
+    u32 range(u32 lo, u32 hi) {
+        if (hi <= lo) {
+            return lo;
+        }
+        return lo + (next() % (hi - lo));
+    }
+    i32 irange(i32 lo, i32 hi) {
+        return static_cast<i32>(range(static_cast<u32>(lo), static_cast<u32>(hi)));
+    }
+    void seed(u32 s) { s_ = s ? s : 1u; }
+    u32 state() const { return s_; }
+
+private:
+    u32 s_;
+};
+
+enum class EnemyKind : u8 { Drone = 0, Crawler = 1, Tank = 2 };
+
+struct Enemy {
+    i32 world_x = 0;
+    i32 world_y = 0;
+    i32 hp = 1;
+    EnemyKind kind = EnemyKind::Drone;
+    bool alive = false;
+    u8 flash = 0;
+    u16 anim = 0;
+};
+
+struct Bullet {
+    i32 world_x = 0;
+    i32 world_y = 0;
+    i32 vx = 0;
+    i32 vy = 0;
+    bool alive = false;
+    bool enemy = false;
+};
+
+// App state: world + camera + player + combat (vertical slice).
 struct Player {
     i32 world_x = static_cast<i32>(kWorldW / 2);
     i32 world_y = static_cast<i32>(kWorldH / 2);
@@ -75,7 +126,10 @@ struct Player {
     u32 level = 1;
     u32 xp = 0;
     u32 kills = 0;
-    u32 hurt_timer = 0;  // frames of Color-Mod flash remaining
+    u32 hurt_timer = 0;
+    u32 fire_cooldown = 0;
+    i32 pulse_damage = 1;
+    u32 fire_period = 18;  // frames between shots
 };
 
 struct Camera {
@@ -88,30 +142,44 @@ struct AppState {
     Camera cam;
     u64 frame = 0;
     u32 map_seed = 1;
-    std::vector<u8> map;  // kMapTiles*kMapTiles tile index
+    u32 sim_seed = 1234;
+    Rng rng{1234};
+    std::vector<u8> map;
+    std::vector<Enemy> enemies;
+    std::vector<Bullet> bullets;
+    u32 spawn_timer = 0;
+    u32 enemy_count_target = 8;
     bool ready = false;
+    u32 view_w = 640;
+    u32 view_h = 360;
 };
 
 void sim_reset(AppState& s, u32 seed);
 void camera_follow(AppState& s, u32 view_w, u32 view_h);
 void player_move(AppState& s, bool up, bool down, bool left, bool right, i32 speed = 3);
 void player_hurt(AppState& s, i32 damage);
+void set_viewport(AppState& s, u32 w, u32 h);
+void spawn_enemy(AppState& s, EnemyKind kind);
+void fire_pulse(AppState& s);
 void sim_step(AppState& s, const bool* keys /*UDLR*/);
 
 inline i32 world_to_screen_x(const AppState& s, i32 wx) { return wx - s.cam.x; }
 inline i32 world_to_screen_y(const AppState& s, i32 wy) { return wy - s.cam.y; }
 
-// Inclusive visible MapTile range with optional guard band.
 void visible_map_range(const AppState& s, u32 view_w, u32 view_h, i32 guard,
                        i32& tx0, i32& ty0, i32& tx1, i32& ty1);
 
-// 2-frame walk cycle index (0/1) from player.frame.
+// Is world point inside camera viewport + margin? (cull helper)
+bool in_view(const AppState& s, i32 wx, i32 wy, i32 margin);
+
 inline u32 player_walk_frame(const Player& p) { return (p.frame >> 3) & 1u; }
-
-// Sprite name for current player state.
 const char* player_sprite_name(const Player& p);
+const char* enemy_sprite_name(EnemyKind k, u32 anim);
 
-// Draw visible map + player using screen-space API (world already camera-relative).
+u32 live_enemy_count(const AppState& s);
+u32 live_bullet_count(const AppState& s);
+u32 hash_sim(const AppState& s);
+
 void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex,
                   u32 view_w, u32 view_h);
 

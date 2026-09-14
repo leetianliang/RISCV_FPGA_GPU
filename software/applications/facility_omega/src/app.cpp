@@ -112,8 +112,18 @@ void sim_reset(AppState& s, u32 seed) {
             }
         }
     }
+    s.player = Player{};
     s.player.world_x = static_cast<i32>(kWorldW / 2);
     s.player.world_y = static_cast<i32>(kWorldH / 2);
+    s.sim_seed = seed ? seed : 1u;
+    s.rng.seed(s.sim_seed);
+    s.enemies.clear();
+    s.enemies.reserve(256);
+    s.bullets.clear();
+    s.bullets.reserve(256);
+    s.spawn_timer = 0;
+    s.enemy_count_target = 6;
+    s.frame = 0;
     s.ready = true;
 }
 
@@ -182,6 +192,103 @@ void sim_step(AppState& s, const bool* keys) {
     if (s.player.hurt_timer > 0) {
         --s.player.hurt_timer;
     }
+    // Spawn outside current viewport (G-02)
+    if (++s.spawn_timer >= 45) {
+        s.spawn_timer = 0;
+        const u32 live = live_enemy_count(s);
+        if (live < s.enemy_count_target) {
+            const u32 r = s.rng.range(0, 10);
+            EnemyKind k = r < 5 ? EnemyKind::Drone : (r < 8 ? EnemyKind::Crawler : EnemyKind::Tank);
+            spawn_enemy(s, k);
+            if (s.frame > 600 && s.enemy_count_target < 40) {
+                ++s.enemy_count_target;
+            }
+        }
+    }
+    // Auto Pulse Shot (H-01..H-02)
+    if (s.player.fire_cooldown > 0) {
+        --s.player.fire_cooldown;
+    } else {
+        fire_pulse(s);
+    }
+    // Enemies chase player
+    for (auto& e : s.enemies) {
+        if (!e.alive) {
+            continue;
+        }
+        const i32 dx = s.player.world_x - e.world_x;
+        const i32 dy = s.player.world_y - e.world_y;
+        i32 dist2 = dx * dx + dy * dy;
+        if (dist2 < 1) {
+            dist2 = 1;
+        }
+        i32 sp = 2;
+        i32 hit_r = 14;
+        if (e.kind == EnemyKind::Crawler) {
+            sp = 1;
+            hit_r = 16;
+        } else if (e.kind == EnemyKind::Tank) {
+            sp = 1;
+            hit_r = 22;
+        }
+        // integer step toward player (deterministic, no float wall-clock)
+        if (dist2 > 0) {
+            // step = speed * dx / approx_len
+            i32 len = 1;
+            // crude integer sqrt
+            while ((len + 1) * (len + 1) <= dist2 && len < 10000) {
+                ++len;
+            }
+            e.world_x += (dx * sp) / len;
+            e.world_y += (dy * sp) / len;
+        }
+        ++e.anim;
+        if (e.flash) {
+            --e.flash;
+        }
+        // touch damage
+        const i32 tdx = e.world_x - s.player.world_x;
+        const i32 tdy = e.world_y - s.player.world_y;
+        if (tdx * tdx + tdy * tdy < hit_r * hit_r && s.player.hurt_timer == 0) {
+            player_hurt(s, e.kind == EnemyKind::Tank ? 6 : 2);
+        }
+    }
+    // Bullets
+    for (auto& b : s.bullets) {
+        if (!b.alive) {
+            continue;
+        }
+        b.world_x += b.vx;
+        b.world_y += b.vy;
+        if (b.world_x < 0 || b.world_y < 0 || b.world_x > static_cast<i32>(kWorldW) ||
+            b.world_y > static_cast<i32>(kWorldH)) {
+            b.alive = false;
+            continue;
+        }
+        if (!b.enemy) {
+            for (auto& e : s.enemies) {
+                if (!e.alive) {
+                    continue;
+                }
+                const i32 dx = e.world_x - b.world_x;
+                const i32 dy = e.world_y - b.world_y;
+                i32 hit = 10;
+                if (e.kind == EnemyKind::Tank) {
+                    hit = 18;
+                }
+                if (dx * dx + dy * dy < hit * hit) {
+                    e.hp -= s.player.pulse_damage;
+                    e.flash = 6;
+                    b.alive = false;
+                    if (e.hp <= 0) {
+                        e.alive = false;
+                        ++s.player.kills;
+                    }
+                    break;
+                }
+            }
+        }
+    }
 }
 
 void player_hurt(AppState& s, i32 damage) {
@@ -193,6 +300,189 @@ void player_hurt(AppState& s, i32 damage) {
         s.player.hp = 0;
     }
     s.player.hurt_timer = 12;
+}
+
+void set_viewport(AppState& s, u32 w, u32 h) {
+    s.view_w = w;
+    s.view_h = h;
+}
+
+void spawn_enemy(AppState& s, EnemyKind kind) {
+    Enemy e;
+    e.kind = kind;
+    e.alive = true;
+    e.flash = 0;
+    e.anim = 0;
+    if (kind == EnemyKind::Drone) {
+        e.hp = 2;
+    } else if (kind == EnemyKind::Crawler) {
+        e.hp = 3;
+    } else {
+        e.hp = 10;
+    }
+    // Spawn on a ring outside the current camera viewport (G-02)
+    const i32 vw = static_cast<i32>(s.view_w ? s.view_w : 640);
+    const i32 vh = static_cast<i32>(s.view_h ? s.view_h : 360);
+    const i32 margin = 48;
+    const i32 side = static_cast<i32>(s.rng.range(0, 4));
+    i32 sx = 0, sy = 0;
+    switch (side) {
+        case 0:  // top
+            sx = s.cam.x + s.rng.irange(0, vw);
+            sy = s.cam.y - margin;
+            break;
+        case 1:  // bottom
+            sx = s.cam.x + s.rng.irange(0, vw);
+            sy = s.cam.y + vh + margin;
+            break;
+        case 2:  // left
+            sx = s.cam.x - margin;
+            sy = s.cam.y + s.rng.irange(0, vh);
+            break;
+        default:
+            sx = s.cam.x + vw + margin;
+            sy = s.cam.y + s.rng.irange(0, vh);
+            break;
+    }
+    if (sx < 16) {
+        sx = 16;
+    }
+    if (sy < 16) {
+        sy = 16;
+    }
+    if (sx > static_cast<i32>(kWorldW) - 16) {
+        sx = static_cast<i32>(kWorldW) - 16;
+    }
+    if (sy > static_cast<i32>(kWorldH) - 16) {
+        sy = static_cast<i32>(kWorldH) - 16;
+    }
+    e.world_x = sx;
+    e.world_y = sy;
+    for (auto& slot : s.enemies) {
+        if (!slot.alive) {
+            slot = e;
+            return;
+        }
+    }
+    if (s.enemies.size() < 256) {
+        s.enemies.push_back(e);
+    }
+}
+
+void fire_pulse(AppState& s) {
+    // nearest living enemy
+    const Enemy* best = nullptr;
+    i64 best_d = 0;
+    for (const auto& e : s.enemies) {
+        if (!e.alive) {
+            continue;
+        }
+        const i64 dx = e.world_x - s.player.world_x;
+        const i64 dy = e.world_y - s.player.world_y;
+        const i64 d = dx * dx + dy * dy;
+        if (!best || d < best_d) {
+            best = &e;
+            best_d = d;
+        }
+    }
+    Bullet b;
+    b.alive = true;
+    b.enemy = false;
+    b.world_x = s.player.world_x;
+    b.world_y = s.player.world_y;
+    if (best) {
+        const i32 dx = best->world_x - s.player.world_x;
+        const i32 dy = best->world_y - s.player.world_y;
+        i32 len = 1;
+        const i32 d2 = dx * dx + dy * dy;
+        while ((len + 1) * (len + 1) <= d2 && len < 10000) {
+            ++len;
+        }
+        b.vx = (dx * 6) / len;
+        b.vy = (dy * 6) / len;
+    } else {
+        b.vx = 0;
+        b.vy = -6;
+    }
+    s.player.fire_cooldown = s.player.fire_period;
+    for (auto& slot : s.bullets) {
+        if (!slot.alive) {
+            slot = b;
+            return;
+        }
+    }
+    if (s.bullets.size() < 256) {
+        s.bullets.push_back(b);
+    }
+}
+
+bool in_view(const AppState& s, i32 wx, i32 wy, i32 margin) {
+    const i32 sx = wx - s.cam.x;
+    const i32 sy = wy - s.cam.y;
+    return sx >= -margin && sy >= -margin && sx < static_cast<i32>(s.view_w) + margin &&
+           sy < static_cast<i32>(s.view_h) + margin;
+}
+
+const char* enemy_sprite_name(EnemyKind k, u32 anim) {
+    (void)anim;
+    switch (k) {
+        case EnemyKind::Drone:
+            return "drone_0";
+        case EnemyKind::Crawler:
+            return "crawler_0";
+        default:
+            return "tank_0";
+    }
+}
+
+u32 live_enemy_count(const AppState& s) {
+    u32 n = 0;
+    for (const auto& e : s.enemies) {
+        if (e.alive) {
+            ++n;
+        }
+    }
+    return n;
+}
+
+u32 live_bullet_count(const AppState& s) {
+    u32 n = 0;
+    for (const auto& b : s.bullets) {
+        if (b.alive) {
+            ++n;
+        }
+    }
+    return n;
+}
+
+u32 hash_sim(const AppState& s) {
+    u32 h = 2166136261u;
+    auto mix = [&](u32 v) {
+        h ^= v;
+        h *= 16777619u;
+    };
+    mix(static_cast<u32>(s.frame));
+    mix(static_cast<u32>(s.player.world_x));
+    mix(static_cast<u32>(s.player.world_y));
+    mix(static_cast<u32>(s.player.hp));
+    mix(s.player.kills);
+    for (const auto& e : s.enemies) {
+        if (!e.alive) {
+            continue;
+        }
+        mix(static_cast<u32>(e.world_x));
+        mix(static_cast<u32>(e.world_y));
+        mix(static_cast<u32>(e.hp));
+        mix(static_cast<u32>(e.kind));
+    }
+    for (const auto& b : s.bullets) {
+        if (!b.alive) {
+            continue;
+        }
+        mix(static_cast<u32>(b.world_x));
+        mix(static_cast<u32>(b.world_y));
+    }
+    return h;
 }
 
 void visible_map_range(const AppState& s, u32 view_w, u32 view_h, i32 guard,
@@ -284,6 +574,47 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
         sp.dst_x = sx - static_cast<i32>(t->ax);
         sp.dst_y = sy - static_cast<i32>(t->ay);
         api.draw_sprite(sp);
+    }
+    // enemies (cull off-screen — G-05)
+    for (const auto& e : s.enemies) {
+        if (!e.alive) {
+            continue;
+        }
+        if (!in_view(s, e.world_x, e.world_y, 48)) {
+            continue;
+        }
+        const TexRef* et = tex.find(enemy_sprite_name(e.kind, e.anim));
+        if (!et) {
+            continue;
+        }
+        gpu2d::SpriteParams sp;
+        sp.tex = et->id;
+        sp.w = et->w;
+        sp.h = et->h;
+        sp.dst_x = e.world_x - s.cam.x - static_cast<i32>(et->ax);
+        sp.dst_y = e.world_y - s.cam.y - static_cast<i32>(et->ay);
+        if (e.flash) {
+            sp.color_mod = true;
+            sp.mod = gpu2d::Color::rgb(255, 100, 100);
+        }
+        api.draw_sprite(sp);
+    }
+    // pulse shots
+    const TexRef* bt = tex.find("pulse_shot");
+    if (bt) {
+        for (const auto& b : s.bullets) {
+            if (!b.alive || !in_view(s, b.world_x, b.world_y, 16)) {
+                continue;
+            }
+            gpu2d::SpriteParams sp;
+            sp.tex = bt->id;
+            sp.w = bt->w;
+            sp.h = bt->h;
+            sp.dst_x = b.world_x - s.cam.x - static_cast<i32>(bt->ax);
+            sp.dst_y = b.world_y - s.cam.y - static_cast<i32>(bt->ay);
+            sp.blend = gpu2d::BlendMode::AddSat;
+            api.draw_sprite(sp);
+        }
     }
     // player
     const TexRef* pt = tex.find(player_sprite_name(s.player));

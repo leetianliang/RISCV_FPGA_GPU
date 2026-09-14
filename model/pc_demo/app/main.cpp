@@ -281,6 +281,7 @@ int main(int argc, char** argv) {
                 }
             }
             facility::sim_reset(fo, cli.seed);
+            facility::set_viewport(fo, cli.profile.width, cli.profile.height);
         } else if (cli.app == "facility") {
             std::fprintf(stderr, "failed to load facility assets from %s\n", fo_rt.c_str());
             return 1;
@@ -393,6 +394,7 @@ int main(int argc, char** argv) {
                     if (fo.ready) {
                         use_facility = true;
                         screen = AppScreen::Game;
+                        facility::set_viewport(fo, cli.profile.width, cli.profile.height);
                     } else {
                         std::fprintf(stderr,
                                      "FACILITY-O not available (assets not loaded).\n"
@@ -522,14 +524,17 @@ int main(int argc, char** argv) {
         const bool keys[4] = {input.up, input.down, input.left, input.right};
         rec.begin_frame();
         if (use_facility) {
+            facility::set_viewport(fo, cli.profile.width, cli.profile.height);
             facility::sim_step(fo, keys);
             facility::camera_follow(fo, cli.profile.width, cli.profile.height);
             facility::render_scene(rec, fo, fo_tex, cli.profile.width, cli.profile.height);
             // simple HUD
-            char hud[96];
-            std::snprintf(hud, sizeof(hud), "FACILITY-O  LV %u HP %d KILLS %u  MAP %ux%u",
+            char hud[128];
+            std::snprintf(hud, sizeof(hud),
+                          "FACILITY-O  LV %u HP %d KILLS %u EN %u BL %u",
                           fo.player.level, fo.player.hp, fo.player.kills,
-                          facility::kWorldW, facility::kWorldH);
+                          facility::live_enemy_count(fo),
+                          facility::live_bullet_count(fo));
             neon::draw_text_pal(rec, assets, 4, 3, hud, Color::rgb(180, 255, 255));
             std::snprintf(hud, sizeof(hud), "CAM %d,%d  P %d,%d", fo.cam.x, fo.cam.y,
                           fo.player.world_x, fo.player.world_y);

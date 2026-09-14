@@ -161,6 +161,74 @@ int main() {
         CHECK(p.player.dir == 0);
     }
 
+    // G/H: enemies spawn, chase, cull, pulse shot kill
+    {
+        AppState p;
+        sim_reset(p, 55);
+        set_viewport(p, 640, 360);
+        camera_follow(p, 640, 360);
+        // force spawn outside viewport
+        spawn_enemy(p, EnemyKind::Drone);
+        spawn_enemy(p, EnemyKind::Crawler);
+        spawn_enemy(p, EnemyKind::Tank);
+        CHECK(live_enemy_count(p) == 3);
+        for (const auto& e : p.enemies) {
+            if (!e.alive) {
+                continue;
+            }
+            // spawn ring is outside camera + margin
+            const bool inside = e.world_x > p.cam.x && e.world_y > p.cam.y &&
+                                e.world_x < p.cam.x + 640 && e.world_y < p.cam.y + 360;
+            CHECK(!inside);
+        }
+        // sprite names differ
+        CHECK(std::string(enemy_sprite_name(EnemyKind::Drone, 0)) == "drone_0");
+        CHECK(std::string(enemy_sprite_name(EnemyKind::Crawler, 0)) == "crawler_0");
+        CHECK(std::string(enemy_sprite_name(EnemyKind::Tank, 0)) == "tank_0");
+        // run sim: should fire and eventually kill or at least spawn bullets
+        u32 max_bl = 0;
+        for (int i = 0; i < 400; ++i) {
+            sim_step(p, nullptr);
+            camera_follow(p, 640, 360);
+            const u32 bl = live_bullet_count(p);
+            if (bl > max_bl) {
+                max_bl = bl;
+            }
+        }
+        CHECK(max_bl > 0);
+        // deterministic two runs
+        AppState a, b;
+        sim_reset(a, 12);
+        sim_reset(b, 12);
+        set_viewport(a, 640, 360);
+        set_viewport(b, 640, 360);
+        for (int i = 0; i < 120; ++i) {
+            sim_step(a, nullptr);
+            sim_step(b, nullptr);
+        }
+        CHECK(hash_sim(a) == hash_sim(b));
+        CHECK(live_enemy_count(a) == live_enemy_count(b));
+        // kill loop: tank has more HP
+        AppState k;
+        sim_reset(k, 1);
+        set_viewport(k, 640, 360);
+        camera_follow(k, 640, 360);
+        Enemy t;
+        t.kind = EnemyKind::Tank;
+        t.hp = 10;
+        t.alive = true;
+        t.world_x = k.player.world_x + 30;
+        t.world_y = k.player.world_y;
+        k.enemies.clear();
+        k.enemies.push_back(t);
+        const u32 kills0 = k.player.kills;
+        k.player.pulse_damage = 10;
+        for (int i = 0; i < 200; ++i) {
+            sim_step(k, nullptr);
+        }
+        CHECK(k.player.kills > kills0);
+    }
+
     // deterministic reset + map
     AppState a, b;
     sim_reset(a, 99);
