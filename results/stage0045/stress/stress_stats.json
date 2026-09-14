@@ -1,0 +1,83 @@
+{
+  "label": "Functional PC Golden workload statistics \u2014 NOT FPGA performance",
+  "backend": "tile32",
+  "scenes": [
+    {
+      "scene": "sprite",
+      "seed": 9,
+      "frames": 80,
+      "base_sprites": 811,
+      "base_cmds": 846,
+      "tiles_active": 240,
+      "workrefs": 1017,
+      "max_overdraw": 8,
+      "stdout_line": "gpu2d_demo done backend=tile scene=1 base_cmds=846 base_sprites=811 tiles=240/240 wrefs=1017 max_od=8"
+    },
+    {
+      "scene": "alpha",
+      "seed": 9,
+      "frames": 80,
+      "base_sprites": 438,
+      "base_cmds": 473,
+      "tiles_active": 240,
+      "workrefs": 892,
+      "max_overdraw": 4,
+      "stdout_line": "gpu2d_demo done backend=tile scene=2 base_cmds=473 base_sprites=438 tiles=240/240 wrefs=892 max_od=4"
+    },
+    {
+      "scene": "bullet",
+      "seed": 9,
+      "frames": 80,
+      "base_sprites": 1121,
+      "base_cmds": 1156,
+      "tiles_active": 240,
+      "workrefs": 1982,
+      "max_overdraw": 29,
+      "stdout_line": "gpu2d_demo done backend=tile scene=3 base_cmds=1156 base_sprites=1121 tiles=240/240 wrefs=1982 max_od=29"
+    },
+    {
+      "scene": "scale",
+      "seed": 9,
+      "frames": 80,
+      "base_sprites": 484,
+      "base_cmds": 519,
+      "tiles_active": 240,
+      "workrefs": 808,
+      "max_overdraw": 13,
+      "stdout_line": "gpu2d_demo done backend=tile scene=4 base_cmds=519 base_sprites=484 tiles=240/240 wrefs=808 max_od=13"
+    },
+    {
+      "scene": "overdraw",
+      "seed": 9,
+      "frames": 80,
+      "base_sprites": 294,
+      "base_cmds": 329,
+      "tiles_active": 240,
+      "workrefs": 1793,
+      "max_overdraw": 284,
+      "stdout_line": "gpu2d_demo done backend=tile scene=5 base_cmds=329 base_sprites=294 tiles=240/240 wrefs=1793 max_od=284"
+    }
+  ],
+  "thresholds": {
+    "sprite": {
+      "metric": "sprites",
+      "min": 500
+    },
+    "alpha": {
+      "metric": "alpha_draws",
+      "min": 300
+    },
+    "bullet": {
+      "metric": "live_bullets",
+      "min": 1000
+    },
+    "scale": {
+      "metric": "scaled_draws",
+      "min": 200
+    },
+    "overdraw": {
+      "metric": "max_overdraw",
+      "min": 8
+    }
+  }
+}

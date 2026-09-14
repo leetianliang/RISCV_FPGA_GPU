@@ -756,10 +756,12 @@
       "status": "PASS",
       "requirement": "Stage-004 regressions still pass",
       "implementation_evidence": [
-        "model/golden/"
+        "model/golden/tests/"
       ],
       "verification_evidence": [
-        "ctest stage0045 includes golden_*"
+        "golden_test_tile_faults",
+        "golden_test_integrity",
+        "golden_test_tile_sweep"
       ],
       "test_name": "golden_test_tile_faults",
       "notes": "See REPORT_0045"

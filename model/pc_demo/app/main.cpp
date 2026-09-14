@@ -163,9 +163,13 @@ bool write_ppm(const std::string& path, const u8* fb, u32 w, u32 h, u32 stride) 
         const u8* row = fb + static_cast<size_t>(y) * stride;
         for (u32 x = 0; x < w; ++x) {
             const u16 p = static_cast<u16>(row[x * 2] | (row[x * 2 + 1] << 8));
-            const u8 r = static_cast<u8>(((p >> 11) & 0x1F) << 3);
-            const u8 g = static_cast<u8>(((p >> 5) & 0x3F) << 2);
-            const u8 b = static_cast<u8>((p & 0x1F) << 3);
+            // PWA-04: bit-replication match Win32 presenter RGB565 expansion.
+            const u32 r5 = (p >> 11) & 0x1F;
+            const u32 g6 = (p >> 5) & 0x3F;
+            const u32 b5 = p & 0x1F;
+            const u8 r = static_cast<u8>((r5 << 3) | (r5 >> 2));
+            const u8 g = static_cast<u8>((g6 << 2) | (g6 >> 4));
+            const u8 b = static_cast<u8>((b5 << 3) | (b5 >> 2));
             std::fputc(r, f);
             std::fputc(g, f);
             std::fputc(b, f);

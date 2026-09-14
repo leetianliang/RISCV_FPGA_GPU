@@ -97,4 +97,13 @@ DrawCounts last_render_counts();
 u32 font_glyph_w();
 u32 font_glyph_h();
 
+// R2-08 / F-T3: pure formatting for technical HUD (unit-testable).
+struct TechHudStrings {
+    char line0[96];
+    char line1[96];
+    char line2[96];
+    char line3[96];
+};
+TechHudStrings make_tech_hud_strings(const gpu2d::RendererTelemetry& t, double host_fps);
+
 }  // namespace neon

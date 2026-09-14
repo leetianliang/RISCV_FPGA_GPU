@@ -341,8 +341,9 @@ void draw_enemy(gpu2d::GraphicsApi& api, const Assets& a, const Enemy& e) {
     sp.dst_x = static_cast<i32>(e.x) - static_cast<i32>(sp.w / 2);
     sp.dst_y = static_cast<i32>(e.y) - static_cast<i32>(sp.h / 2);
     if (e.flash) {
+        // R2-07 / F-06: visible damage flash — red tint, not identity white.
         sp.color_mod = true;
-        sp.mod = Color::rgb(255, 255, 255);
+        sp.mod = Color::rgb(255, 80, 80);
     }
     if (e.kind == EnemyKind::Heavy) {
         // Visible Bilinear scale (FX-03): large Heavy body pulse.
@@ -452,7 +453,8 @@ void draw_text_pal(gpu2d::GraphicsApi& api, const Assets& a, i32 x, i32 y, const
         sp.palette = true;
         sp.color_mod = (c.r != 255 || c.g != 255 || c.b != 255);
         sp.mod = c;
-        sp.blend = alpha < 255 ? gpu2d::BlendMode::StraightAlpha : gpu2d::BlendMode::Copy;
+        // PWA-01: Indexed8 uses palette alpha; StraightAlpha honors index-0 transparent.
+        sp.blend = gpu2d::BlendMode::StraightAlpha;
         sp.global_alpha = alpha;
         api.draw_sprite(sp);
         ++g_counts.sprites;
@@ -538,6 +540,22 @@ void render_scene_base(gpu2d::GraphicsApi& api, const Assets& a, const SimState&
     }
 }
 
+TechHudStrings make_tech_hud_strings(const gpu2d::RendererTelemetry& t, double host_fps) {
+    TechHudStrings s{};
+    std::snprintf(s.line0, sizeof(s.line0), "CMD %u  SPR %u  WREF %u", t.command_count,
+                  t.sprite_count, t.workref_count);
+    std::snprintf(s.line1, sizeof(s.line1), "TILE %u/%u MAXREF %u MAXOD %u", t.tiles_active,
+                  t.tiles_total, t.max_workrefs_per_tile, t.max_overdraw);
+    if (host_fps > 0.0) {
+        std::snprintf(s.line2, sizeof(s.line2), "PC GOLDEN HOST FPS %.1f", host_fps);
+    } else {
+        std::snprintf(s.line2, sizeof(s.line2), "PC GOLDEN HOST FPS N/A");
+    }
+    std::snprintf(s.line3, sizeof(s.line3), "GRID %ux%u TILE %u", t.grid_w, t.grid_h,
+                  t.tile_size);
+    return s;
+}
+
 void render_debug_overlay(gpu2d::GraphicsApi& api, const Assets& a, const SimState& sim,
                           const SimConfig& cfg, const DrawOpts& opts) {
     // Clip path demo: HUD panel (clipped_fill)
@@ -570,23 +588,13 @@ void render_debug_overlay(gpu2d::GraphicsApi& api, const Assets& a, const SimSta
 
     if (opts.tech_hud && opts.tel) {
         const auto& t = *opts.tel;
-        char buf[192];
         i32 y = static_cast<i32>(cfg.height) - 70;
         api.fill_rect(0, y - 2, 280, 68, Color::rgba(0, 0, 0, 180));
-        std::snprintf(buf, sizeof(buf), "CMD %u  SPR %u  WREF %u", t.command_count,
-                      t.sprite_count, t.workref_count);
-        draw_text_pal(api, a, 4, y, buf, Color::rgb(120, 255, 160));
-        std::snprintf(buf, sizeof(buf), "TILE %u/%u MAXREF %u MAXOD %u", t.tiles_active,
-                      t.tiles_total, t.max_workrefs_per_tile, t.max_overdraw);
-        draw_text_pal(api, a, 4, y + 12, buf, Color::rgb(120, 255, 160));
-        if (opts.host_fps > 0.0) {
-            std::snprintf(buf, sizeof(buf), "PC GOLDEN HOST FPS %.1f", opts.host_fps);
-        } else {
-            std::snprintf(buf, sizeof(buf), "PC GOLDEN HOST FPS N/A");
-        }
-        draw_text_pal(api, a, 4, y + 24, buf, Color::rgb(255, 120, 120));
-        std::snprintf(buf, sizeof(buf), "GRID %ux%u TILE %u", t.grid_w, t.grid_h, t.tile_size);
-        draw_text_pal(api, a, 4, y + 36, buf, Color::rgb(160, 160, 255));
+        const auto hs = make_tech_hud_strings(t, opts.host_fps);
+        draw_text_pal(api, a, 4, y, hs.line0, Color::rgb(120, 255, 160));
+        draw_text_pal(api, a, 4, y + 12, hs.line1, Color::rgb(120, 255, 160));
+        draw_text_pal(api, a, 4, y + 24, hs.line2, Color::rgb(255, 120, 120));
+        draw_text_pal(api, a, 4, y + 36, hs.line3, Color::rgb(160, 160, 255));
     }
 
     // Architecture X-Ray (uses opts.tel — must be BASE telemetry, not overlay).

@@ -172,13 +172,15 @@ void GoldenBackend::set_backend(BackendKind kind) {
     if (kind == BackendKind::Immediate || kind == BackendKind::Tile32 ||
         kind == BackendKind::Tile16 || kind == BackendKind::Tile64) {
         backend_ = kind;
+        // R2-09: enum name is authoritative for tile size.
         if (kind == BackendKind::Tile16) {
             tile_size_ = 16;
+        } else if (kind == BackendKind::Tile32) {
+            tile_size_ = 32;
         } else if (kind == BackendKind::Tile64) {
             tile_size_ = 64;
-        } else if (kind == BackendKind::Tile32 || kind == BackendKind::Immediate) {
-            // keep current tile_size_ for Immediate telemetry defaults
         }
+        // Immediate: leave tile_size_ as telemetry default
     }
 }
 

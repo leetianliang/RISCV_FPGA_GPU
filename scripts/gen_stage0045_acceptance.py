@@ -121,7 +121,7 @@ rows = [
     ("SYS-06", "Presenter does not host-render game content",
      ["model/pc_demo/host/presenter.cpp"], ["gpu2d_test_presenter"], "gpu2d_test_presenter"),
     ("SYS-07", "Stage-004 regressions still pass",
-     ["model/golden/"], ["ctest stage0045 includes golden_*"], "golden_test_tile_faults"),
+     ["model/golden/tests/"], ["golden_test_tile_faults", "golden_test_integrity", "golden_test_tile_sweep"], "golden_test_tile_faults"),
     # AUD
     ("AUD-01", "56-ID acceptance manifest",
      ["docs/tasks/STAGE_0045_ACCEPTANCE.json"], ["gpu2d_test_boundary"], "gpu2d_test_boundary"),

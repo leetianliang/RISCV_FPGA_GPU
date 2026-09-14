@@ -5,6 +5,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <string>
 
 namespace {
 int g_fail = 0;
@@ -93,7 +94,7 @@ int main() {
         CommandRecorder rec;
         rec.begin_frame();
         rec.fill_rect(0, 0, 64, 64, Color::rgb(0, 0, 0));
-        rec.set_clip(true, 10, 10, 30, 30);  // xmax/ymax inclusive in clip rect as used by Golden
+        rec.set_clip(true, 10, 10, 30, 30);  // half-open [xmin,xmax) [ymin,ymax)
         rec.fill_rect(0, 0, 64, 64, Color::rgb(255, 0, 0));
         rec.clear_clip();
         rec.fill_rect(40, 40, 8, 8, Color::rgb(0, 255, 0));
@@ -271,6 +272,81 @@ int main() {
             std::printf("fault=0x%X idx=%u\n", r.gpu.last_fault(), r.gpu.last_fault_index());
             ++g_fail;
         }
+    }
+
+    // R2-08: TechHudStrings match telemetry
+    {
+        gpu2d::RendererTelemetry t;
+        t.command_count = 42;
+        t.sprite_count = 17;
+        t.workref_count = 99;
+        t.tiles_active = 3;
+        t.tiles_total = 15;
+        t.max_workrefs_per_tile = 8;
+        t.max_overdraw = 5;
+        t.grid_w = 5;
+        t.grid_h = 3;
+        t.tile_size = 32;
+        const auto s = neon::make_tech_hud_strings(t, 0.0);
+        CHECK(std::string(s.line0) == "CMD 42  SPR 17  WREF 99");
+        CHECK(std::string(s.line1) == "TILE 3/15 MAXREF 8 MAXOD 5");
+        CHECK(std::string(s.line2) == "PC GOLDEN HOST FPS N/A");
+        CHECK(std::string(s.line3) == "GRID 5x3 TILE 32");
+        const auto s2 = neon::make_tech_hud_strings(t, 60.0);
+        CHECK(std::string(s2.line2) == "PC GOLDEN HOST FPS 60.0");
+    }
+
+    // R2-07 / FX-04: damage flash Color Mod non-white + Imm==Tile
+    {
+        Rig imm, tile;
+        CHECK(make_rig(imm, BackendKind::Immediate));
+        CHECK(make_rig(tile, BackendKind::Tile32));
+        CommandRecorder rec;
+        rec.begin_frame();
+        rec.fill_rect(0, 0, 32, 32, Color::rgb(0, 0, 0));
+        SpriteParams sp;
+        sp.tex = imm.a.player;
+        sp.w = 16;
+        sp.h = 16;
+        sp.dst_x = 8;
+        sp.dst_y = 8;
+        sp.color_mod = true;
+        sp.mod = Color::rgb(255, 80, 80);  // non-identity
+        rec.draw_sprite(sp);
+        rec.present();
+        bool has_mod = false;
+        for (const auto& c : rec.commands()) {
+            if (c.op == RecOp::Sprite && c.sp.color_mod &&
+                !(c.sp.mod.r == 255 && c.sp.mod.g == 255 && c.sp.mod.b == 255)) {
+                has_mod = true;
+            }
+        }
+        CHECK(has_mod);
+        CHECK(imm.gpu.execute_frame(rec.commands()));
+        CHECK(tile.gpu.execute_frame(rec.commands()));
+        const u32 n = imm.gpu.fb_stride() * imm.gpu.fb_height();
+        CHECK(std::memcmp(imm.gpu.framebuffer(), tile.gpu.framebuffer(), n) == 0);
+    }
+
+    // R2-09: Tile16 → Tile32 forces 32
+    {
+        Rig r;
+        CHECK(make_rig(r, BackendKind::Tile16));
+        r.gpu.set_backend(BackendKind::Tile16);
+        // execute a fill so telemetry updates
+        CommandRecorder rec;
+        rec.begin_frame();
+        rec.fill_rect(0, 0, 8, 8, Color::rgb(1, 2, 3));
+        rec.present();
+        CHECK(r.gpu.execute_frame(rec.commands()));
+        // switch to Tile32 and ensure tile_size is 32 via a frame
+        r.gpu.set_backend(BackendKind::Tile32);
+        rec.begin_frame();
+        rec.fill_rect(0, 0, 8, 8, Color::rgb(4, 5, 6));
+        rec.present();
+        CHECK(r.gpu.execute_frame(rec.commands()));
+        const auto& t = r.gpu.telemetry();
+        CHECK(t.tile_size == 32);
     }
 
     if (g_fail) {

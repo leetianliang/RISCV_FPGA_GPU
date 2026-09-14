@@ -96,6 +96,9 @@ add_test(NAME gpu2d_test_cli_scenes
 add_test(NAME gpu2d_test_capture_verify
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/verify_stage0045_captures.py
 )
+add_test(NAME gpu2d_test_stress_json
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/gen_stress_stats0045.py
+)
 
 add_test(NAME gpu2d_demo_headless_imm
     COMMAND gpu2d_demo --headless --frames 30 --seed 1234 --backend immediate --scene game
