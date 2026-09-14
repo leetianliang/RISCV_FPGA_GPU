@@ -221,7 +221,7 @@ int main() {
             const char* name;
             u32 frames;
             u32 min_metric;
-            int metric;  // 0=sprites 1=alpha 2=scaled 3=bilinear+scale 4=max_od 5=bullets
+            int metric;  // 0=sprites 1=alpha 2=scaled 4=max_od 5=live_bullets only
         };
         const Case cases[] = {
             {neon::SceneId::SpriteStorm, "sprite", 80, 500, 0},
@@ -272,21 +272,34 @@ int main() {
                     last_metric = t.max_overdraw;
                     break;
                 case 5:
-                    last_metric = live_bl + dc.sprites;
+                    // R2-04: projectile entities only — never mix with total sprites.
+                    last_metric = live_bl;
+                    if (dc.bullet_draws > 0 && dc.bullet_draws < live_bl) {
+                        std::printf("  WARN bullet_draws %u < live_bl %u\n", dc.bullet_draws,
+                                    live_bl);
+                    }
                     break;
                 default:
                     last_metric = dc.sprites;
                     break;
             }
             std::printf(
-                "stress %s metric=%u (min %u) sprites=%u alpha=%u scaled=%u bil=%u "
-                "live_en=%u live_bl=%u live_pt=%u max_od=%u\n",
-                c.name, last_metric, c.min_metric, dc.sprites, dc.alpha_draws,
-                dc.scaled_draws, dc.bilinear_draws, live_en, live_bl, live_pt, t.max_overdraw);
+                "stress %s metric=%u (min %u) sprites=%u bullet_draws=%u live_bl=%u alpha=%u "
+                "scaled=%u bil=%u live_en=%u live_pt=%u max_od=%u\n",
+                c.name, last_metric, c.min_metric, dc.sprites, dc.bullet_draws, live_bl,
+                dc.alpha_draws, dc.scaled_draws, dc.bilinear_draws, live_en, live_pt,
+                t.max_overdraw);
             if (last_metric < c.min_metric) {
                 std::printf("  FAIL threshold %s metric=%u < %u\n", c.name, last_metric,
                             c.min_metric);
                 ++g_fail;
+            }
+            // Bullet Hell also requires drawn projectiles (not off-screen entities).
+            if (c.sc == neon::SceneId::BulletHell) {
+                if (dc.bullet_draws < 1000) {
+                    std::printf("  FAIL bullet_draws %u < 1000\n", dc.bullet_draws);
+                    ++g_fail;
+                }
             }
         }
     }

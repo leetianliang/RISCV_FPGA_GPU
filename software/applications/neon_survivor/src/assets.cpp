@@ -369,6 +369,7 @@ void draw_bullet(gpu2d::GraphicsApi& api, const Assets& a, const Bullet& b) {
     api.draw_sprite(sp);
     ++g_counts.sprites;
     ++g_counts.additive_draws;
+    ++g_counts.bullet_draws;
 }
 
 void draw_particle(gpu2d::GraphicsApi& api, const Assets& a, const Particle& p) {

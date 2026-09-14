@@ -90,6 +90,7 @@ struct DrawCounts {
     u32 palette_draws = 0;
     u32 dither_draws = 0;
     u32 clipped_draws = 0;
+    u32 bullet_draws = 0;  // projectile sprite submissions only
 };
 
 DrawCounts last_render_counts();
