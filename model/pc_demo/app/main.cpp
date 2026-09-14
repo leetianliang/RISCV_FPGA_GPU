@@ -1,5 +1,6 @@
 #include "gpu2d/renderer.hpp"
 #include "gpu2d/types.hpp"
+#include "facility/app.hpp"
 #include "golden_renderer.hpp"
 #include "neon/assets.hpp"
 #include "neon/sim.hpp"
@@ -34,22 +35,22 @@ struct Cli {
     std::string capture;
     bool show_help = false;
     bool xray = false;
+    std::string app = "neon";  // neon | facility
 };
 
 const char* usage() {
-    return R"(gpu2d_demo — PC Golden Interactive Application (Stage 004.5)
+    return R"(gpu2d_demo — PC Golden Interactive Application
 Usage:
-  gpu2d_demo [--headless] [--frames N] [--seed N]
+  gpu2d_demo [--app neon|facility] [--headless] [--frames N] [--seed N]
              [--backend immediate|tile|tile16|tile64]
              [--profile interactive|showcase]
              [--scene game|sprite|alpha|bullet|scale|overdraw]
-             [--capture <path.raw>]
-             [--xray]
-             [--help]
+             [--capture <path.raw>] [--xray] [--help]
 
-Controls (interactive):
-  WASD move | F1-F5 stress | F6 Immediate | F7 Tile32
-  F8 tech HUD | F9 normal | F10 X-Ray | P pause | R reset | ESC quit
+Controls:
+  WASD move | F1-F5 stress (neon) | F6 Immediate | F7 Tile32
+  F8 tech HUD | F9 normal | F10 X-Ray | P pause | R reset | ESC menu/quit
+  Launcher: 1 NEON SURVIVOR  2 FACILITY-Ω  3 help  4 stress
 )";
 }
 
@@ -70,6 +71,12 @@ bool parse_args(int argc, char** argv, Cli& cli) {
         };
         if (a == "--headless") {
             cli.headless = true;
+        } else if (a == "--app") {
+            cli.app = need("--app");
+            if (cli.app != "neon" && cli.app != "facility") {
+                std::fprintf(stderr, "unknown app %s\n", cli.app.c_str());
+                cli.valid = false;
+            }
         } else if (a == "--frames") {
             cli.frames = static_cast<u32>(std::atoi(need("--frames")));
         } else if (a == "--seed") {
@@ -229,6 +236,45 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    // FACILITY-Ω runtime assets (processed offline; no PNG at runtime).
+    facility::TexBank fo_tex;
+    facility::AppState fo;
+    const std::string fo_rt = "assets/facility_omega/runtime";
+    if (cli.app == "facility" || !cli.headless) {
+        std::vector<facility::SpriteBlob> blobs_fo;
+        if (facility::load_runtime_sprites(fo_rt, blobs_fo)) {
+            for (const auto& b : blobs_fo) {
+                gpu2d::TextureDesc d;
+                d.width = b.width;
+                d.height = b.height;
+                d.stride = b.stride;
+                d.format = b.indexed ? gpu2d::PixelFormat::INDEX8
+                                     : (b.rgb565 ? gpu2d::PixelFormat::RGB565
+                                                 : gpu2d::PixelFormat::ARGB8888);
+                d.pixels = b.pixels.data();
+                auto id = gpu.create_texture(d);
+                facility::TexRef tr;
+                tr.id = id;
+                tr.w = b.width;
+                tr.h = b.height;
+                tr.ax = b.anchor_x;
+                tr.ay = b.anchor_y;
+                if (id.valid()) {
+                    fo_tex.put(b.name, tr);
+                }
+            }
+            facility::sim_reset(fo, cli.seed);
+        } else if (cli.app == "facility") {
+            std::fprintf(stderr, "failed to load facility assets from %s\n", fo_rt.c_str());
+            return 1;
+        }
+    }
+    bool use_facility = (cli.app == "facility");
+    if (use_facility && !fo.ready) {
+        std::fprintf(stderr, "facility assets not ready\n");
+        return 1;
+    }
+
     host::Presenter pres;
     const u32 win_w = cli.profile.width * 2;
     const u32 win_h = cli.profile.height * 2;
@@ -272,8 +318,8 @@ int main(int argc, char** argv) {
         neon::draw_text(api, assets, 24, 28, "RISC-V + FPGA 2D GPU DEMO", Color::rgb(80, 220, 255));
         if (sc == AppScreen::Menu) {
             neon::draw_text(api, assets, 40, 80, "1  NEON SURVIVOR", Color::rgb(180, 255, 180));
-            neon::draw_text(api, assets, 40, 100, "2  GPU PLAYGROUND - COMING SOON",
-                            Color::rgb(120, 120, 140));
+            neon::draw_text(api, assets, 40, 100, "2  FACILITY-O",
+                            Color::rgb(255, 200, 120));
             neon::draw_text(api, assets, 40, 120, "3  ARCHITECTURE X-RAY / HELP",
                             Color::rgb(180, 255, 180));
             neon::draw_text(api, assets, 40, 140, "4  BENCHMARK / STRESS",
@@ -310,13 +356,17 @@ int main(int argc, char** argv) {
             }
             if (screen == AppScreen::Menu) {
                 if (input.edge_1) {
+                    use_facility = false;
                     screen = AppScreen::Game;
                     neon::sim_reset(sim, scfg, cli.seed);
                     rng.seed(cli.seed);
                     sim.scene = neon::SceneId::Game;
                     cli.scene = neon::SceneId::Game;
                 } else if (input.edge_2) {
-                    // placeholder
+                    if (fo.ready) {
+                        use_facility = true;
+                        screen = AppScreen::Game;
+                    }
                 } else if (input.edge_3) {
                     screen = AppScreen::Help;
                     xray = true;
@@ -437,20 +487,39 @@ int main(int argc, char** argv) {
         }
 
         const bool keys[4] = {input.up, input.down, input.left, input.right};
+        rec.begin_frame();
+        if (use_facility) {
+            facility::sim_step(fo, keys);
+            facility::camera_follow(fo, cli.profile.width, cli.profile.height);
+            facility::render_scene(rec, fo, fo_tex, cli.profile.width, cli.profile.height);
+            // simple HUD
+            char hud[96];
+            std::snprintf(hud, sizeof(hud), "FACILITY-O  LV %u HP %d KILLS %u  MAP %ux%u",
+                          fo.player.level, fo.player.hp, fo.player.kills,
+                          facility::kWorldW, facility::kWorldH);
+            neon::draw_text_pal(rec, assets, 4, 3, hud, Color::rgb(180, 255, 255));
+            std::snprintf(hud, sizeof(hud), "CAM %d,%d  P %d,%d", fo.cam.x, fo.cam.y,
+                          fo.player.world_x, fo.player.world_y);
+            neon::draw_text_pal(rec, assets, 4, 16, hud, Color::rgb(255, 200, 80));
+            rec.present();
+            if (!gpu.execute_frame(rec.commands())) {
+                std::fprintf(stderr, "facility execute fault=0x%X\n", gpu.last_fault());
+                return 1;
+            }
+            base_tel = gpu.telemetry();
+        } else {
         neon::sim_step(sim, scfg, rng, keys, cli.headless);
 
         // R2-01: measure BASE scene only; overlay never feeds telemetry it draws.
-        rec.begin_frame();
         neon::render_scene_base(rec, assets, sim, scfg);
         rec.present();
         if (!gpu.execute_frame(rec.commands())) {
             std::fprintf(stderr, "execute_frame(base) failed fault=0x%X\n", gpu.last_fault());
             return 1;
         }
-        // Authoritative BASE telemetry snapshot (before any overlay execute).
         base_tel = gpu.telemetry();
 
-        const bool want_overlay = true;  // gameplay HUD; tech/X-Ray via flags
+        const bool want_overlay = true;
         if (want_overlay) {
             neon::DrawOpts opts;
             opts.hud = true;
@@ -469,7 +538,7 @@ int main(int argc, char** argv) {
                              gpu.last_fault());
                 return 1;
             }
-            // Overlay telemetry is discarded for X-Ray; keep base_tel as source.
+        }
         }
 
         const u8* fb = gpu.framebuffer();

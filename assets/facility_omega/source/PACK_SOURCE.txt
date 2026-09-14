@@ -1,0 +1,3 @@
+Immutable extraction of FACILITY_OMEGA_First_Asset_Pack_V0.1.zip.
+Original: docs/tasks/FACILITY_OMEGA_First_Asset_Pack_V0.1.zip
+Do not modify files under source/.

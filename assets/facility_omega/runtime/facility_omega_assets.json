@@ -1,0 +1,789 @@
+{
+  "package": "facility_omega_runtime",
+  "version": "0.1",
+  "source_intake": "assets/facility_omega/source (immutable)",
+  "sprite_count": 41,
+  "sprites": [
+    {
+      "name": "engineer_a0",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        516,
+        40,
+        142,
+        200
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_a0.argb",
+      "preview_file": "processed/png/engineer_a0.png",
+      "sha256": "2b91f1342cccd0ea90a81af034e01a31cf92fe3e3e2734a626722a8017bb57de"
+    },
+    {
+      "name": "engineer_a1",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        794,
+        40,
+        142,
+        200
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_a1.argb",
+      "preview_file": "processed/png/engineer_a1.png",
+      "sha256": "28fb88c09417bd21d9c934af9836acb676489053b3b2a99a91bc87bde911362e"
+    },
+    {
+      "name": "engineer_b0",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        524,
+        295,
+        131,
+        190
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_b0.argb",
+      "preview_file": "processed/png/engineer_b0.png",
+      "sha256": "e0802e343a271e0a32fbc43a727c3b070a02ae42f78cdf0da59491953f816ab6"
+    },
+    {
+      "name": "engineer_b1",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        798,
+        295,
+        134,
+        190
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_b1.argb",
+      "preview_file": "processed/png/engineer_b1.png",
+      "sha256": "613aa977effcceae62207a893fae4db16e186220c4d8d3a1f89b9d18341db10a"
+    },
+    {
+      "name": "engineer_c0",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        307,
+        535,
+        192,
+        200
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_c0.argb",
+      "preview_file": "processed/png/engineer_c0.png",
+      "sha256": "7e12843fd17be4538d12a2b3fe4cf58b3dd2db2d84d2cf4bc82f308e454bf8de"
+    },
+    {
+      "name": "engineer_c1",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        539,
+        535,
+        175,
+        200
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_c1.argb",
+      "preview_file": "processed/png/engineer_c1.png",
+      "sha256": "431c47303c8adda74df0837489415f7533121fce324fa75ac0727815ba29ddf7"
+    },
+    {
+      "name": "engineer_d0",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        792,
+        535,
+        176,
+        200
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_d0.argb",
+      "preview_file": "processed/png/engineer_d0.png",
+      "sha256": "a51d25c220e072d8c7db70191371737ab619ba7f858f49b76788d9856522b5b0"
+    },
+    {
+      "name": "engineer_d1",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        999,
+        535,
+        184,
+        200
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_d1.argb",
+      "preview_file": "processed/png/engineer_d1.png",
+      "sha256": "2390ca79911c7005d94be9699552034fea4ffb853b76e0f15931719af4850789"
+    },
+    {
+      "name": "engineer_idle",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        236,
+        808,
+        176,
+        200
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_idle.argb",
+      "preview_file": "processed/png/engineer_idle.png",
+      "sha256": "c540131a7dc6e7585d12ea558f45c7dfced67c30ee547287aab4cecc1b1738a3"
+    },
+    {
+      "name": "engineer_hurt",
+      "source_sheet": "player_source.png",
+      "source_box": [
+        519,
+        808,
+        191,
+        200
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/engineer_hurt.argb",
+      "preview_file": "processed/png/engineer_hurt.png",
+      "sha256": "751a2cdcc8802badbf5b8e318954d8dd715f9b091e0a402401c0718eadc302ff"
+    },
+    {
+      "name": "drone_0",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        67,
+        90,
+        386,
+        200
+      ],
+      "format": "argb8888",
+      "width": 24,
+      "height": 24,
+      "stride": 96,
+      "anchor_x": 12,
+      "anchor_y": 12,
+      "runtime_file": "argb8888/drone_0.argb",
+      "preview_file": "processed/png/drone_0.png",
+      "sha256": "20e4f61b66a6358f4c68d2cf73b44c20b5b59fa4fc822f1f10674a14350b6734"
+    },
+    {
+      "name": "crawler_0",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        495,
+        90,
+        463,
+        200
+      ],
+      "format": "argb8888",
+      "width": 28,
+      "height": 28,
+      "stride": 112,
+      "anchor_x": 14,
+      "anchor_y": 20,
+      "runtime_file": "argb8888/crawler_0.argb",
+      "preview_file": "processed/png/crawler_0.png",
+      "sha256": "9acc3a97d1eea6ff1958b6c4a6afb104f6da87cd7f7d7b0e5f01d940bba7182a"
+    },
+    {
+      "name": "runner_0",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        1028,
+        90,
+        365,
+        200
+      ],
+      "format": "argb8888",
+      "width": 28,
+      "height": 28,
+      "stride": 112,
+      "anchor_x": 14,
+      "anchor_y": 20,
+      "runtime_file": "argb8888/runner_0.argb",
+      "preview_file": "processed/png/runner_0.png",
+      "sha256": "102b78b66dbd1189a3f0bd1f32f407db9ff9916e31c0bc1e8520cf8fd082e744"
+    },
+    {
+      "name": "tank_0",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        39,
+        390,
+        712,
+        330
+      ],
+      "format": "argb8888",
+      "width": 48,
+      "height": 48,
+      "stride": 192,
+      "anchor_x": 24,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/tank_0.argb",
+      "preview_file": "processed/png/tank_0.png",
+      "sha256": "f9c73ecfdc898f31626b292675641907cc49aa71aa37caaf1d4afb6846a36e08"
+    },
+    {
+      "name": "elite_0",
+      "source_sheet": "enemies_source.png",
+      "source_box": [
+        811,
+        390,
+        603,
+        330
+      ],
+      "format": "argb8888",
+      "width": 48,
+      "height": 48,
+      "stride": 192,
+      "anchor_x": 24,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/elite_0.argb",
+      "preview_file": "processed/png/elite_0.png",
+      "sha256": "7a8fdb148b383fc4ed86fb600a0004d3183d6453ee751071ea150bfdc2fcd633"
+    },
+    {
+      "name": "pulse_shot",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        21,
+        20,
+        301,
+        100
+      ],
+      "format": "argb8888",
+      "width": 8,
+      "height": 8,
+      "stride": 32,
+      "anchor_x": 4,
+      "anchor_y": 4,
+      "runtime_file": "argb8888/pulse_shot.argb",
+      "preview_file": "processed/png/pulse_shot.png",
+      "sha256": "861295ffd10a493b96be7708d95517c50beafbe436d72197403cc00a30fed731"
+    },
+    {
+      "name": "enemy_bullet",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        342,
+        20,
+        140,
+        100
+      ],
+      "format": "argb8888",
+      "width": 8,
+      "height": 8,
+      "stride": 32,
+      "anchor_x": 4,
+      "anchor_y": 4,
+      "runtime_file": "argb8888/enemy_bullet.argb",
+      "preview_file": "processed/png/enemy_bullet.png",
+      "sha256": "718e3cd4de420e19560757472a64893c67912bf2b48b64a9bc4fe1073157dc36"
+    },
+    {
+      "name": "orbit_drone",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        795,
+        20,
+        235,
+        100
+      ],
+      "format": "argb8888",
+      "width": 12,
+      "height": 12,
+      "stride": 48,
+      "anchor_x": 6,
+      "anchor_y": 6,
+      "runtime_file": "argb8888/orbit_drone.argb",
+      "preview_file": "processed/png/orbit_drone.png",
+      "sha256": "04389dbf46b28d429d250d7102804933427ef1f3adffcc65e3e3e2185196cd86"
+    },
+    {
+      "name": "xp_small",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        21,
+        895,
+        304,
+        150
+      ],
+      "format": "argb8888",
+      "width": 8,
+      "height": 8,
+      "stride": 32,
+      "anchor_x": 4,
+      "anchor_y": 4,
+      "runtime_file": "argb8888/xp_small.argb",
+      "preview_file": "processed/png/xp_small.png",
+      "sha256": "ddb2c39374c775bf43ea37d3d7e1353907731fbb7fb28bc6359df4cca1bdc202"
+    },
+    {
+      "name": "xp_large",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        364,
+        895,
+        310,
+        150
+      ],
+      "format": "argb8888",
+      "width": 12,
+      "height": 12,
+      "stride": 48,
+      "anchor_x": 6,
+      "anchor_y": 6,
+      "runtime_file": "argb8888/xp_large.argb",
+      "preview_file": "processed/png/xp_large.png",
+      "sha256": "e536da0771fff9fdf7c7ce81aa4d76c0015e864560a4d68db9b43b352aa6c989"
+    },
+    {
+      "name": "repair_pickup",
+      "source_sheet": "weapons_pickups_source.png",
+      "source_box": [
+        733,
+        895,
+        323,
+        150
+      ],
+      "format": "argb8888",
+      "width": 16,
+      "height": 16,
+      "stride": 64,
+      "anchor_x": 8,
+      "anchor_y": 8,
+      "runtime_file": "argb8888/repair_pickup.argb",
+      "preview_file": "processed/png/repair_pickup.png",
+      "sha256": "33ab0f48a259e57e156bfbd0f3f917d65086a3370f813adfa455ced88eaa6304"
+    },
+    {
+      "name": "spark",
+      "source_sheet": "fx_source.png",
+      "source_box": [
+        20,
+        50,
+        180,
+        180
+      ],
+      "format": "argb8888",
+      "width": 8,
+      "height": 8,
+      "stride": 32,
+      "anchor_x": 4,
+      "anchor_y": 4,
+      "runtime_file": "argb8888/spark.argb",
+      "preview_file": "processed/png/spark.png",
+      "sha256": "c1ea6a59eb20c02821c6e7e9a9ca859a0f6e7e6488e2c7d5ae8b88121d5acae7"
+    },
+    {
+      "name": "glow_small",
+      "source_sheet": "fx_source.png",
+      "source_box": [
+        220,
+        50,
+        220,
+        220
+      ],
+      "format": "argb8888",
+      "width": 16,
+      "height": 16,
+      "stride": 64,
+      "anchor_x": 8,
+      "anchor_y": 8,
+      "runtime_file": "argb8888/glow_small.argb",
+      "preview_file": "processed/png/glow_small.png",
+      "sha256": "a6f1754e263ddcf0b39c9834d4174ca8ee6b9c3f210e0168b7662312ed8c03cb"
+    },
+    {
+      "name": "glow_large",
+      "source_sheet": "fx_source.png",
+      "source_box": [
+        460,
+        50,
+        280,
+        280
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 16,
+      "runtime_file": "argb8888/glow_large.argb",
+      "preview_file": "processed/png/glow_large.png",
+      "sha256": "14ed3aba16926106c90e94ed463e11d361adb29c784474726f1299f40ee6c8f6"
+    },
+    {
+      "name": "ring",
+      "source_sheet": "fx_source.png",
+      "source_box": [
+        760,
+        50,
+        300,
+        300
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 16,
+      "runtime_file": "argb8888/ring.argb",
+      "preview_file": "processed/png/ring.png",
+      "sha256": "c0a042b8a64d14a146aaea1e73dc82f456aeb33b13a7909596fc908e53086427"
+    },
+    {
+      "name": "explosion",
+      "source_sheet": "fx_source.png",
+      "source_box": [
+        20,
+        380,
+        280,
+        280
+      ],
+      "format": "argb8888",
+      "width": 32,
+      "height": 32,
+      "stride": 128,
+      "anchor_x": 16,
+      "anchor_y": 16,
+      "runtime_file": "argb8888/explosion.argb",
+      "preview_file": "processed/png/explosion.png",
+      "sha256": "2ffba175dea9ae2cade5be5648af685c507ef4ecf5e25c9ac1ec7e26ccd33429"
+    },
+    {
+      "name": "trail",
+      "source_sheet": "fx_source.png",
+      "source_box": [
+        320,
+        380,
+        160,
+        160
+      ],
+      "format": "argb8888",
+      "width": 8,
+      "height": 8,
+      "stride": 32,
+      "anchor_x": 4,
+      "anchor_y": 4,
+      "runtime_file": "argb8888/trail.argb",
+      "preview_file": "processed/png/trail.png",
+      "sha256": "177382a7a311e6753bc668f175daf75d3a61af326e14d4af7cd0074a00204bf0"
+    },
+    {
+      "name": "floor_00",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        19,
+        70,
+        140,
+        140
+      ],
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_00.565",
+      "preview_file": "processed/png/floor_00.png",
+      "sha256": "b37d25c7b22ba7da340b45d3ce51861169ac59bf8e1d6afd9238c4721fd52406"
+    },
+    {
+      "name": "floor_01",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        190,
+        70,
+        140,
+        140
+      ],
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_01.565",
+      "preview_file": "processed/png/floor_01.png",
+      "sha256": "4b3350033016d0827b134d5de4d3b2c74da90c2b2be835e2747c92dd5a12e3fe"
+    },
+    {
+      "name": "floor_02",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        360,
+        70,
+        140,
+        140
+      ],
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_02.565",
+      "preview_file": "processed/png/floor_02.png",
+      "sha256": "73684cf1695df8169775723bca155311bd783f54ed9eded3686299f7e8b010f8"
+    },
+    {
+      "name": "floor_03",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        530,
+        70,
+        140,
+        140
+      ],
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_03.565",
+      "preview_file": "processed/png/floor_03.png",
+      "sha256": "50977cdf7a735adad4a223e8e4b63d0d8d220515ba205aecc3a49dfec45fa3b9"
+    },
+    {
+      "name": "floor_04",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        700,
+        70,
+        140,
+        140
+      ],
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_04.565",
+      "preview_file": "processed/png/floor_04.png",
+      "sha256": "dc4572ea5d2ad3b1cdaa658a02ea85e100fde0029da5f5c740e87b37239bdd9d"
+    },
+    {
+      "name": "floor_05",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        870,
+        70,
+        140,
+        140
+      ],
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_05.565",
+      "preview_file": "processed/png/floor_05.png",
+      "sha256": "b2699631b41756581ac70b5e73bd52c000d097ea1d93fc0e323fe36a31746692"
+    },
+    {
+      "name": "floor_06",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        1040,
+        70,
+        140,
+        140
+      ],
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_06.565",
+      "preview_file": "processed/png/floor_06.png",
+      "sha256": "95d5ebce1c968e5f9eff1d9a5a7ac5a11df8aa1d71953a45aaba7fce4104181c"
+    },
+    {
+      "name": "floor_07",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        19,
+        280,
+        140,
+        140
+      ],
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/floor_07.565",
+      "preview_file": "processed/png/floor_07.png",
+      "sha256": "96e4090a4a30f38af0b6375133f936278765d80daef8dd11111ebc9de2185d93"
+    },
+    {
+      "name": "hazard_stripe",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        30,
+        700,
+        110,
+        200
+      ],
+      "format": "rgb565",
+      "width": 32,
+      "height": 16,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/hazard_stripe.565",
+      "preview_file": "processed/png/hazard_stripe.png",
+      "sha256": "c946733d0945b737873f5cd3a36528912f50788b9338ed114c0585bf5879244e"
+    },
+    {
+      "name": "grate",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        180,
+        700,
+        180,
+        220
+      ],
+      "format": "rgb565",
+      "width": 32,
+      "height": 32,
+      "stride": 64,
+      "anchor_x": 0,
+      "anchor_y": 0,
+      "runtime_file": "rgb565/grate.565",
+      "preview_file": "processed/png/grate.png",
+      "sha256": "af2e23cd457a55de6c16d6e221b280c6a40fe94f3e762f36cfff0b296383c3f1"
+    },
+    {
+      "name": "barrel",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        25,
+        985,
+        240,
+        200
+      ],
+      "format": "argb8888",
+      "width": 24,
+      "height": 32,
+      "stride": 96,
+      "anchor_x": 12,
+      "anchor_y": 28,
+      "runtime_file": "argb8888/barrel.argb",
+      "preview_file": "processed/png/barrel.png",
+      "sha256": "863f0a15c62addb3e3346b6463ffd236d11e1b9fd7ebfc053108ee4d0467bcb8"
+    },
+    {
+      "name": "crate",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        300,
+        985,
+        240,
+        200
+      ],
+      "format": "argb8888",
+      "width": 28,
+      "height": 28,
+      "stride": 112,
+      "anchor_x": 14,
+      "anchor_y": 24,
+      "runtime_file": "argb8888/crate.argb",
+      "preview_file": "processed/png/crate.png",
+      "sha256": "cdaad815bd74e350a3ad48dd6251260f57e0c26ae5788b7630b65e87c930d1e6"
+    },
+    {
+      "name": "console",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        570,
+        985,
+        190,
+        200
+      ],
+      "format": "argb8888",
+      "width": 28,
+      "height": 36,
+      "stride": 112,
+      "anchor_x": 14,
+      "anchor_y": 32,
+      "runtime_file": "argb8888/console.argb",
+      "preview_file": "processed/png/console.png",
+      "sha256": "a0ce68b1464f0e84025ff315e0914329fa0c4ebc64e5323b2e616c9ecadc95cc"
+    },
+    {
+      "name": "canister",
+      "source_sheet": "environment_source.png",
+      "source_box": [
+        790,
+        985,
+        170,
+        200
+      ],
+      "format": "argb8888",
+      "width": 20,
+      "height": 28,
+      "stride": 80,
+      "anchor_x": 10,
+      "anchor_y": 24,
+      "runtime_file": "argb8888/canister.argb",
+      "preview_file": "processed/png/canister.png",
+      "sha256": "fb631f12192a7f316bfdce2d28934b813092ec94368c2ab51787e19d5d6fa353"
+    }
+  ],
+  "contact_sheet": "processed/contact_sheet.png",
+  "notes": "Labels on source sheets are NOT part of runtime sprites."
+}

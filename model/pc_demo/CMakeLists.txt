@@ -27,6 +27,15 @@ target_include_directories(neon_game PUBLIC
 target_link_libraries(neon_game PUBLIC gpu2d_api)
 target_compile_options(neon_game PRIVATE ${GOLDEN_WARN_FLAGS})
 
+add_library(facility_omega STATIC
+    ${CMAKE_SOURCE_DIR}/software/applications/facility_omega/src/app.cpp
+)
+target_include_directories(facility_omega PUBLIC
+    ${CMAKE_SOURCE_DIR}/software/applications/facility_omega/include
+)
+target_link_libraries(facility_omega PUBLIC gpu2d_api)
+target_compile_options(facility_omega PRIVATE ${GOLDEN_WARN_FLAGS})
+
 add_library(pc_host STATIC
     host/presenter.cpp
 )
@@ -44,7 +53,7 @@ target_link_libraries(golden_backend_lib PUBLIC golden_core gpu2d_api)
 target_compile_options(golden_backend_lib PRIVATE ${GOLDEN_WARN_FLAGS})
 
 add_executable(gpu2d_demo app/main.cpp)
-target_link_libraries(gpu2d_demo PRIVATE golden_backend_lib neon_game pc_host gpu2d_api)
+target_link_libraries(gpu2d_demo PRIVATE golden_backend_lib neon_game facility_omega pc_host gpu2d_api)
 target_compile_options(gpu2d_demo PRIVATE ${GOLDEN_WARN_FLAGS})
 
 # ---- Application-level tests (Stage 004.5) ----
@@ -85,6 +94,18 @@ add_test(NAME gpu2d_test_boundary
 )
 
 # Headless demo smoke via CLI
+add_executable(gpu2d_test_facility tests/test_facility.cpp)
+target_link_libraries(gpu2d_test_facility PRIVATE facility_omega)
+target_compile_options(gpu2d_test_facility PRIVATE ${GOLDEN_WARN_FLAGS})
+add_test(NAME gpu2d_test_facility COMMAND gpu2d_test_facility
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+
+add_test(NAME gpu2d_test_assetc
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/facility_omega_assetc.py
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+
 add_executable(gpu2d_test_mutation tests/test_mutation.cpp)
 target_link_libraries(gpu2d_test_mutation PRIVATE golden_backend_lib neon_game)
 target_compile_options(gpu2d_test_mutation PRIVATE ${GOLDEN_WARN_FLAGS})
