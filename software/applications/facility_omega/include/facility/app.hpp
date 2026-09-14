@@ -75,6 +75,7 @@ struct Player {
     u32 level = 1;
     u32 xp = 0;
     u32 kills = 0;
+    u32 hurt_timer = 0;  // frames of Color-Mod flash remaining
 };
 
 struct Camera {
@@ -94,7 +95,21 @@ struct AppState {
 void sim_reset(AppState& s, u32 seed);
 void camera_follow(AppState& s, u32 view_w, u32 view_h);
 void player_move(AppState& s, bool up, bool down, bool left, bool right, i32 speed = 3);
+void player_hurt(AppState& s, i32 damage);
 void sim_step(AppState& s, const bool* keys /*UDLR*/);
+
+inline i32 world_to_screen_x(const AppState& s, i32 wx) { return wx - s.cam.x; }
+inline i32 world_to_screen_y(const AppState& s, i32 wy) { return wy - s.cam.y; }
+
+// Inclusive visible MapTile range with optional guard band.
+void visible_map_range(const AppState& s, u32 view_w, u32 view_h, i32 guard,
+                       i32& tx0, i32& ty0, i32& tx1, i32& ty1);
+
+// 2-frame walk cycle index (0/1) from player.frame.
+inline u32 player_walk_frame(const Player& p) { return (p.frame >> 3) & 1u; }
+
+// Sprite name for current player state.
+const char* player_sprite_name(const Player& p);
 
 // Draw visible map + player using screen-space API (world already camera-relative).
 void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex,

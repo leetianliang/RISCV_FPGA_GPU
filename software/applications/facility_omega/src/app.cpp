@@ -179,24 +179,68 @@ void player_move(AppState& s, bool up, bool down, bool left, bool right, i32 spe
 void sim_step(AppState& s, const bool* keys) {
     ++s.frame;
     player_move(s, keys && keys[0], keys && keys[1], keys && keys[2], keys && keys[3]);
+    if (s.player.hurt_timer > 0) {
+        --s.player.hurt_timer;
+    }
+}
+
+void player_hurt(AppState& s, i32 damage) {
+    if (damage <= 0) {
+        return;
+    }
+    s.player.hp -= damage;
+    if (s.player.hp < 0) {
+        s.player.hp = 0;
+    }
+    s.player.hurt_timer = 12;
+}
+
+void visible_map_range(const AppState& s, u32 view_w, u32 view_h, i32 guard,
+                       i32& tx0, i32& ty0, i32& tx1, i32& ty1) {
+    const i32 ts = static_cast<i32>(kMapTileSize);
+    tx0 = s.cam.x / ts - guard;
+    ty0 = s.cam.y / ts - guard;
+    tx1 = (s.cam.x + static_cast<i32>(view_w)) / ts + guard;
+    ty1 = (s.cam.y + static_cast<i32>(view_h)) / ts + guard;
+    if (tx0 < 0) {
+        tx0 = 0;
+    }
+    if (ty0 < 0) {
+        ty0 = 0;
+    }
+    if (tx1 > static_cast<i32>(kMapTiles) - 1) {
+        tx1 = static_cast<i32>(kMapTiles) - 1;
+    }
+    if (ty1 > static_cast<i32>(kMapTiles) - 1) {
+        ty1 = static_cast<i32>(kMapTiles) - 1;
+    }
+}
+
+const char* player_sprite_name(const Player& p) {
+    if (!p.moving) {
+        return "engineer_idle";
+    }
+    const u32 f = player_walk_frame(p);
+    switch (p.dir) {
+        case 0:
+            return f ? "engineer_a1" : "engineer_a0";
+        case 1:
+            return f ? "engineer_b1" : "engineer_b0";
+        case 2:
+            return f ? "engineer_c1" : "engineer_c0";
+        default:
+            return f ? "engineer_d1" : "engineer_d0";
+    }
 }
 
 void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex,
                   u32 view_w, u32 view_h) {
-    // Visible MapTiles + 1 guard band
-    const i32 tx0 = s.cam.x / static_cast<i32>(kMapTileSize) - 1;
-    const i32 ty0 = s.cam.y / static_cast<i32>(kMapTileSize) - 1;
-    const i32 tx1 = (s.cam.x + static_cast<i32>(view_w)) / static_cast<i32>(kMapTileSize) + 1;
-    const i32 ty1 = (s.cam.y + static_cast<i32>(view_h)) / static_cast<i32>(kMapTileSize) + 1;
+    i32 tx0, ty0, tx1, ty1;
+    visible_map_range(s, view_w, view_h, 1, tx0, ty0, tx1, ty1);
     api.fill_rect(0, 0, view_w, view_h, gpu2d::Color::rgb(8, 12, 20));
+    const i32 ts = static_cast<i32>(kMapTileSize);
     for (i32 ty = ty0; ty <= ty1; ++ty) {
-        if (ty < 0 || ty >= static_cast<i32>(kMapTiles)) {
-            continue;
-        }
         for (i32 tx = tx0; tx <= tx1; ++tx) {
-            if (tx < 0 || tx >= static_cast<i32>(kMapTiles)) {
-                continue;
-            }
             const u32 idx = map_index(s, static_cast<u32>(tx), static_cast<u32>(ty));
             const TexRef* t = tex.find(floor_name(idx));
             if (!t) {
@@ -206,23 +250,29 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
             sp.tex = t->id;
             sp.w = t->w;
             sp.h = t->h;
-            sp.dst_x = tx * static_cast<i32>(kMapTileSize) - s.cam.x;
-            sp.dst_y = ty * static_cast<i32>(kMapTileSize) - s.cam.y;
+            sp.dst_x = tx * ts - s.cam.x;
+            sp.dst_y = ty * ts - s.cam.y;
             api.draw_sprite(sp);
         }
     }
-    // props near spawn
-    static const char* kProps[] = {"barrel", "crate", "console", "canister", "grate",
-                                   "hazard_stripe"};
-    for (u32 i = 0; i < 6; ++i) {
-        const TexRef* t = tex.find(kProps[i]);
+    // Deterministic props across the facility (E-08, ≥6 types).
+    struct Prop {
+        const char* name;
+        i32 wx, wy;
+    };
+    static const Prop kProps[] = {
+        {"barrel", 2048, 2048}, {"crate", 2100, 2060},   {"console", 1980, 2100},
+        {"canister", 2200, 1980}, {"grate", 1900, 2200},  {"hazard_stripe", 2048, 1920},
+        {"barrel", 1000, 1000},  {"crate", 3000, 3000},   {"console", 3200, 1200},
+        {"canister", 800, 3400}, {"grate", 3600, 800},    {"hazard_stripe", 1500, 2800},
+    };
+    for (const auto& pr : kProps) {
+        const TexRef* t = tex.find(pr.name);
         if (!t) {
             continue;
         }
-        const i32 wx = static_cast<i32>(kWorldW / 2) + static_cast<i32>(i % 3) * 48 - 80;
-        const i32 wy = static_cast<i32>(kWorldH / 2) + static_cast<i32>(i / 3) * 48 - 40;
-        const i32 sx = wx - s.cam.x;
-        const i32 sy = wy - s.cam.y;
+        const i32 sx = pr.wx - s.cam.x;
+        const i32 sy = pr.wy - s.cam.y;
         if (sx < -64 || sy < -64 || sx > static_cast<i32>(view_w) ||
             sy > static_cast<i32>(view_h)) {
             continue;
@@ -236,25 +286,7 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
         api.draw_sprite(sp);
     }
     // player
-    const char* pname = "engineer_idle";
-    switch (s.player.dir) {
-        case 0:
-            pname = (s.player.frame & 8) ? "engineer_a0" : "engineer_a1";
-            break;
-        case 1:
-            pname = (s.player.frame & 8) ? "engineer_b0" : "engineer_b1";
-            break;
-        case 2:
-            pname = (s.player.frame & 8) ? "engineer_c0" : "engineer_c1";
-            break;
-        default:
-            pname = (s.player.frame & 8) ? "engineer_d0" : "engineer_d1";
-            break;
-    }
-    if (!s.player.moving) {
-        pname = "engineer_idle";
-    }
-    const TexRef* pt = tex.find(pname);
+    const TexRef* pt = tex.find(player_sprite_name(s.player));
     if (pt) {
         gpu2d::SpriteParams sp;
         sp.tex = pt->id;
@@ -262,7 +294,7 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
         sp.h = pt->h;
         sp.dst_x = s.player.world_x - s.cam.x - static_cast<i32>(pt->ax);
         sp.dst_y = s.player.world_y - s.cam.y - static_cast<i32>(pt->ay);
-        if (s.player.hp < s.player.max_hp && (s.frame & 2)) {
+        if (s.player.hurt_timer > 0) {
             sp.color_mod = true;
             sp.mod = gpu2d::Color::rgb(255, 80, 80);
         }
