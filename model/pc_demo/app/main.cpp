@@ -9,6 +9,7 @@
 #include <chrono>
 #include <cstdio>
 #include <cstring>
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -239,7 +240,23 @@ int main(int argc, char** argv) {
     // FACILITY-Ω runtime assets (processed offline; no PNG at runtime).
     facility::TexBank fo_tex;
     facility::AppState fo;
-    const std::string fo_rt = "assets/facility_omega/runtime";
+    auto resolve_fo_rt = []() -> std::string {
+        const char* cands[] = {
+            "assets/facility_omega/runtime",
+            "../assets/facility_omega/runtime",
+            "../../assets/facility_omega/runtime",
+            "../../../assets/facility_omega/runtime",
+            "../../../../assets/facility_omega/runtime",
+        };
+        for (const char* c : cands) {
+            std::ifstream probe(std::string(c) + "/facility_omega_assets.json");
+            if (probe.good()) {
+                return c;
+            }
+        }
+        return "assets/facility_omega/runtime";
+    };
+    const std::string fo_rt = resolve_fo_rt();
     if (cli.app == "facility" || !cli.headless) {
         std::vector<facility::SpriteBlob> blobs_fo;
         if (facility::load_runtime_sprites(fo_rt, blobs_fo)) {
@@ -267,6 +284,11 @@ int main(int argc, char** argv) {
         } else if (cli.app == "facility") {
             std::fprintf(stderr, "failed to load facility assets from %s\n", fo_rt.c_str());
             return 1;
+        } else {
+            std::fprintf(stderr,
+                         "[warn] FACILITY-O assets not found under %s — menu [2] disabled. "
+                         "Run from repo root or build/stage0045.\n",
+                         fo_rt.c_str());
         }
     }
     bool use_facility = (cli.app == "facility");
@@ -318,8 +340,13 @@ int main(int argc, char** argv) {
         neon::draw_text(api, assets, 24, 28, "RISC-V + FPGA 2D GPU DEMO", Color::rgb(80, 220, 255));
         if (sc == AppScreen::Menu) {
             neon::draw_text(api, assets, 40, 80, "1  NEON SURVIVOR", Color::rgb(180, 255, 180));
-            neon::draw_text(api, assets, 40, 100, "2  FACILITY-O",
-                            Color::rgb(255, 200, 120));
+            if (fo.ready) {
+                neon::draw_text(api, assets, 40, 100, "2  FACILITY-O",
+                                Color::rgb(255, 200, 120));
+            } else {
+                neon::draw_text(api, assets, 40, 100, "2  FACILITY-O (NO ASSETS)",
+                                Color::rgb(120, 80, 80));
+            }
             neon::draw_text(api, assets, 40, 120, "3  ARCHITECTURE X-RAY / HELP",
                             Color::rgb(180, 255, 180));
             neon::draw_text(api, assets, 40, 140, "4  BENCHMARK / STRESS",
@@ -366,6 +393,12 @@ int main(int argc, char** argv) {
                     if (fo.ready) {
                         use_facility = true;
                         screen = AppScreen::Game;
+                    } else {
+                        std::fprintf(stderr,
+                                     "FACILITY-O not available (assets not loaded).\n"
+                                     "Launch from repository root:\n"
+                                     "  .\\build\\stage0045\\model\\pc_demo\\gpu2d_demo.exe\n"
+                                     "or:  --app facility\n");
                     }
                 } else if (input.edge_3) {
                     screen = AppScreen::Help;
