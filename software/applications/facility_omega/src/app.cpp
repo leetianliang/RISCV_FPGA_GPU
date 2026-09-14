@@ -561,19 +561,29 @@ void visible_map_range(const AppState& s, u32 view_w, u32 view_h, i32 guard,
 }
 
 const char* player_sprite_name(const Player& p) {
-    if (!p.moving) {
-        return "engineer_idle";
-    }
     const u32 f = player_walk_frame(p);
     // Source labels: a=UP  b=DOWN  c=LEFT  d=RIGHT
+    if (!p.moving) {
+        // Hold last facing after stop (no dedicated side-idle art; use walk frame 0).
+        switch (p.dir) {
+            case 1:
+                return "engineer_a0";
+            case 2:
+                return "engineer_c0";
+            case 3:
+                return "engineer_d0";
+            default:
+                return "engineer_idle";  // front idle when facing down/spawn
+        }
+    }
     switch (p.dir) {
-        case 0:  // down
+        case 0:
             return f ? "engineer_b1" : "engineer_b0";
-        case 1:  // up
+        case 1:
             return f ? "engineer_a1" : "engineer_a0";
-        case 2:  // left
+        case 2:
             return f ? "engineer_c1" : "engineer_c0";
-        default:  // right
+        default:
             return f ? "engineer_d1" : "engineer_d0";
     }
 }
@@ -604,15 +614,36 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
     }
     // Authored service bays repeat across the large world; only visible art is submitted.
     // These are visual landmarks, not newly introduced collision walls.
+    auto world_rect = [&](i32 wx, i32 wy, u32 w, u32 h, gpu2d::Color color) {
+        if (wx + static_cast<i32>(w) > s.cam.x && wy + static_cast<i32>(h) > s.cam.y &&
+            wx < s.cam.x + static_cast<i32>(view_w) && wy < s.cam.y + static_cast<i32>(view_h))
+            api.fill_rect(wx - s.cam.x, wy - s.cam.y, w, h, color);
+    };
+    // Soft contact shadow (two stacked rects — no host blur).
+    auto contact_shadow = [&](i32 wx, i32 wy, i32 half_w, i32 half_h) {
+        const i32 sx = wx - s.cam.x - half_w;
+        const i32 sy = wy - s.cam.y - half_h / 2;
+        if (sx + half_w * 2 <= 0 || sy + half_h <= 0 || sx >= static_cast<i32>(view_w) ||
+            sy >= static_cast<i32>(view_h)) {
+            return;
+        }
+        api.fill_rect(sx, sy + 1, static_cast<u32>(half_w * 2), static_cast<u32>(half_h - 1),
+                      gpu2d::Color::rgba(0, 0, 0, 70));
+        api.fill_rect(sx + 2, sy, static_cast<u32>(half_w * 2 - 4), static_cast<u32>(half_h),
+                      gpu2d::Color::rgba(0, 0, 0, 90));
+    };
     auto art = [&](const char* name, i32 wx, i32 wy, bool opaque = false,
                    i32 scale = 1, gpu2d::BlendMode blend = gpu2d::BlendMode::StraightAlpha,
-                   u8 alpha = 255) {
+                   u8 alpha = 255, bool shadow = true) {
         const TexRef* t = tex.find(name);
         if (!t) return;
         const i32 sx = wx - s.cam.x - static_cast<i32>(t->ax) * scale;
         const i32 sy = wy - s.cam.y - static_cast<i32>(t->ay) * scale;
         const i32 w = static_cast<i32>(t->w) * scale, h = static_cast<i32>(t->h) * scale;
         if (sx + w <= 0 || sy + h <= 0 || sx >= static_cast<i32>(view_w) || sy >= static_cast<i32>(view_h)) return;
+        if (shadow && !opaque && t->w >= 12) {
+            contact_shadow(wx, wy, w / 2, h / 6 > 4 ? h / 6 : 5);
+        }
         gpu2d::SpriteParams sp;
         sp.tex = t->id; sp.src_x = t->sx; sp.src_y = t->sy; sp.w = t->w; sp.h = t->h;
         sp.dst_x = sx; sp.dst_y = sy;
@@ -620,11 +651,6 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
         sp.blend = opaque ? gpu2d::BlendMode::Copy : blend;
         sp.global_alpha = alpha;
         api.draw_sprite(sp);
-    };
-    auto world_rect = [&](i32 wx, i32 wy, u32 w, u32 h, gpu2d::Color color) {
-        if (wx + static_cast<i32>(w) > s.cam.x && wy + static_cast<i32>(h) > s.cam.y &&
-            wx < s.cam.x + static_cast<i32>(view_w) && wy < s.cam.y + static_cast<i32>(view_h))
-            api.fill_rect(wx - s.cam.x, wy - s.cam.y, w, h, color);
     };
     for (i32 cy = 512; cy <= 3584; cy += 768) {
         for (i32 cx = 512; cx <= 3584; cx += 768) {
@@ -675,16 +701,43 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
         if (!et) {
             continue;
         }
+        const i32 esc = e.kind == EnemyKind::Tank ? 3 : 2;  // *1.5
+        const i32 ew = static_cast<i32>(et->w) * esc / 2;
+        const i32 eh = static_cast<i32>(et->h) * esc / 2;
+        contact_shadow(e.world_x, e.world_y, ew / 2, eh / 5 > 4 ? eh / 5 : 5);
+        // Lift body off dark floor: faint additive aura behind sprite.
+        {
+            const TexRef* gl = tex.find("glow_small");
+            if (gl) {
+                gpu2d::SpriteParams g;
+                g.tex = gl->id; g.src_x = gl->sx; g.src_y = gl->sy;
+                g.w = gl->w; g.h = gl->h;
+                g.scale_w = ew + 8; g.scale_h = eh + 8;
+                g.dst_x = e.world_x - s.cam.x - (ew + 8) / 2;
+                g.dst_y = e.world_y - s.cam.y - (eh + 8) / 2;
+                g.blend = gpu2d::BlendMode::AddSat;
+                g.global_alpha = 48;
+                g.color_mod = true;
+                g.mod = gpu2d::Color::rgb(255, 60, 60);
+                api.draw_sprite(g);
+            }
+        }
         gpu2d::SpriteParams sp;
         sp.blend = gpu2d::BlendMode::StraightAlpha;
         sp.tex = et->id; sp.src_x = et->sx; sp.src_y = et->sy;
         sp.w = et->w;
         sp.h = et->h;
-        sp.dst_x = e.world_x - s.cam.x - static_cast<i32>(et->ax);
-        sp.dst_y = e.world_y - s.cam.y - static_cast<i32>(et->ay);
+        sp.scale_w = ew; sp.scale_h = eh;
+        sp.dst_x = e.world_x - s.cam.x - static_cast<i32>(et->ax) * esc / 2;
+        sp.dst_y = e.world_y - s.cam.y - static_cast<i32>(et->ay) * esc / 2;
         if (e.flash) {
             sp.color_mod = true;
-            sp.mod = gpu2d::Color::rgb(255, 100, 100);
+            sp.mod = gpu2d::Color::rgb(255, 120, 120);
+        } else {
+            // Mild lighten so dark chassis reads against floor (multiply >1 not available;
+            // use near-white mod to avoid double-darkening).
+            sp.color_mod = true;
+            sp.mod = gpu2d::Color::rgb(230, 230, 235);
         }
         api.draw_sprite(sp);
     }
@@ -705,19 +758,19 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
             api.draw_sprite(sp);
         }
     }
-    // player
+    // player — 48px (3/2 of 32) for showcase readability
     const TexRef* pt = tex.find(player_sprite_name(s.player));
     if (pt) {
+        contact_shadow(s.player.world_x, s.player.world_y, 14, 6);
         gpu2d::SpriteParams sp;
         sp.blend = gpu2d::BlendMode::StraightAlpha;
         sp.tex = pt->id; sp.src_x = pt->sx; sp.src_y = pt->sy;
         sp.w = pt->w;
         sp.h = pt->h;
-        // 32px source canvas, existing GPU scaling to 40px for player readability.
-        sp.scale_w = static_cast<i32>(pt->w) * 5 / 4;
-        sp.scale_h = static_cast<i32>(pt->h) * 5 / 4;
-        sp.dst_x = s.player.world_x - s.cam.x - static_cast<i32>(pt->ax) * 5 / 4;
-        sp.dst_y = s.player.world_y - s.cam.y - static_cast<i32>(pt->ay) * 5 / 4;
+        sp.scale_w = static_cast<i32>(pt->w) * 3 / 2;
+        sp.scale_h = static_cast<i32>(pt->h) * 3 / 2;
+        sp.dst_x = s.player.world_x - s.cam.x - static_cast<i32>(pt->ax) * 3 / 2;
+        sp.dst_y = s.player.world_y - s.cam.y - static_cast<i32>(pt->ay) * 3 / 2;
         if (s.player.hurt_timer > 0) {
             sp.color_mod = true;
             sp.mod = gpu2d::Color::rgb(255, 80, 80);

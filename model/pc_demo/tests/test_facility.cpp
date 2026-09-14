@@ -88,11 +88,19 @@ int main() {
         CHECK(p.player.dir == 3);
         CHECK(std::string(player_sprite_name(p.player)).rfind("engineer_d", 0) == 0);
     }
-    // F: idle
+    // F: idle keeps last facing (a=UP b=DOWN c=LEFT d=RIGHT)
     {
         AppState p;
         sim_reset(p, 1);
         CHECK(std::string(player_sprite_name(p.player)) == "engineer_idle");
+        player_move(p, false, false, false, true, 2);
+        CHECK(std::string(player_sprite_name(p.player)).rfind("engineer_d", 0) == 0);
+        player_move(p, false, false, false, false, 2);  // stop while facing right
+        CHECK(p.player.dir == 3);
+        CHECK(std::string(player_sprite_name(p.player)) == "engineer_d0");
+        player_move(p, true, false, false, false, 2);
+        player_move(p, false, false, false, false, 2);
+        CHECK(std::string(player_sprite_name(p.player)) == "engineer_a0");
     }
     // F: 2-frame walk cycle
     {
