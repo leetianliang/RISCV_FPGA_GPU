@@ -1,0 +1,861 @@
+{
+  "task": "TASK_APP2_001",
+  "stage": "004.5-application2",
+  "authoritative_ids": [
+    "AST-01",
+    "AST-02",
+    "AST-03",
+    "AST-04",
+    "AST-05",
+    "AST-06",
+    "AST-07",
+    "AST-08",
+    "MAP-01",
+    "MAP-02",
+    "MAP-03",
+    "MAP-04",
+    "MAP-05",
+    "MAP-06",
+    "MAP-07",
+    "MAP-08",
+    "PLY-01",
+    "PLY-02",
+    "PLY-03",
+    "PLY-04",
+    "PLY-05",
+    "ENM-01",
+    "ENM-02",
+    "ENM-03",
+    "ENM-04",
+    "ENM-05",
+    "CMB-01",
+    "CMB-02",
+    "CMB-03",
+    "CMB-04",
+    "CMB-05",
+    "CMB-06",
+    "XP-01",
+    "XP-02",
+    "XP-03",
+    "XP-04",
+    "XP-05",
+    "XP-06",
+    "UI-01",
+    "UI-02",
+    "UI-03",
+    "UI-04",
+    "EQ-01",
+    "EQ-02",
+    "EQ-03",
+    "EQ-04",
+    "SYS-01",
+    "SYS-02",
+    "SYS-03",
+    "SYS-04",
+    "SYS-05",
+    "VIS-01",
+    "VIS-02",
+    "VIS-03",
+    "VIS-04",
+    "VIS-05"
+  ],
+  "acceptance": [
+    {
+      "id": "AST-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Verify source pack SHA256",
+      "implementation_evidence": [
+        "scripts/app2_asset_intake.py",
+        "assets/facility_omega/source"
+      ],
+      "verification_evidence": [
+        "scripts/app2_asset_intake.py"
+      ],
+      "test_name": "gpu2d_test_assetc",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "AST-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Source sheets immutable under source/",
+      "implementation_evidence": [
+        "assets/facility_omega/source/PACK_SOURCE.txt"
+      ],
+      "verification_evidence": [
+        "scripts/app2_asset_intake.py"
+      ],
+      "test_name": "gpu2d_test_assetc",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "AST-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Asset audit manifest with candidates",
+      "implementation_evidence": [
+        "assets/facility_omega/processed/asset_audit.json"
+      ],
+      "verification_evidence": [
+        "tools/facility_omega_assetc.py"
+      ],
+      "test_name": "gpu2d_test_assetc",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "AST-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Source labels excluded from runtime sprites",
+      "implementation_evidence": [
+        "tools/facility_omega_assetc.py"
+      ],
+      "verification_evidence": [
+        "assets/facility_omega/processed/contact_sheet.png"
+      ],
+      "test_name": "gpu2d_test_assetc",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "AST-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Contact sheet of processed candidates",
+      "implementation_evidence": [
+        "assets/facility_omega/processed/contact_sheet.png"
+      ],
+      "verification_evidence": [
+        "tools/facility_omega_assetc.py"
+      ],
+      "test_name": "gpu2d_test_assetc",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "AST-06",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Runtime manifest with format/anchor/hash",
+      "implementation_evidence": [
+        "assets/facility_omega/runtime/facility_omega_assets.json"
+      ],
+      "verification_evidence": [
+        "tools/facility_omega_assetc.py"
+      ],
+      "test_name": "gpu2d_test_assetc",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "AST-07",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Deterministic offline rebuild of runtime assets",
+      "implementation_evidence": [
+        "tools/facility_omega_assetc.py"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_assetc"
+      ],
+      "test_name": "gpu2d_test_assetc",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "AST-08",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "ARGB8888 runtime bytes are BGRA",
+      "implementation_evidence": [
+        "scripts/check_app2_argb_order.py",
+        "tools/facility_omega_assetc.py"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_argb_order"
+      ],
+      "test_name": "gpu2d_test_argb_order",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "MAP-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "128x128 MapTile logical map",
+      "implementation_evidence": [
+        "software/applications/facility_omega/include/facility/app.hpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "MAP-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "32x32 MapTile size",
+      "implementation_evidence": [
+        "software/applications/facility_omega/include/facility/app.hpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "MAP-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "World bounds 4096x4096",
+      "implementation_evidence": [
+        "software/applications/facility_omega/include/facility/app.hpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "MAP-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Player-follow camera",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "MAP-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Camera clamp at world edges",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "MAP-06",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Only visible MapTiles submitted",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "MAP-07",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "At least 8 processed floor tiles",
+      "implementation_evidence": [
+        "tools/facility_omega_assetc.py",
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "MAP-08",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "At least 6 props in world",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "PLY-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Engineer uses processed image assets",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "PLY-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "WASD movement",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "PLY-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Four directions with correct art mapping",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "PLY-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Two-frame walk animation",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "PLY-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Idle keeps facing; world boundary; camera follows",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "ENM-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Enemies spawn in world space",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "ENM-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Spawn outside camera viewport",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "ENM-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Deterministic chase toward player",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "ENM-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Drone/Crawler/Tank differ in art and stats",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility",
+        "gpu2d_test_facility_visual"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "ENM-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Off-screen enemies not submitted to GPU",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility_visual"
+      ],
+      "test_name": "gpu2d_test_facility_visual",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "CMB-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Auto-target nearest legal enemy",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "CMB-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Fire Pulse Shot on cooldown",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "CMB-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Projectile exists in world space",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "CMB-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Projectile uses processed pulse_shot art",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility_visual"
+      ],
+      "test_name": "gpu2d_test_facility_visual",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "CMB-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Projectile/enemy collision and kill",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "CMB-06",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Hit flash Color Mod and kill counter",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility",
+        "gpu2d_test_facility_visual"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "XP-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Killed enemies drop XP crystals",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "XP-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "XP crystal uses processed image asset",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "XP-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Player collects nearby XP (magnet)",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "XP-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "XP bar in HUD",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp",
+        "model/pc_demo/app/main.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "XP-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Level threshold raises level",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "XP-06",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Level-up pause + 3-choice upgrade + resume",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp",
+        "model/pc_demo/app/main.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility",
+        "gpu2d_test_facility_visual"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "UI-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "HUD: HP, XP, Level, Time, Kills",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp",
+        "model/pc_demo/app/main.cpp"
+      ],
+      "verification_evidence": [
+        "results/facility_omega/v0_1/v3_combat.png"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "UI-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Weapon icon in HUD",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "results/facility_omega/v0_1/v3_combat.png"
+      ],
+      "test_name": "gpu2d_test_facility",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "UI-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Launcher exposes NEON SURVIVOR and FACILITY-O",
+      "implementation_evidence": [
+        "model/pc_demo/app/main.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_demo_headless_imm"
+      ],
+      "test_name": "gpu2d_demo_headless_imm",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "UI-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Technical HUD / X-Ray toggle path",
+      "implementation_evidence": [
+        "model/pc_demo/app/main.cpp"
+      ],
+      "verification_evidence": [
+        "results/facility_omega/v0_1/v5_technical.png"
+      ],
+      "test_name": "gpu2d_demo_headless_imm",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "EQ-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Immediate backend executes application stream",
+      "implementation_evidence": [
+        "model/pc_demo/golden_backend/golden_renderer.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility_visual"
+      ],
+      "test_name": "gpu2d_test_facility_visual",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "EQ-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Tile32 backend executes same stream",
+      "implementation_evidence": [
+        "model/pc_demo/golden_backend/golden_renderer.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility_visual"
+      ],
+      "test_name": "gpu2d_test_facility_visual",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "EQ-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Same application code both backends",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility_visual"
+      ],
+      "test_name": "gpu2d_test_facility_visual",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "EQ-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "60 frames Immediate==Tile including level-up UI",
+      "implementation_evidence": [
+        "model/pc_demo/tests/test_facility_visual.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility_visual"
+      ],
+      "test_name": "gpu2d_test_facility_visual",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "SYS-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Fixed seed+script reproduces simulation hash",
+      "implementation_evidence": [
+        "software/applications/facility_omega/src/app.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility",
+        "gpu2d_test_facility_stability"
+      ],
+      "test_name": "gpu2d_test_facility_stability",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "SYS-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Fixed seed+frame reproduces framebuffer hash",
+      "implementation_evidence": [
+        "model/pc_demo/tests/test_facility_visual.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility_visual"
+      ],
+      "test_name": "gpu2d_test_facility_visual",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "SYS-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "600-frame headless gameplay smoke",
+      "implementation_evidence": [
+        "model/pc_demo/tests/test_facility_stability.cpp"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility_stability"
+      ],
+      "test_name": "gpu2d_test_facility_stability",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "SYS-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Asset manifest hashes / source unchanged",
+      "implementation_evidence": [
+        "assets/facility_omega/runtime/facility_omega_assets.json"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_assetc",
+        "gpu2d_test_argb_order"
+      ],
+      "test_name": "gpu2d_test_assetc",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "SYS-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Existing NEON and Golden regressions pass",
+      "implementation_evidence": [
+        "model/golden/tests/",
+        "software/applications/neon_survivor/"
+      ],
+      "verification_evidence": [
+        "golden_test_tile_faults",
+        "gpu2d_test_system"
+      ],
+      "test_name": "golden_test_tile_faults",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "VIS-01",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Asset contact sheet",
+      "implementation_evidence": [
+        "assets/facility_omega/processed/contact_sheet.png"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_assetc"
+      ],
+      "test_name": "gpu2d_test_assetc",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "VIS-02",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Large map screenshot (scrolling world)",
+      "implementation_evidence": [
+        "results/facility_omega/v0_1/v2_large_map.png"
+      ],
+      "verification_evidence": [
+        "scripts/capture_facility_omega_v1.py"
+      ],
+      "test_name": "gpu2d_demo_headless_imm",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "VIS-03",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Combat screenshot (player/enemies/shots)",
+      "implementation_evidence": [
+        "results/facility_omega/v0_1/v3_combat.png"
+      ],
+      "verification_evidence": [
+        "scripts/capture_facility_omega_v1.py"
+      ],
+      "test_name": "gpu2d_demo_headless_imm",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "VIS-04",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Level-up fixture screenshot",
+      "implementation_evidence": [
+        "results/facility_omega/v0_1/v4_levelup_fixture.png"
+      ],
+      "verification_evidence": [
+        "gpu2d_test_facility_visual"
+      ],
+      "test_name": "gpu2d_test_facility_visual",
+      "notes": "See REPORT_APP2_001"
+    },
+    {
+      "id": "VIS-05",
+      "mandatory": true,
+      "status": "PASS",
+      "requirement": "Technical / X-Ray screenshot",
+      "implementation_evidence": [
+        "results/facility_omega/v0_1/v5_technical.png"
+      ],
+      "verification_evidence": [
+        "scripts/capture_facility_omega_v1.py"
+      ],
+      "test_name": "gpu2d_demo_headless_imm",
+      "notes": "See REPORT_APP2_001"
+    }
+  ]
+}
