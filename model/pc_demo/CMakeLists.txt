@@ -120,6 +120,12 @@ target_compile_options(gpu2d_test_facility_visual PRIVATE ${GOLDEN_WARN_FLAGS})
 add_test(NAME gpu2d_test_facility_visual COMMAND gpu2d_test_facility_visual
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
+add_executable(gpu2d_test_facility_stability tests/test_facility_stability.cpp)
+target_link_libraries(gpu2d_test_facility_stability PRIVATE facility_omega)
+target_compile_options(gpu2d_test_facility_stability PRIVATE ${GOLDEN_WARN_FLAGS})
+add_test(NAME gpu2d_test_facility_stability COMMAND gpu2d_test_facility_stability
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
 
 add_executable(gpu2d_test_mutation tests/test_mutation.cpp)
 target_link_libraries(gpu2d_test_mutation PRIVATE golden_backend_lib neon_game)

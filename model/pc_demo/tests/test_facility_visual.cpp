@@ -104,6 +104,28 @@ int main(int argc, char** argv) {
     }
     CHECK(seen_explosion && seen_spark);
     CHECK(state.player.kills>0);
+    // K-05: include one Level-Up UI frame in the equality corpus
+    {
+        state.level_up_pending = true;
+        const u32 dmg = state.player.pulse_damage;
+        rec.begin_frame();
+        facility::render_scene(rec, state, bank, 640, 360);
+        CHECK(imm.execute_frame(rec.commands()));
+        CHECK(tile.execute_frame(rec.commands()));
+        CHECK(std::memcmp(imm.framebuffer(), tile.framebuffer(), imm.fb_stride() * 360) == 0);
+        // still paused
+        const u64 f0 = state.frame;
+        facility::sim_step(state, nullptr);
+        CHECK(state.frame == f0);
+        CHECK(facility::apply_upgrade(state, 2));
+        CHECK(state.player.projectile_count >= 2);
+        CHECK(state.player.pulse_damage == dmg);  // did not take damage upgrade
+        rec.begin_frame();
+        facility::render_scene(rec, state, bank, 640, 360);
+        CHECK(imm.execute_frame(rec.commands()));
+        CHECK(tile.execute_frame(rec.commands()));
+        CHECK(std::memcmp(imm.framebuffer(), tile.framebuffer(), imm.fb_stride() * 360) == 0);
+    }
     std::printf("FACILITY visual pixels + transparent draws + 60 frame equality: %s\n", failures ? "FAIL" : "PASS");
     return failures ? 1 : 0;
 }
