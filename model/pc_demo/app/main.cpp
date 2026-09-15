@@ -535,6 +535,20 @@ int main(int argc, char** argv) {
         rec.begin_frame();
         if (use_facility) {
             facility::set_viewport(fo, cli.profile.width, cli.profile.height);
+            // Level-up: 1/2/3 choose upgrade; no movement keys while pending.
+            if (fo.level_up_pending) {
+                if (cli.headless) {
+                    facility::apply_upgrade(fo, 0);  // deterministic auto-pick for captures
+                } else if (input.edge_1) {
+                    facility::apply_upgrade(fo, 0);
+                } else if (input.edge_2) {
+                    facility::apply_upgrade(fo, 1);
+                } else if (input.edge_3) {
+                    facility::apply_upgrade(fo, 2);
+                }
+                input.clear_edges();
+                for (int i = 0; i < 4; ++i) keys[i] = false;
+            }
             facility::sim_step(fo, keys);
             facility::camera_follow(fo, cli.profile.width, cli.profile.height);
             facility::render_scene(rec, fo, fo_tex, cli.profile.width, cli.profile.height);
@@ -542,12 +556,27 @@ int main(int argc, char** argv) {
             neon::draw_text_pal(rec, assets, 20, 7, "FACILITY-O", Color::rgb(211, 229, 234));
             neon::draw_text_pal(rec, assets, 20, 19, "POWER TEST / A-3", Color::rgb(85, 146, 170));
             neon::draw_text_pal(rec, assets, 134, 13, "HP", Color::rgb(197, 220, 225));
+            std::snprintf(hud, sizeof(hud), "LV%u XP %u/%u", fo.player.level, fo.player.xp,
+                          fo.player.xp_need);
+            neon::draw_text_pal(rec, assets, 20, 36, hud, Color::rgb(120, 220, 170));
             std::snprintf(hud, sizeof(hud), "%02u:%02u", static_cast<u32>(fo.frame / 3600),
                           static_cast<u32>((fo.frame / 60) % 60));
             neon::draw_text_pal(rec, assets, 294, 13, hud, Color::rgb(188, 230, 244));
             std::snprintf(hud, sizeof(hud), "KILLS %u", fo.player.kills);
             neon::draw_text_pal(rec, assets, 378, 13, hud, Color::rgb(218, 231, 237));
             neon::draw_text_pal(rec, assets, cli.profile.width - 113, 13, "PULSE SHOT", Color::rgb(92, 199, 236));
+            if (fo.level_up_pending) {
+                const i32 cx = static_cast<i32>(cli.profile.width) / 2;
+                const i32 cy = static_cast<i32>(cli.profile.height) / 2;
+                neon::draw_text_pal(rec, assets, cx - 40, cy - 48, "LEVEL UP",
+                                    Color::rgb(245, 200, 80));
+                neon::draw_text_pal(rec, assets, cx - 132, cy - 12, "[1] DAMAGE +1",
+                                    Color::rgb(200, 230, 240));
+                neon::draw_text_pal(rec, assets, cx - 36, cy - 12, "[2] RATE +1",
+                                    Color::rgb(200, 230, 240));
+                neon::draw_text_pal(rec, assets, cx + 60, cy - 12, "[3] SHOTS +1",
+                                    Color::rgb(200, 230, 240));
+            }
             if (tech_hud) {
                 std::snprintf(hud, sizeof(hud), "CAM %d,%d EN %u BL %u", fo.cam.x, fo.cam.y,
                               facility::live_enemy_count(fo), facility::live_bullet_count(fo));

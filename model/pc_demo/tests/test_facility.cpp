@@ -268,7 +268,69 @@ int main() {
         CHECK(axis.enemies[0].world_y == 2048);
     }
 
-    // deterministic reset + map
+    // Block I: XP drop / magnet collect / level-up pause / upgrade apply
+    {
+        AppState p;
+        sim_reset(p, 88);
+        set_viewport(p, 640, 360);
+        camera_follow(p, 640, 360);
+        CHECK(p.player.level == 1);
+        CHECK(p.player.xp_need == xp_to_level(1));
+        // place a tank next to player and buff damage so it dies quickly
+        Enemy t;
+        t.kind = EnemyKind::Tank;
+        t.hp = 1;
+        t.alive = true;
+        t.world_x = p.player.world_x + 20;
+        t.world_y = p.player.world_y;
+        p.enemies.push_back(t);
+        p.player.pulse_damage = 99;
+        u32 gems0 = 0;
+        for (int i = 0; i < 80 && gems0 == 0; ++i) {
+            sim_step(p, nullptr);
+            for (const auto& g : p.xp_gems) {
+                if (g.alive) {
+                    gems0 = 1;
+                }
+            }
+        }
+        CHECK(gems0 == 1);
+        CHECK(p.player.kills >= 1);
+        // magnet: gems near player should be collected
+        for (int i = 0; i < 40; ++i) {
+            sim_step(p, nullptr);
+        }
+        u32 live_gems = 0;
+        for (const auto& g : p.xp_gems) {
+            if (g.alive) {
+                ++live_gems;
+            }
+        }
+        CHECK(live_gems == 0);
+        // force enough XP to level
+        p.player.xp = p.player.xp_need;
+        p.level_up_pending = true;
+        const u32 dmg0 = p.player.pulse_damage;
+        const u32 period0 = p.player.fire_period;
+        const u32 shots0 = p.player.projectile_count;
+        // sim freezes while pending
+        const u64 f0 = p.frame;
+        sim_step(p, nullptr);
+        CHECK(p.frame == f0);
+        CHECK(apply_upgrade(p, 0));
+        CHECK(p.player.pulse_damage == dmg0 + 1);
+        CHECK(!p.level_up_pending);
+        p.level_up_pending = true;
+        CHECK(apply_upgrade(p, 1));
+        CHECK(p.player.fire_period < period0);
+        p.level_up_pending = true;
+        CHECK(apply_upgrade(p, 2));
+        CHECK(p.player.projectile_count == shots0 + 1);
+        // multi-shot fires more than one bullet
+        p.bullets.clear();
+        fire_pulse(p);
+        CHECK(live_bullet_count(p) >= 2);
+    }
     AppState a, b;
     sim_reset(a, 99);
     sim_reset(b, 99);

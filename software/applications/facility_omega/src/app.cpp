@@ -168,6 +168,7 @@ void sim_reset(AppState& s, u32 seed) {
     s.player = Player{};
     s.player.world_x = static_cast<i32>(kWorldW / 2);
     s.player.world_y = static_cast<i32>(kWorldH / 2);
+    s.player.xp_need = xp_to_level(s.player.level);
     s.sim_seed = seed ? seed : 1u;
     s.rng.seed(s.sim_seed);
     s.enemies.clear();
@@ -175,9 +176,13 @@ void sim_reset(AppState& s, u32 seed) {
     s.bullets.clear();
     s.bullets.reserve(256);
     s.effects.reserve(96);
+    s.xp_gems.clear();
+    s.xp_gems.reserve(512);
     s.spawn_timer = 0;
     s.enemy_count_target = 6;
     s.frame = 0;
+    s.level_up_pending = false;
+    s.upgrades_taken = 0;
     s.ready = true;
 }
 
@@ -241,6 +246,10 @@ void player_move(AppState& s, bool up, bool down, bool left, bool right, i32 spe
 }
 
 void sim_step(AppState& s, const bool* keys) {
+    // I-05: freeze world while upgrade choice is open.
+    if (s.level_up_pending) {
+        return;
+    }
     ++s.frame;
     for (auto& fx : s.effects) if (fx.life) --fx.life;
     player_move(s, keys && keys[0], keys && keys[1], keys && keys[2], keys && keys[3]);
@@ -338,12 +347,85 @@ void sim_step(AppState& s, const bool* keys) {
                     if (e.hp <= 0) {
                         e.alive = false;
                         ++s.player.kills;
+                        const u32 xv = e.kind == EnemyKind::Tank ? 3u
+                                           : (e.kind == EnemyKind::Crawler ? 2u : 1u);
+                        spawn_xp(s, e.world_x, e.world_y, xv);
                     }
                     break;
                 }
             }
         }
     }
+    // XP gems: drift toward player in magnet radius; collect (I-02/I-03).
+    for (auto& g : s.xp_gems) {
+        if (!g.alive) {
+            continue;
+        }
+        const i32 dx = s.player.world_x - g.world_x;
+        const i32 dy = s.player.world_y - g.world_y;
+        const i32 d2 = dx * dx + dy * dy;
+        if (d2 < 28 * 28) {
+            const i32 len = static_cast<i32>(distance_root(static_cast<u32>(d2 < 1 ? 1 : d2)));
+            g.vx = (dx * 5) / len;
+            g.vy = (dy * 5) / len;
+        } else {
+            g.vx = 0;
+            g.vy = 0;
+        }
+        g.world_x += g.vx;
+        g.world_y += g.vy;
+        if (d2 < 12 * 12) {
+            g.alive = false;
+            s.player.xp += g.value;
+            while (s.player.xp >= s.player.xp_need) {
+                s.player.xp -= s.player.xp_need;
+                ++s.player.level;
+                s.player.xp_need = xp_to_level(s.player.level);
+                s.level_up_pending = true;
+            }
+        }
+    }
+}
+
+void spawn_xp(AppState& s, i32 x, i32 y, u32 value) {
+    XpGem g;
+    g.alive = true;
+    g.world_x = x + s.rng.irange(-6, 6);
+    g.world_y = y + s.rng.irange(-6, 6);
+    g.value = value ? value : 1;
+    for (auto& slot : s.xp_gems) {
+        if (!slot.alive) {
+            slot = g;
+            return;
+        }
+    }
+    if (s.xp_gems.size() < 512) {
+        s.xp_gems.push_back(g);
+    }
+}
+
+bool apply_upgrade(AppState& s, u32 choice) {
+    if (!s.level_up_pending) {
+        return false;
+    }
+    switch (choice) {
+        case 0:
+            ++s.player.pulse_damage;
+            break;
+        case 1:
+            if (s.player.fire_period > 6) {
+                s.player.fire_period -= 2;
+            }
+            break;
+        default:
+            if (s.player.projectile_count < 5) {
+                ++s.player.projectile_count;
+            }
+            break;
+    }
+    ++s.upgrades_taken;
+    s.level_up_pending = false;
+    return true;
 }
 
 void player_hurt(AppState& s, i32 damage) {
@@ -440,31 +522,44 @@ void fire_pulse(AppState& s) {
             best_d = d;
         }
     }
-    Bullet b;
-    b.alive = true;
-    b.enemy = false;
-    b.world_x = s.player.world_x;
-    b.world_y = s.player.world_y;
+    i32 base_vx = 0, base_vy = -6;
     if (best) {
         const i32 dx = best->world_x - s.player.world_x;
         const i32 dy = best->world_y - s.player.world_y;
         const i32 d2 = dx * dx + dy * dy;
         const i32 len = static_cast<i32>(distance_root(static_cast<u32>(d2)));
-        b.vx = (dx * 6) / len;
-        b.vy = (dy * 6) / len;
-    } else {
-        b.vx = 0;
-        b.vy = -6;
+        base_vx = (dx * 6) / len;
+        base_vy = (dy * 6) / len;
     }
     s.player.fire_cooldown = s.player.fire_period;
-    for (auto& slot : s.bullets) {
-        if (!slot.alive) {
-            slot = b;
-            return;
+    const u32 n = s.player.projectile_count ? s.player.projectile_count : 1u;
+    for (u32 i = 0; i < n; ++i) {
+        Bullet b;
+        b.alive = true;
+        b.enemy = false;
+        b.world_x = s.player.world_x;
+        b.world_y = s.player.world_y;
+        if (n == 1) {
+            b.vx = base_vx;
+            b.vy = base_vy;
+        } else {
+            // deterministic fan around aim direction
+            const i32 off = static_cast<i32>(i) - static_cast<i32>(n / 2);
+            // rotate ~off*10° using small integer approximation
+            b.vx = base_vx - base_vy * off / 6;
+            b.vy = base_vy + base_vx * off / 6;
         }
-    }
-    if (s.bullets.size() < 256) {
-        s.bullets.push_back(b);
+        bool placed = false;
+        for (auto& slot : s.bullets) {
+            if (!slot.alive) {
+                slot = b;
+                placed = true;
+                break;
+            }
+        }
+        if (!placed && s.bullets.size() < 256) {
+            s.bullets.push_back(b);
+        }
     }
 }
 
@@ -518,6 +613,9 @@ u32 hash_sim(const AppState& s) {
     mix(static_cast<u32>(s.player.world_y));
     mix(static_cast<u32>(s.player.hp));
     mix(s.player.kills);
+    mix(s.player.xp);
+    mix(s.player.level);
+    mix(s.level_up_pending ? 1u : 0u);
     for (const auto& e : s.enemies) {
         if (!e.alive) {
             continue;
@@ -758,6 +856,24 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
             api.draw_sprite(sp);
         }
     }
+    // XP crystals (I-02)
+    const TexRef* xg = tex.find("xp_small");
+    if (xg) {
+        for (const auto& g : s.xp_gems) {
+            if (!g.alive || !in_view(s, g.world_x, g.world_y, 16)) {
+                continue;
+            }
+            gpu2d::SpriteParams sp;
+            sp.tex = xg->id; sp.src_x = xg->sx; sp.src_y = xg->sy;
+            sp.w = xg->w; sp.h = xg->h;
+            sp.scale_w = static_cast<i32>(xg->w) * 3 / 2;
+            sp.scale_h = static_cast<i32>(xg->h) * 3 / 2;
+            sp.dst_x = g.world_x - s.cam.x - static_cast<i32>(xg->ax) * 3 / 2;
+            sp.dst_y = g.world_y - s.cam.y - static_cast<i32>(xg->ay) * 3 / 2;
+            sp.blend = gpu2d::BlendMode::AddSat;
+            api.draw_sprite(sp);
+        }
+    }
     // player — 48px (3/2 of 32) for showcase readability
     const TexRef* pt = tex.find(player_sprite_name(s.player));
     if (pt) {
@@ -801,6 +917,29 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
         sp.dst_x=static_cast<i32>(view_w)-35; sp.dst_y=4;
         sp.blend=gpu2d::BlendMode::StraightAlpha;
         api.draw_sprite(sp);
+    }
+    // XP bar under HP (I-04)
+    api.fill_rect(155, 26, 116, 4, gpu2d::Color::rgb(30, 48, 58));
+    if (s.player.xp_need) {
+        const u32 xpw = s.player.xp * 112 / s.player.xp_need;
+        if (xpw) {
+            api.fill_rect(157, 27, xpw, 2, gpu2d::Color::rgb(64, 210, 160));
+        }
+    }
+    // Level-up panel (I-05): dark scrim + industrial cards; text drawn by host font in main.
+    if (s.level_up_pending) {
+        api.fill_rect(0, 0, view_w, view_h, gpu2d::Color::rgba(4, 8, 14, 200));
+        const i32 cx = static_cast<i32>(view_w) / 2;
+        const i32 cy = static_cast<i32>(view_h) / 2;
+        api.fill_rect(cx - 150, cy - 56, 300, 112, gpu2d::Color::rgb(12, 22, 32));
+        api.fill_rect(cx - 150, cy - 56, 300, 2, gpu2d::Color::rgb(64, 160, 190));
+        api.fill_rect(cx - 150, cy + 54, 300, 2, gpu2d::Color::rgb(64, 160, 190));
+        for (int i = 0; i < 3; ++i) {
+            const i32 bx = cx - 140 + i * 96;
+            api.fill_rect(bx, cy - 24, 88, 48, gpu2d::Color::rgb(22, 40, 52));
+            api.fill_rect(bx, cy - 24, 88, 2, gpu2d::Color::rgb(245, 149, 43));
+            api.fill_rect(bx, cy + 22, 88, 2, gpu2d::Color::rgb(40, 90, 110));
+        }
     }
 }
 

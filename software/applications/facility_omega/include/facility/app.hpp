@@ -129,6 +129,21 @@ struct Bullet {
     bool enemy = false;
 };
 
+struct XpGem {
+    i32 world_x = 0;
+    i32 world_y = 0;
+    i32 vx = 0;
+    i32 vy = 0;
+    u32 value = 1;
+    bool alive = false;
+};
+
+enum class UpgradeId : u8 {
+    PulseDamage = 0,
+    FireRate = 1,
+    ProjectileCount = 2,
+};
+
 // App state: world + camera + player + combat (vertical slice).
 struct Player {
     i32 world_x = static_cast<i32>(kWorldW / 2);
@@ -140,11 +155,13 @@ struct Player {
     i32 max_hp = 100;
     u32 level = 1;
     u32 xp = 0;
+    u32 xp_need = 10;  // xp_to_level(1)
     u32 kills = 0;
     u32 hurt_timer = 0;
     u32 fire_cooldown = 0;
     i32 pulse_damage = 1;
     u32 fire_period = 18;  // frames between shots
+    u32 projectile_count = 1;
 };
 
 struct Camera {
@@ -163,11 +180,14 @@ struct AppState {
     std::vector<Enemy> enemies;
     std::vector<Bullet> bullets;
     std::vector<Effect> effects;
+    std::vector<XpGem> xp_gems;
     u32 spawn_timer = 0;
     u32 enemy_count_target = 8;
     bool ready = false;
     u32 view_w = 640;
     u32 view_h = 360;
+    bool level_up_pending = false;
+    u32 upgrades_taken = 0;
 };
 
 void sim_reset(AppState& s, u32 seed);
@@ -176,8 +196,13 @@ void player_move(AppState& s, bool up, bool down, bool left, bool right, i32 spe
 void player_hurt(AppState& s, i32 damage);
 void set_viewport(AppState& s, u32 w, u32 h);
 void spawn_enemy(AppState& s, EnemyKind kind);
+void spawn_xp(AppState& s, i32 x, i32 y, u32 value);
 void fire_pulse(AppState& s);
+// keys: 0 up 1 down 2 left 3 right; while level-up pending sim freezes (I-05).
 void sim_step(AppState& s, const bool* keys /*UDLR*/);
+// I-07: choice 0/1/2 applies upgrade and resumes.
+bool apply_upgrade(AppState& s, u32 choice);
+inline u32 xp_to_level(u32 level) { return 6u + level * 4u; }
 
 inline i32 world_to_screen_x(const AppState& s, i32 wx) { return wx - s.cam.x; }
 inline i32 world_to_screen_y(const AppState& s, i32 wy) { return wy - s.cam.y; }
