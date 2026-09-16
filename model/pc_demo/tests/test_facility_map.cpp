@@ -1,6 +1,7 @@
 #include "facility/app.hpp"
 #include "golden_renderer.hpp"
 #include "gpu2d/renderer.hpp"
+#include "../app/facility_showcase.hpp"
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
@@ -41,6 +42,16 @@ int main(int argc,char** argv) {
     sim_reset(s,1234);
     CHECK(s.environment.zones.size()==4);
     CHECK(s.environment.collision.size()==s.environment.structures.size());
+    // R3V2 is visual only: lock the approved R3 geometry explicitly.
+    const Bounds frozen[]={{1544,1544,348,24},{2132,1544,428,24},
+        {1544,1568,24,312},{1544,2128,24,432},{1568,2536,288,24},
+        {2144,2536,416,24},{2528,1568,32,304},{2528,2176,32,360},
+        {1624,1668,176,68},{1624,2300,128,80},{2320,1656,128,80},{2288,1940,128,68}};
+    CHECK(s.environment.collision.size()==12);
+    for(size_t i=0;i<s.environment.collision.size() && i<12;++i) {
+        const auto& a=s.environment.collision[i];const auto& b=frozen[i];
+        CHECK(a.x==b.x && a.y==b.y && a.w==b.w && a.h==b.h);
+    }
     // Production player input must use the authored collision layer and slide.
     s.player.world_x=1600;s.player.world_y=1680;
     player_move(s,false,false,false,true,100);
@@ -130,6 +141,21 @@ int main(int argc,char** argv) {
         CHECK(std::memcmp(imm.framebuffer(),tile.framebuffer(),imm.fb_stride()*360)==0);
         capture("scroll_"+std::to_string(frame));
     }
+    // Medium-density staged capture uses production render_scene and real GPU blends.
+    AppState staged;facility_capture::stage(staged);camera_follow(staged,640,360);
+    CHECK(staged.enemies.size()==20 && staged.bullets.size()==9 && staged.xp_gems.size()==7);
+    for(const auto& enemy:staged.enemies)
+        CHECK(position_clear(staged.environment,enemy.world_x,enemy.world_y,enemy.kind==EnemyKind::Tank?18:10));
+    rec.begin_frame();render_scene(rec,staged,bank,640,360);
+    bool alpha=false,additive=false;
+    for(const auto& command:rec.commands()) if(command.op==gpu2d::RecOp::Sprite) {
+        alpha |= command.sp.blend==gpu2d::BlendMode::StraightAlpha && command.sp.global_alpha<255;
+        additive |= command.sp.blend==gpu2d::BlendMode::AddSat;
+    }
+    CHECK(alpha && additive);
+    CHECK(imm.execute_frame(rec.commands()) && tile.execute_frame(rec.commands()));
+    CHECK(std::memcmp(imm.framebuffer(),tile.framebuffer(),imm.fb_stride()*360)==0);
+    capture("showcase_fixture");
     // Four exact 512px captures form an overview without exceeding backend FB arena.
     gpu2d::GoldenBackend overview;
     profile.width=512;profile.height=512;CHECK(overview.init(profile));

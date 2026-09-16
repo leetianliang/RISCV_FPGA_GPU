@@ -104,30 +104,144 @@ void render_environment(gpu2d::GraphicsApi& api,const Environment& e,const TexBa
     // 256px material sheets have no visible frame/rivets; 32px map cells are not drawn.
     for(i32 y=cy/256*256;y<cy+static_cast<i32>(height);y+=256)
         for(i32 x=cx/256*256;x<cx+static_cast<i32>(width);x+=256)
-            art({"floor_material",x,y,true});
-    // Wide service recesses and nonperiodic expansion joints follow the authored hall.
-    rect(1576,1584,248,204,Color::rgb(23,34,42));
-    rect(1576,2240,216,200,Color::rgb(33,37,40));
-    rect(2288,1592,208,176,Color::rgb(21,38,46));
-    for(i32 y:{1800,2208,2464}) { rect(1576,y,936,1,Color::rgb(18,29,36)); rect(1576,y+1,936,1,Color::rgb(40,50,57)); }
-    rect(1872,1584,1,928,Color::rgb(22,32,39));
-    rect(2224,1784,1,728,Color::rgb(22,32,39));
-    // Long lanes remain floor markings: no collision is inferred from paint.
-    rect(1878,1816,5,580,Color::rgb(103,90,48));
-    rect(1889,1816,1,580,Color::rgb(75,72,49));
-    rect(1878,2396,340,5,Color::rgb(103,90,48));
-    rect(2190,1856,230,3,Color::rgb(38,95,112));
+            art({((x/256+3*y/256)%7==0)?"floor_material_cool":
+                 ((x/256+3*y/256)%7==3)?"floor_material_worn":"floor_material",x,y,true});
+    // Authored room-local decoration. Everything below is paint/recessed floor;
+    // none of it participates in position_clear or changes the R3 footprints.
+    auto r=[&](i32 x,i32 y,u32 w,u32 h,Color c) {rect(1536+x,1536+y,w,h,c);};
+    const auto dark=Color::rgb(19,28,34), edge=Color::rgb(43,53,59);
+    const auto amber=Color::rgb(111,93,50), cyan=Color::rgb(37,93,107);
+    auto line=[&](i32 x,i32 y,i32 dx,i32 dy,Color c) {
+        r(x,y,dx?static_cast<u32>(dx):2,dy?static_cast<u32>(dy):2,c);
+    };
+    auto panel=[&](i32 x,i32 y,i32 w,i32 h,bool technical=false) {
+        r(x,y,w,h,dark);r(x+2,y+2,w-4,h-4,Color::rgb(35,44,49));
+        r(x+3,y+3,w-6,1,edge);r(x+3,y+h-3,w-6,1,Color::rgb(27,35,41));
+        // Short corner brackets and sunk fasteners, not a bright rectangular frame.
+        for(i32 xx:{x+6,x+w-15}) for(i32 yy:{y+6,y+h-7}) {
+            r(xx,yy,9,1,Color::rgb(63,69,68));r(xx+3,yy+2,2,2,dark);
+        }
+        r(x+w/2-8,y+h/2,16,2,dark);
+        if(technical) {r(x+w-24,y+h-14,12,2,cyan);r(x+w-24,y+h-10,6,1,edge);}
+    };
+    auto drain=[&](i32 x,i32 y,i32 w) {
+        r(x,y,w,14,dark);r(x,y,w,1,edge);r(x,y+13,w,1,edge);
+        for(i32 k=4;k<w-3;k+=7) r(x+k,y+3,2,8,Color::rgb(44,52,57));
+    };
+    auto cable=[&](i32 x,i32 y,i32 dx,i32 dy,Color c) {
+        const u32 w=dx?static_cast<u32>(dx):7,h=dy?static_cast<u32>(dy):7;
+        r(x,y,w,h,dark);r(x+2,y+2,dx?w-2:2,dy?h-2:2,c);
+        if(dx) for(i32 k=12;k<dx-6;k+=40) r(x+k,y,3,7,edge);
+        else for(i32 k=12;k<dy-6;k+=40) r(x,y+k,7,3,edge);
+    };
+    auto arrow=[&](i32 x,i32 y,Color c) {
+        r(x,y+6,24,4,c);
+        for(i32 k=0;k<8;++k) r(x+20+k,y+k,2,16-k*2,c);
+    };
+    auto wear=[&](i32 x,i32 y,i32 seed) {
+        // Small clusters of scuffs around service routes, never a world-wide scatter.
+        for(i32 k=0;k<18;++k) {
+            const i32 dx=(k*37+seed*11)%96,dy=(k*13+seed*7)%42;
+            r(x+dx,y+dy,3+(k%5)*3,1+(k%2),k%3?Color::rgb(29,37,41):edge);
+        }
+    };
+    // Offset joints end at maintenance panels or service channels; no full-room cross.
+    line(40,266,226,0,dark);line(266,266,0,72,edge);
+    line(330,84,0,126,dark);line(330,210,146,0,dark);
+    line(572,252,178,0,dark);line(750,252,0,104,dark);
+    line(36,650,216,0,dark);line(252,610,0,40,dark);
+    line(470,666,230,0,dark);line(700,666,0,106,edge);
+    line(800,882,194,0,dark);line(584,850,0,132,dark);
+    // Maintenance: a connected pair of feed pipes, repair covers and yellow route marks.
+    cable(40,70,72,0,Color::rgb(75,78,61));cable(105,70,0,94,Color::rgb(75,78,61));
+    cable(40,82,84,0,Color::rgb(54,71,78));cable(117,82,0,82,Color::rgb(54,71,78));
+    panel(158,52,118,42);drain(50,310,124);panel(192,288,88,56);
+    for(i32 k=0;k<5;++k) r(94+k*24,214,14,3,amber);
+    arrow(280,224,amber);wear(65,238,2);wear(214,350,7);
+    // Storage: loading footprints are painted L corners, clear and freely traversable.
+    for(i32 y:{690,870}) for(i32 x:{58,194}) {
+        r(x,y,25,2,amber);r(x,y,2,48,amber);
+        r(x+80,y+46,25,2,amber);r(x+103,y,2,48,amber);
+    }
+    drain(42,947,206);cable(47,612,0,151,Color::rgb(73,64,44));
+    cable(47,756,88,0,Color::rgb(73,64,44));
+    wear(186,846,5);wear(84,696,9);arrow(300,890,amber);
+    // Power lab: connected conduits, circuit traces and segmented light strips.
+    cable(851,30,0,99,cyan);cable(851,122,142,0,cyan);
+    cable(898,199,0,205,cyan);cable(849,397,56,0,cyan);
+    panel(756,252,168,76,true);panel(666,92,106,48,true);
+    for(i32 k=0;k<4;++k) {
+        r(770+k*36,344,22,2,cyan);r(943,240+k*29,2,15,cyan);
+    }
+    drain(762,468,162);wear(850,491,3);
+    // Central hall: asymmetric service panels and test lanes add scale, not obstacles.
+    panel(352,300,116,56,true);panel(525,470,160,76,true);
+    panel(308,574,105,70);panel(747,620,162,58,true);
+    panel(445,830,94,48);panel(772,934,146,42);
+    drain(418,742,164);drain(575,146,108);
+    cable(678,380,0,187,Color::rgb(33,67,76));cable(678,560,110,0,Color::rgb(33,67,76));
+    line(322,392,0,116,amber);line(332,396,0,52,Color::rgb(72,69,46));
+    line(364,716,0,112,amber);line(364,826,53,0,amber);
+    arrow(400,224,cyan);arrow(734,718,cyan);arrow(605,914,amber);
+    wear(338,476,4);wear(556,612,11);wear(755,768,1);wear(381,915,6);
+    // Recessed service numbers and ticks: flat, low-contrast stencils.
+    for(const auto p: {Bounds{486,286,0,0},Bounds{923,574,0,0},Bounds{174,607,0,0}}) {
+        r(p.x,p.y,12,2,edge);r(p.x,p.y+2,2,20,edge);r(p.x+10,p.y+2,2,20,edge);
+        r(p.x,p.y+22,12,2,edge);r(p.x+19,p.y,3,24,edge);
+        for(i32 k=0;k<3;++k) r(p.x+30+k*5,p.y+18,2,6,edge);
+    }
     for(const auto& a:e.decals) art(a);
+    // Local pools use the existing alpha sprite; no new blend or lighting semantics.
+    if(const auto* glow=tex.find("glow_large")) {
+        for(const auto p:{Bounds{2350,1738,110,46},Bounds{2382,2010,100,42},Bounds{1660,1740,72,32}}) {
+            gpu2d::SpriteParams light;
+            light.tex=glow->id;light.src_x=glow->sx;light.src_y=glow->sy;
+            light.w=glow->w;light.h=glow->h;light.scale_w=p.w;light.scale_h=p.h;
+            light.dst_x=p.x-cx-p.w/2;light.dst_y=p.y-cy-p.h/2;
+            light.blend=gpu2d::BlendMode::StraightAlpha;light.global_alpha=42;
+            api.draw_sprite(light);
+        }
+    }
     for(const auto& a:e.effects) art(a);
     for(const auto& st:e.structures) {
         const auto& b=st.bounds;
-        rect(b.x-3,b.y-3,b.w+6,b.h+8,Color::rgb(10,17,23));
-        rect(b.x,b.y,b.w,b.h,Color::rgb(38,51,61));
-        rect(b.x,b.y,b.w,3,Color::rgb(70,85,96));
-        rect(b.x,b.y+b.h-6,b.w,6,Color::rgb(16,25,33));
-        if(b.h>40) {
-            for(i32 x=b.x+8;x<b.x+b.w-8;x+=24)
-                rect(x,b.y+b.h-5,12,3,st.power?Color::rgb(38,118,140):Color::rgb(141,109,48));
+        const bool wall=b.w<=32 || b.h<=32;
+        rect(b.x-2,b.y,b.w+4,b.h+5,Color::rgb(12,20,26));
+        rect(b.x,b.y,b.w,b.h,Color::rgb(34,45,53));
+        rect(b.x+2,b.y+2,b.w-4,2,Color::rgb(wall?64:43,wall?77:54,wall?84:60));
+        rect(b.x,b.y+b.h-4,b.w,4,Color::rgb(18,27,33));
+        if(wall) {
+            // Edge rail, recessed pipe strip and support straps stay inside the AABB.
+            const bool vertical=b.w<=32;
+            if(vertical) {
+                rect(b.x+5,b.y+5,3,b.h-10,Color::rgb(46,61,70));
+                rect(b.x+11,b.y+5,2,b.h-10,Color::rgb(18,28,35));
+                for(i32 y=b.y+18;y<b.y+b.h-16;y+=86) {
+                    rect(b.x+2,y,b.w-4,7,Color::rgb(55,64,67));
+                    rect(b.x+5,y+2,2,2,Color::rgb(103,107,96));
+                }
+                for(i32 y:{b.y+4,b.y+b.h-13}) {
+                    rect(b.x+2,y,b.w-4,8,dark);
+                    rect(b.x+b.w-7,y+1,3,5,Color::rgb(86,156,165));
+                }
+            } else {
+                rect(b.x+4,b.y+8,b.w-8,3,Color::rgb(48,62,70));
+                for(i32 x=b.x+18;x<b.x+b.w-16;x+=94) {
+                    rect(x,b.y+2,7,b.h-4,Color::rgb(55,64,67));
+                    rect(x+2,b.y+5,2,2,Color::rgb(103,107,96));
+                }
+                for(i32 x:{b.x+4,b.x+b.w-14}) {
+                    rect(x,b.y+2,10,b.h-4,dark);
+                    rect(x+2,b.y+b.h-8,6,3,Color::rgb(143,115,58));
+                }
+            }
+        } else {
+            // Low base plates with broken corner marks, grounded by incoming cables.
+            for(i32 x:{b.x+5,b.x+b.w-18}) {
+                rect(x,b.y+b.h-8,12,2,st.power?cyan:amber);
+                rect(x,b.y+6,3,3,Color::rgb(67,74,72));
+            }
+            rect(b.x+8,b.y+b.h-15,b.w-16,1,Color::rgb(25,34,40));
         }
     }
     for(const auto& a:e.props) art(a);

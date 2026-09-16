@@ -1,0 +1,194 @@
+[OUTPUT] 
+Internal ctest changing into directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045
+
+[HANDLER_OUTPUT] 
+Test project C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045
+
+      Start  1: golden_test_gpu_math
+ 1/92 Test  #1: golden_test_gpu_math ...............................   Passed    0.24 sec
+      Start  2: golden_test_memory_image
+ 2/92 Test  #2: golden_test_memory_image ...........................   Passed    0.26 sec
+      Start  3: golden_test_surface
+ 3/92 Test  #3: golden_test_surface ................................   Passed    0.25 sec
+      Start  4: golden_test_cmd_io
+ 4/92 Test  #4: golden_test_cmd_io .................................   Passed    0.24 sec
+      Start  5: golden_test_command_header
+ 5/92 Test  #5: golden_test_command_header .........................   Passed    0.23 sec
+      Start  6: golden_test_fill_directed
+ 6/92 Test  #6: golden_test_fill_directed ..........................   Passed    0.30 sec
+      Start  7: golden_test_blit_directed
+ 7/92 Test  #7: golden_test_blit_directed ..........................   Passed    0.28 sec
+      Start  8: golden_test_pixel_pipeline
+ 8/92 Test  #8: golden_test_pixel_pipeline .........................   Passed    0.24 sec
+      Start  9: golden_test_mutation
+ 9/92 Test  #9: golden_test_mutation ...............................   Passed    0.27 sec
+      Start 10: golden_test_sprite_ext
+10/92 Test #10: golden_test_sprite_ext .............................   Passed    0.27 sec
+      Start 11: golden_test_random_diff
+11/92 Test #11: golden_test_random_diff ............................   Passed    0.29 sec
+      Start 12: golden_test_premult_exact
+12/92 Test #12: golden_test_premult_exact ..........................   Passed    0.26 sec
+      Start 13: golden_test_premult_matrix
+13/92 Test #13: golden_test_premult_matrix .........................   Passed    0.27 sec
+      Start 14: golden_test_sampler_errors
+14/92 Test #14: golden_test_sampler_errors .........................   Passed    0.27 sec
+      Start 15: golden_test_ext_faults
+15/92 Test #15: golden_test_ext_faults .............................   Passed    0.27 sec
+      Start 16: golden_test_semantics_pairs
+16/92 Test #16: golden_test_semantics_pairs ........................   Passed    0.28 sec
+      Start 17: golden_test_oracle_exact
+17/92 Test #17: golden_test_oracle_exact ...........................   Passed    0.29 sec
+      Start 18: golden_test_diff_suites
+18/92 Test #18: golden_test_diff_suites ............................   Passed    0.26 sec
+      Start 19: golden_test_core_alpha_diff
+19/92 Test #19: golden_test_core_alpha_diff ........................   Passed    0.25 sec
+      Start 20: golden_test_scale_param_diff
+20/92 Test #20: golden_test_scale_param_diff .......................   Passed    0.26 sec
+      Start 21: golden_test_clip_diff
+21/92 Test #21: golden_test_clip_diff ..............................   Passed    0.27 sec
+      Start 22: golden_test_oracle_v2
+22/92 Test #22: golden_test_oracle_v2 ..............................   Passed    0.25 sec
+      Start 23: golden_test_dither_dst
+23/92 Test #23: golden_test_dither_dst .............................   Passed    0.30 sec
+      Start 24: golden_test_ext_mem_matrix
+24/92 Test #24: golden_test_ext_mem_matrix .........................   Passed    0.25 sec
+      Start 25: golden_test_tile
+25/92 Test #25: golden_test_tile ...................................   Passed    0.28 sec
+      Start 26: golden_test_tile_eq_random
+26/92 Test #26: golden_test_tile_eq_random .........................   Passed    0.42 sec
+      Start 27: golden_test_tile_ext
+27/92 Test #27: golden_test_tile_ext ...............................   Passed    0.27 sec
+      Start 28: golden_test_tile_faults
+28/92 Test #28: golden_test_tile_faults ............................   Passed    0.28 sec
+      Start 29: golden_test_tile_extended
+29/92 Test #29: golden_test_tile_extended ..........................   Passed    0.30 sec
+      Start 30: golden_test_integrity
+30/92 Test #30: golden_test_integrity ..............................   Passed    0.94 sec
+      Start 31: golden_fill_basic_run
+31/92 Test #31: golden_fill_basic_run ..............................   Passed    0.31 sec
+      Start 32: golden_fill_basic_compare
+32/92 Test #32: golden_fill_basic_compare ..........................   Passed    0.21 sec
+      Start 33: golden_blit_rgb565_basic_run
+33/92 Test #33: golden_blit_rgb565_basic_run .......................   Passed    0.07 sec
+      Start 34: golden_blit_rgb565_basic_compare
+34/92 Test #34: golden_blit_rgb565_basic_compare ...................   Passed    0.20 sec
+      Start 35: golden_blit_colorkey_run
+35/92 Test #35: golden_blit_colorkey_run ...........................   Passed    0.05 sec
+      Start 36: golden_blit_colorkey_compare
+36/92 Test #36: golden_blit_colorkey_compare .......................   Passed    0.18 sec
+      Start 37: golden_blit_alpha_argb8888_run
+37/92 Test #37: golden_blit_alpha_argb8888_run .....................   Passed    0.05 sec
+      Start 38: golden_blit_alpha_argb8888_compare
+38/92 Test #38: golden_blit_alpha_argb8888_compare .................   Passed    0.18 sec
+      Start 39: golden_blit_overdraw_rgb565_run
+39/92 Test #39: golden_blit_overdraw_rgb565_run ....................   Passed    0.05 sec
+      Start 40: golden_blit_overdraw_rgb565_compare
+40/92 Test #40: golden_blit_overdraw_rgb565_compare ................   Passed    0.17 sec
+      Start 41: golden_blit_additive_run
+41/92 Test #41: golden_blit_additive_run ...........................   Passed    0.06 sec
+      Start 42: golden_blit_additive_compare
+42/92 Test #42: golden_blit_additive_compare .......................   Passed    0.17 sec
+      Start 43: golden_blit_ext_scale_nearest_run
+43/92 Test #43: golden_blit_ext_scale_nearest_run ..................   Passed    0.05 sec
+      Start 44: golden_blit_ext_scale_nearest_compare
+44/92 Test #44: golden_blit_ext_scale_nearest_compare ..............   Passed    0.16 sec
+      Start 45: golden_blit_ext_scale_bilinear_run
+45/92 Test #45: golden_blit_ext_scale_bilinear_run .................   Passed    0.06 sec
+      Start 46: golden_blit_ext_scale_bilinear_compare
+46/92 Test #46: golden_blit_ext_scale_bilinear_compare .............   Passed    0.18 sec
+      Start 47: golden_blit_flip_xy_run
+47/92 Test #47: golden_blit_flip_xy_run ............................   Passed    0.05 sec
+      Start 48: golden_blit_flip_xy_compare
+48/92 Test #48: golden_blit_flip_xy_compare ........................   Passed    0.16 sec
+      Start 49: golden_blit_clip_run
+49/92 Test #49: golden_blit_clip_run ...............................   Passed    0.05 sec
+      Start 50: golden_blit_clip_compare
+50/92 Test #50: golden_blit_clip_compare ...........................   Passed    0.17 sec
+      Start 51: golden_indexed8_palette_run
+51/92 Test #51: golden_indexed8_palette_run ........................   Passed    0.06 sec
+      Start 52: golden_indexed8_palette_compare
+52/92 Test #52: golden_indexed8_palette_compare ....................   Passed    0.16 sec
+      Start 53: golden_indexed8_bilinear_run
+53/92 Test #53: golden_indexed8_bilinear_run .......................   Passed    0.05 sec
+      Start 54: golden_indexed8_bilinear_compare
+54/92 Test #54: golden_indexed8_bilinear_compare ...................   Passed    0.20 sec
+      Start 55: golden_color_mod_run
+55/92 Test #55: golden_color_mod_run ...............................   Passed    0.06 sec
+      Start 56: golden_color_mod_compare
+56/92 Test #56: golden_color_mod_compare ...........................   Passed    0.21 sec
+      Start 57: golden_premult_alpha_run
+57/92 Test #57: golden_premult_alpha_run ...........................   Passed    0.06 sec
+      Start 58: golden_premult_alpha_compare
+58/92 Test #58: golden_premult_alpha_compare .......................   Passed    0.16 sec
+      Start 59: golden_rgb565_dither_run
+59/92 Test #59: golden_rgb565_dither_run ...........................   Passed    0.05 sec
+      Start 60: golden_rgb565_dither_compare
+60/92 Test #60: golden_rgb565_dither_compare .......................   Passed    0.15 sec
+      Start 61: golden_argb8888_target_run
+61/92 Test #61: golden_argb8888_target_run .........................   Passed    0.06 sec
+      Start 62: golden_argb8888_target_compare
+62/92 Test #62: golden_argb8888_target_compare .....................   Passed    0.17 sec
+      Start 63: golden_fill_basic_frame_compare_mismatch
+63/92 Test #63: golden_fill_basic_frame_compare_mismatch ...........   Passed    0.41 sec
+      Start 64: golden_fixture_validate
+64/92 Test #64: golden_fixture_validate ............................   Passed    0.31 sec
+      Start 65: golden_tile_fixture_validate
+65/92 Test #65: golden_tile_fixture_validate .......................   Passed    0.25 sec
+      Start 66: golden_test_tile_sweep
+66/92 Test #66: golden_test_tile_sweep .............................   Passed    1.50 sec
+      Start 67: golden_tile_fixture_tile_fill_basic
+67/92 Test #67: golden_tile_fixture_tile_fill_basic ................   Passed    0.06 sec
+      Start 68: golden_tile_fixture_tile_alpha_overlap
+68/92 Test #68: golden_tile_fixture_tile_alpha_overlap .............   Passed    0.05 sec
+      Start 69: golden_tile_fixture_tile_bilinear_cross_boundary
+69/92 Test #69: golden_tile_fixture_tile_bilinear_cross_boundary ...   Passed    0.06 sec
+      Start 70: golden_tile_fixture_tile_palette
+70/92 Test #70: golden_tile_fixture_tile_palette ...................   Passed    0.07 sec
+      Start 71: golden_tile_fixture_tile_dither_cross_boundary
+71/92 Test #71: golden_tile_fixture_tile_dither_cross_boundary .....   Passed    0.07 sec
+      Start 72: gpu2d_test_api
+72/92 Test #72: gpu2d_test_api .....................................   Passed    0.25 sec
+      Start 73: gpu2d_test_backend
+73/92 Test #73: gpu2d_test_backend .................................   Passed    0.28 sec
+      Start 74: gpu2d_test_sim
+74/92 Test #74: gpu2d_test_sim .....................................   Passed    0.24 sec
+      Start 75: gpu2d_test_presenter
+75/92 Test #75: gpu2d_test_presenter ...............................   Passed    0.25 sec
+      Start 76: gpu2d_test_features
+76/92 Test #76: gpu2d_test_features ................................   Passed    0.53 sec
+      Start 77: gpu2d_test_system
+77/92 Test #77: gpu2d_test_system ..................................   Passed   38.09 sec
+      Start 78: gpu2d_test_boundary
+78/92 Test #78: gpu2d_test_boundary ................................   Passed    0.18 sec
+      Start 79: gpu2d_test_facility
+79/92 Test #79: gpu2d_test_facility ................................   Passed    0.14 sec
+      Start 80: gpu2d_test_assetc
+80/92 Test #80: gpu2d_test_assetc ..................................   Passed    1.92 sec
+      Start 81: gpu2d_test_argb_order
+81/92 Test #81: gpu2d_test_argb_order ..............................   Passed    0.38 sec
+      Start 82: gpu2d_test_asset_pipeline
+82/92 Test #82: gpu2d_test_asset_pipeline ..........................   Passed    2.46 sec
+      Start 83: gpu2d_test_facility_map
+83/92 Test #83: gpu2d_test_facility_map ............................   Passed    6.12 sec
+      Start 84: gpu2d_test_facility_visual
+84/92 Test #84: gpu2d_test_facility_visual .........................   Passed    7.43 sec
+      Start 85: gpu2d_test_facility_stability
+85/92 Test #85: gpu2d_test_facility_stability ......................   Passed    0.13 sec
+      Start 86: gpu2d_test_mutation
+86/92 Test #86: gpu2d_test_mutation ................................   Passed    0.26 sec
+      Start 87: gpu2d_test_cli_scenes
+87/92 Test #87: gpu2d_test_cli_scenes ..............................   Passed   16.15 sec
+      Start 88: gpu2d_test_capture_verify
+88/92 Test #88: gpu2d_test_capture_verify ..........................   Passed  131.18 sec
+      Start 89: gpu2d_test_stress_json
+89/92 Test #89: gpu2d_test_stress_json .............................   Passed   36.29 sec
+      Start 90: gpu2d_demo_headless_imm
+90/92 Test #90: gpu2d_demo_headless_imm ............................   Passed    0.38 sec
+      Start 91: gpu2d_demo_headless_tile
+91/92 Test #91: gpu2d_demo_headless_tile ...........................   Passed    1.74 sec
+      Start 92: gpu2d_demo_invalid_cli
+92/92 Test #92: gpu2d_demo_invalid_cli .............................   Passed    0.05 sec
+
+100% tests passed, 0 tests failed out of 92
+
+Total Test time (real) = 260.40 sec

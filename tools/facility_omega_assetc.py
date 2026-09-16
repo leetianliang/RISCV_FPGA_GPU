@@ -60,6 +60,10 @@ def process_one(spec, sheets):
     if min(x,y)<0 or x+w>sh.width or y+h>sh.height:
         raise ValueError('crop outside source')
     crop=sh.crop((x,y,x+w,y+h)).convert('RGBA')
+    if spec.get('mirror_x'):
+        crop=crop.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+    if spec.get('mirror_y'):
+        crop=crop.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
     tw,th=spec['tw'],spec['th']
     if spec['fmt']=='rgb565':
         crop=crop.resize((tw,th),Image.Resampling.LANCZOS)

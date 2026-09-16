@@ -1,6 +1,7 @@
 #include "gpu2d/renderer.hpp"
 #include "gpu2d/types.hpp"
 #include "facility/app.hpp"
+#include "facility_showcase.hpp"
 #include "golden_renderer.hpp"
 #include "neon/assets.hpp"
 #include "neon/sim.hpp"
@@ -37,6 +38,7 @@ struct Cli {
     bool show_help = false;
     bool xray = false;
     bool facility_route = false;
+    bool facility_showcase = false;
     std::string app = "neon";  // neon | facility
 };
 
@@ -47,7 +49,9 @@ Usage:
              [--backend immediate|tile|tile16|tile64]
              [--profile interactive|showcase]
              [--scene game|sprite|alpha|bullet|scale|overdraw]
-             [--capture <path.raw>] [--xray] [--facility-route] [--help]
+             [--capture <path.raw>] [--xray] [--facility-route] [--facility-showcase] [--help]
+
+  --facility-showcase: headless facility capture of an explicitly staged snapshot.
 
 Controls:
   WASD move | F1-F5 stress (neon) | F6 Immediate | F7 Tile32
@@ -75,6 +79,8 @@ bool parse_args(int argc, char** argv, Cli& cli) {
             cli.headless = true;
         } else if (a == "--facility-route") {
             cli.facility_route = true;
+        } else if (a == "--facility-showcase") {
+            cli.facility_showcase = true;
         } else if (a == "--app") {
             cli.app = need("--app");
             if (cli.app != "neon" && cli.app != "facility") {
@@ -142,6 +148,10 @@ bool parse_args(int argc, char** argv, Cli& cli) {
     }
     if (cli.headless && cli.frames == 0) {
         cli.frames = 60;  // default headless length
+    }
+    if (cli.facility_showcase && (!cli.headless || cli.app!="facility" || cli.facility_route)) {
+        std::fprintf(stderr,"--facility-showcase requires --headless --app facility and no route\n");
+        cli.valid=false;
     }
     return cli.valid;
 }
@@ -549,10 +559,13 @@ int main(int argc, char** argv) {
                 input.clear_edges();
                 for (int i = 0; i < 4; ++i) keys[i] = false;
             }
-            facility::sim_step(fo, keys);
+            if (cli.facility_showcase) facility_capture::stage(fo);
+            else facility::sim_step(fo, keys);
             facility::camera_follow(fo, cli.profile.width, cli.profile.height);
             facility::render_scene(rec, fo, fo_tex, cli.profile.width, cli.profile.height);
             char hud[128];
+            if (cli.facility_showcase)
+                neon::draw_text_pal(rec, assets, 20, cli.profile.height-14, "STAGED SHOWCASE / 20 ENEMIES", Color::rgb(115,152,164));
             neon::draw_text_pal(rec, assets, 20, 7, "FACILITY-O", Color::rgb(211, 229, 234));
             neon::draw_text_pal(rec, assets, 20, 19, "POWER TEST / A-3", Color::rgb(85, 146, 170));
             neon::draw_text_pal(rec, assets, 134, 13, "HP", Color::rgb(197, 220, 225));
