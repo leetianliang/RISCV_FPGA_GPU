@@ -65,7 +65,8 @@ def process_one(spec, sheets):
         crop=crop.resize((tw,th),Image.Resampling.LANCZOS)
         bg=Image.new('RGBA',(tw,th),(12,18,24,255))
         bg.alpha_composite(crop)
-        return ImageEnhance.Brightness(bg.convert('RGB')).enhance(spec.get('tone',1)).convert('RGBA')
+        material=ImageEnhance.Brightness(bg.convert('RGB')).enhance(spec.get('tone',1))
+        return ImageEnhance.Contrast(material).enhance(spec.get('contrast',1)).convert('RGBA')
     bbox=crop.getchannel('A').getbbox()
     if not bbox:
         raise ValueError('empty crop')
@@ -147,9 +148,11 @@ def build_outputs():
         x,y=i%cols*cw,i//cols*ch
         im=images[name]
         draw.rectangle((x+120,y+4,x+236,y+143),fill=(113,124,137))
-        factor=max(1,min(3,110//im.width,136//im.height))
-        enlarged=im.resize((im.width*factor,im.height*factor),Image.Resampling.NEAREST)
-        contact.alpha_composite(im,(x+4,y+8))
+        factor=min(3,110/im.width,136/im.height)
+        enlarged=im.resize((max(1,round(im.width*factor)),max(1,round(im.height*factor))),Image.Resampling.NEAREST)
+        native=im.copy()
+        native.thumbnail((110,136),Image.Resampling.NEAREST)
+        contact.alpha_composite(native,(x+4,y+8))
         contact.alpha_composite(enlarged,(x+122,y+6))
         draw.text((x+5,y+148),name,fill='white')
         draw.text((x+5,y+164),f'{im.width}x{im.height} '+it['format'],fill='#89b8cb')

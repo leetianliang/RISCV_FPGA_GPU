@@ -28,6 +28,7 @@ target_link_libraries(neon_game PUBLIC gpu2d_api)
 target_compile_options(neon_game PRIVATE ${GOLDEN_WARN_FLAGS})
 
 add_library(facility_omega STATIC
+    ${CMAKE_SOURCE_DIR}/software/applications/facility_omega/src/environment.cpp
     ${CMAKE_SOURCE_DIR}/software/applications/facility_omega/src/app.cpp
 )
 target_include_directories(facility_omega PUBLIC
@@ -115,6 +116,11 @@ add_test(NAME gpu2d_test_asset_pipeline
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 add_executable(gpu2d_test_facility_visual tests/test_facility_visual.cpp)
+add_executable(gpu2d_test_facility_map tests/test_facility_map.cpp)
+target_link_libraries(gpu2d_test_facility_map PRIVATE facility_omega golden_backend_lib)
+target_compile_options(gpu2d_test_facility_map PRIVATE ${GOLDEN_WARN_FLAGS})
+add_test(NAME gpu2d_test_facility_map COMMAND gpu2d_test_facility_map
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 target_link_libraries(gpu2d_test_facility_visual PRIVATE facility_omega golden_backend_lib)
 target_compile_options(gpu2d_test_facility_visual PRIVATE ${GOLDEN_WARN_FLAGS})
 add_test(NAME gpu2d_test_facility_visual COMMAND gpu2d_test_facility_visual

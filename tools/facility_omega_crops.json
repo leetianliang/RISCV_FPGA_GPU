@@ -1027,6 +1027,19 @@
     "feet": false,
     "tone": 0.68
   },
+  "floor_material": {
+    "sheet": "environment",
+    "box": [104, 136, 64, 48],
+    "tw": 256,
+    "th": 256,
+    "fmt": "rgb565",
+    "ax": 0,
+    "ay": 0,
+    "role": "base_material",
+    "feet": false,
+    "tone": 0.67,
+    "contrast": 0.25
+  },
   "floor_base_3": {
     "sheet": "environment",
     "box": [

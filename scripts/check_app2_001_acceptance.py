@@ -160,7 +160,10 @@ def main() -> int:
     if bad:
         print(f"app2_001 acceptance: FAIL ({bad})")
         return 1
-    print(f"app2_001 acceptance: PASS ({len(ids)} ids, 56 report rows)")
+    print(f"app2_001 evidence structure: PASS ({len(ids)} ids, 56 report rows)")
+    print(f"Stage status: {data.get('stage_status', 'NOT_REVIEWED')}; "
+          f"owner visual approval: {data.get('owner_visual_approval', 'PENDING')}. "
+          "This checker does not execute tests or grant visual acceptance.")
     return 0
 
 

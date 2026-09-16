@@ -33,19 +33,6 @@ void emit_effect(AppState& s, i32 x, i32 y, bool explosion) {
     if (s.effects.size() < 96) s.effects.push_back(fx);
 }
 
-u32 map_index(const AppState& s, u32 tx, u32 ty) {
-    if (tx >= kMapTiles || ty >= kMapTiles) {
-        return 0;
-    }
-    return s.map[static_cast<size_t>(ty) * kMapTiles + tx];
-}
-
-const char* floor_name(u32 idx) {
-    static const char* kFloors[8] = {"floor_00", "floor_01", "floor_02", "floor_03",
-                                     "floor_04", "floor_05", "floor_06", "floor_07"};
-    return kFloors[idx & 7u];
-}
-
 bool read_file(const std::string& path, std::vector<u8>& out) {
     std::ifstream f(path, std::ios::binary);
     if (!f) {
@@ -146,25 +133,8 @@ bool load_runtime_atlases(const std::string& dir, const std::vector<SpriteBlob>&
 void sim_reset(AppState& s, u32 seed) {
     s = AppState{};
     s.map_seed = seed ? seed : 1u;
-    s.map.resize(static_cast<size_t>(kMapTiles) * kMapTiles);
-    // R7: base floors dominate; specials only sparse / authored.
-    u32 x = s.map_seed;
-    for (u32 ty = 0; ty < kMapTiles; ++ty) {
-        for (u32 tx = 0; tx < kMapTiles; ++tx) {
-            x = x * 1664525u + 1013904223u;
-            u8 t = 0;
-            const u32 r = (x >> 16) % 100u;
-            // Calm continuous panels; wear is uncommon, service grates form runs.
-            if (r > 96) t = 1;
-            else if (r > 94) t = 6;
-            else if (r > 92) t = 3;
-            if (ty % 32 == 8 || ty % 32 == 24) t = 2;
-            if ((tx % 32 == 7 || tx % 32 == 25) && ty % 32 >= 10 && ty % 32 <= 22)
-                t = (ty & 1u) ? 4 : 5;
-            if (ty % 32 == 10 && tx % 32 >= 14 && tx % 32 <= 17) t = 7;
-            s.map[static_cast<size_t>(ty) * kMapTiles + tx] = t;
-        }
-    }
+    s.map.assign(static_cast<size_t>(kMapTiles) * kMapTiles, 0);
+    s.environment = make_hero_environment();
     s.player = Player{};
     s.player.world_x = static_cast<i32>(kWorldW / 2);
     s.player.world_y = static_cast<i32>(kWorldH / 2);
@@ -209,6 +179,7 @@ void camera_follow(AppState& s, u32 view_w, u32 view_h) {
 
 void player_move(AppState& s, bool up, bool down, bool left, bool right, i32 speed) {
     s.player.moving = up || down || left || right;
+    const i32 original_x = s.player.world_x, original_y = s.player.world_y;
     if (up) {
         s.player.world_y -= speed;
         s.player.dir = 1;
@@ -225,6 +196,9 @@ void player_move(AppState& s, bool up, bool down, bool left, bool right, i32 spe
         s.player.world_x += speed;
         s.player.dir = 3;
     }
+    const i32 dx = s.player.world_x - original_x, dy = s.player.world_y - original_y;
+    s.player.world_x = original_x; s.player.world_y = original_y;
+    move_in_environment(s.environment, s.player.world_x, s.player.world_y, dx, dy, 8);
     // world boundary
     if (s.player.world_x < 8) {
         s.player.world_x = 8;
@@ -300,8 +274,9 @@ void sim_step(AppState& s, const bool* keys) {
             const i32 len = static_cast<i32>(distance_root(static_cast<u32>(dist2)));
             e.motion_x += (dx * sp * 256) / len;
             e.motion_y += (dy * sp * 256) / len;
-            e.world_x += e.motion_x / 256;
-            e.world_y += e.motion_y / 256;
+            move_enemy_in_environment(s.environment, e.world_x, e.world_y,
+                e.motion_x / 256, e.motion_y / 256,
+                e.kind == EnemyKind::Tank ? 18 : 10, s.player.world_x, s.player.world_y);
             e.motion_x %= 256;
             e.motion_y %= 256;
         }
@@ -495,6 +470,17 @@ void spawn_enemy(AppState& s, EnemyKind kind) {
     }
     e.world_x = sx;
     e.world_y = sy;
+    const i32 radius = kind == EnemyKind::Tank ? 18 : 10;
+    if (!position_clear(s.environment, sx, sy, radius)) {
+        bool found = false;
+        for (i32 distance = 32; distance <= 256 && !found; distance += 32)
+            for (i32 oy : {-1, 0, 1}) for (i32 ox : {-1, 0, 1}) {
+                if (!found && position_clear(s.environment, sx+ox*distance, sy+oy*distance, radius)) {
+                    e.world_x=sx+ox*distance; e.world_y=sy+oy*distance; found=true;
+                }
+            }
+        if (!found) return;
+    }
     for (auto& slot : s.enemies) {
         if (!slot.alive) {
             slot = e;
@@ -688,35 +674,7 @@ const char* player_sprite_name(const Player& p) {
 
 void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex,
                   u32 view_w, u32 view_h) {
-    i32 tx0, ty0, tx1, ty1;
-    visible_map_range(s, view_w, view_h, 1, tx0, ty0, tx1, ty1);
-    api.fill_rect(0, 0, view_w, view_h, gpu2d::Color::rgb(8, 12, 20));
-    const i32 ts = static_cast<i32>(kMapTileSize);
-    for (i32 ty = ty0; ty <= ty1; ++ty) {
-        for (i32 tx = tx0; tx <= tx1; ++tx) {
-            const u32 idx = map_index(s, static_cast<u32>(tx), static_cast<u32>(ty));
-            static constexpr const char* panels[] = {
-                "floor_base_0", "floor_base_1", "floor_base_2", "floor_base_3"};
-            const TexRef* t = tex.find(idx == 0 ? panels[(ty & 1) * 2 + (tx & 1)] : floor_name(idx));
-            if (!t) {
-                continue;
-            }
-            gpu2d::SpriteParams sp;
-            sp.tex = t->id; sp.src_x = t->sx; sp.src_y = t->sy;
-            sp.w = t->w;
-            sp.h = t->h;
-            sp.dst_x = tx * ts - s.cam.x;
-            sp.dst_y = ty * ts - s.cam.y;
-            api.draw_sprite(sp);
-        }
-    }
-    // Authored service bays repeat across the large world; only visible art is submitted.
-    // These are visual landmarks, not newly introduced collision walls.
-    auto world_rect = [&](i32 wx, i32 wy, u32 w, u32 h, gpu2d::Color color) {
-        if (wx + static_cast<i32>(w) > s.cam.x && wy + static_cast<i32>(h) > s.cam.y &&
-            wx < s.cam.x + static_cast<i32>(view_w) && wy < s.cam.y + static_cast<i32>(view_h))
-            api.fill_rect(wx - s.cam.x, wy - s.cam.y, w, h, color);
-    };
+    render_environment(api, s.environment, tex, s.cam.x, s.cam.y, view_w, view_h);
     // Soft contact shadow (two stacked rects — no host blur).
     auto contact_shadow = [&](i32 wx, i32 wy, i32 half_w, i32 half_h) {
         const i32 sx = wx - s.cam.x - half_w;
@@ -750,43 +708,6 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
         sp.global_alpha = alpha;
         api.draw_sprite(sp);
     };
-    for (i32 cy = 512; cy <= 3584; cy += 768) {
-        for (i32 cx = 512; cx <= 3584; cx += 768) {
-            // North/south service islands frame an open fighting area with side exits.
-            for (i32 sign : {-1, 1}) {
-                const i32 y = cy + (sign < 0 ? -86 : 150);
-                world_rect(cx - 256, y - 28, 512, 58, gpu2d::Color::rgb(12, 22, 30));
-                world_rect(cx - 256, y + 30, 512, 3, gpu2d::Color::rgb(54, 73, 82));
-                world_rect(cx - 240, y + 19, 480, 3, gpu2d::Color::rgb(26, 63, 76));
-                for (i32 x = -240; x <= 224; x += 32) {
-                    if (x < -64 || x > 64) art("hazard_stripe", cx+x, y+34, true);
-                }
-                for (i32 x : {-224, -180, 164, 208}) {
-                    art("server", cx+x, y+18);
-                    world_rect(cx+x-5, y+22, 10, 2, gpu2d::Color::rgb(42, 126, 151));
-                }
-                art("pipe_elbow", cx-114, y+16);
-                art("console", cx+104, y+18);
-                art("power_panel", cx-32, y-42, true);
-                art("canister", cx-50, y+18);
-                art("canister", cx+50, y+18);
-            }
-            art("mark_a3", cx-204, cy-60, true);
-            art("mark_service", cx+138, cy+35, true);
-            art("warning_lamp", cx-270, cy-88);
-            art("warning_lamp", cx+270, cy+150);
-            art("barrier", cx-248, cy+104);
-            art("barrier", cx+250, cy-60);
-            art("stacked_crates", cx-262, cy+152);
-            art("crate", cx-214, cy+140);
-            art("barrel", cx+263, cy+42);
-            art("cable_spool", cx+228, cy+63);
-            // Inter-room landmarks preserve meaning after travelling > one viewport.
-            art("access_door", cx+448, cy-96);
-            art("power_cabinet", cx+404, cy-80);
-            art("machine_wreck", cx+464, cy+48);
-        }
-    }
     // enemies (cull off-screen — G-05)
     for (const auto& e : s.enemies) {
         if (!e.alive) {

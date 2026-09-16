@@ -365,8 +365,8 @@ ROWS: dict[str, tuple[str, list[str], list[str], str]] = {
     ),
 }
 
-# Explicit audited PASS set — all IDs currently implemented for vertical slice.
-REVIEWED_PASS = set(AUTHORITATIVE)
+# Historical implementation claims, not review decisions or executed test results.
+LEGACY_IMPLEMENTATION_PASS = set(AUTHORITATIVE)
 
 
 def main() -> int:
@@ -377,7 +377,7 @@ def main() -> int:
             {
                 "id": iid,
                 "mandatory": True,
-                "status": "PASS" if iid in REVIEWED_PASS else "NOT_DONE",
+                "status": "PASS" if iid in LEGACY_IMPLEMENTATION_PASS else "NOT_DONE",
                 "requirement": req,
                 "implementation_evidence": impl,
                 "verification_evidence": ver,
@@ -388,6 +388,9 @@ def main() -> int:
     data = {
         "task": "TASK_APP2_001",
         "stage": "004.5-application2",
+        "stage_status": "HOLD",
+        "owner_visual_approval": "PENDING",
+        "status_scope": "Historical local implementation claims; V3 map gate is authoritative.",
         "authoritative_ids": AUTHORITATIVE,
         "acceptance": acc,
     }

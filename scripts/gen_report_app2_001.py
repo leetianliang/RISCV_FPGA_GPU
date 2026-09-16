@@ -34,7 +34,10 @@ def main() -> int:
 
 ## 1. Result
 
-**PASS** (pending REVIEW_APP2_001)
+**HOLD — MAP VISUAL/SEMANTIC REWORK REQUIRED**
+
+V3 review governs stage acceptance. The matrix below records historical local
+implementation checks; it does not constitute owner visual approval.
 
 ## 2. START_COMMIT
 

@@ -2,6 +2,7 @@
 
 #include "gpu2d/graphics_api.hpp"
 #include "gpu2d/types.hpp"
+#include "facility/environment.hpp"
 
 #include <string>
 #include <vector>
@@ -177,6 +178,7 @@ struct AppState {
     u32 sim_seed = 1234;
     Rng rng{1234};
     std::vector<u8> map;
+    Environment environment;
     std::vector<Enemy> enemies;
     std::vector<Bullet> bullets;
     std::vector<Effect> effects;
