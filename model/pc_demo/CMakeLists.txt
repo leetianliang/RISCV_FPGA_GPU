@@ -28,6 +28,7 @@ target_link_libraries(neon_game PUBLIC gpu2d_api)
 target_compile_options(neon_game PRIVATE ${GOLDEN_WARN_FLAGS})
 
 add_library(facility_omega STATIC
+    ${CMAKE_SOURCE_DIR}/software/applications/facility_omega/src/gameplay.cpp
     ${CMAKE_SOURCE_DIR}/software/applications/facility_omega/src/environment.cpp
     ${CMAKE_SOURCE_DIR}/software/applications/facility_omega/src/app.cpp
 )
@@ -96,6 +97,23 @@ add_test(NAME gpu2d_test_boundary
 
 # Headless demo smoke via CLI
 add_executable(gpu2d_test_facility tests/test_facility.cpp)
+add_executable(gpu2d_test_facility_spatial tests/test_facility_spatial.cpp)
+add_executable(gpu2d_test_facility_gameplay tests/test_facility_gameplay.cpp)
+add_executable(gpu2d_test_facility_app2_visual tests/test_facility_app2_visual.cpp)
+target_link_libraries(gpu2d_test_facility_app2_visual PRIVATE facility_omega golden_backend_lib)
+target_compile_options(gpu2d_test_facility_app2_visual PRIVATE ${GOLDEN_WARN_FLAGS})
+foreach(mode corpus density)
+    add_test(NAME gpu2d_test_facility_app2_${mode} COMMAND gpu2d_test_facility_app2_visual ${mode}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+endforeach()
+target_link_libraries(gpu2d_test_facility_gameplay PRIVATE facility_omega)
+target_compile_options(gpu2d_test_facility_gameplay PRIVATE ${GOLDEN_WARN_FLAGS})
+foreach(mode director enemies weapons upgrades determinism capacity)
+    add_test(NAME gpu2d_test_facility_${mode} COMMAND gpu2d_test_facility_gameplay ${mode})
+endforeach()
+target_link_libraries(gpu2d_test_facility_spatial PRIVATE facility_omega)
+target_compile_options(gpu2d_test_facility_spatial PRIVATE ${GOLDEN_WARN_FLAGS})
+add_test(NAME gpu2d_test_facility_spatial COMMAND gpu2d_test_facility_spatial)
 target_link_libraries(gpu2d_test_facility PRIVATE facility_omega)
 target_compile_options(gpu2d_test_facility PRIVATE ${GOLDEN_WARN_FLAGS})
 add_test(NAME gpu2d_test_facility COMMAND gpu2d_test_facility

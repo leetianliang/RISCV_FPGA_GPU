@@ -2,6 +2,7 @@
 #include "gpu2d/types.hpp"
 #include "facility/app.hpp"
 #include "facility_showcase.hpp"
+#include "facility_app2_fixtures.hpp"
 #include "golden_renderer.hpp"
 #include "neon/assets.hpp"
 #include "neon/sim.hpp"
@@ -39,6 +40,8 @@ struct Cli {
     bool xray = false;
     bool facility_route = false;
     bool facility_showcase = false;
+    u32 facility_start_seconds=0;
+    std::string facility_capture_scene;
     std::string app = "neon";  // neon | facility
 };
 
@@ -52,6 +55,8 @@ Usage:
              [--capture <path.raw>] [--xray] [--facility-route] [--facility-showcase] [--help]
 
   --facility-showcase: headless facility capture of an explicitly staged snapshot.
+  --facility-start-seconds N: headless verification/demo game-time offset.
+  --facility-capture-scene mid|fx|elite|level|density|technical|showcase: authored fixture.
 
 Controls:
   WASD move | F1-F5 stress (neon) | F6 Immediate | F7 Tile32
@@ -81,6 +86,13 @@ bool parse_args(int argc, char** argv, Cli& cli) {
             cli.facility_route = true;
         } else if (a == "--facility-showcase") {
             cli.facility_showcase = true;
+        } else if (a == "--facility-start-seconds") {
+            const std::string value=need("--facility-start-seconds");
+            if(value.empty() || value.size()>5 || value.find_first_not_of("0123456789")!=std::string::npos)cli.valid=false;
+            else cli.facility_start_seconds=static_cast<u32>(std::stoul(value));
+        } else if (a == "--facility-capture-scene") {
+            cli.facility_capture_scene=need("--facility-capture-scene");
+            if(!facility_capture::valid_scene(cli.facility_capture_scene))cli.valid=false;
         } else if (a == "--app") {
             cli.app = need("--app");
             if (cli.app != "neon" && cli.app != "facility") {
@@ -153,6 +165,8 @@ bool parse_args(int argc, char** argv, Cli& cli) {
         std::fprintf(stderr,"--facility-showcase requires --headless --app facility and no route\n");
         cli.valid=false;
     }
+    if((cli.facility_start_seconds || !cli.facility_capture_scene.empty()) &&
+       (!cli.headless || cli.app!="facility" || cli.facility_showcase || cli.facility_route))cli.valid=false;
     return cli.valid;
 }
 
@@ -294,6 +308,7 @@ int main(int argc, char** argv) {
                 }
             }
             facility::sim_reset(fo, cli.seed);
+            fo.frame=static_cast<u64>(cli.facility_start_seconds)*facility::kTicksPerSecond;
             facility::set_viewport(fo, cli.profile.width, cli.profile.height);
         } else if (cli.app == "facility") {
             std::fprintf(stderr, "failed to load facility assets from %s\n", fo_rt.c_str());
@@ -559,11 +574,17 @@ int main(int argc, char** argv) {
                 input.clear_edges();
                 for (int i = 0; i < 4; ++i) keys[i] = false;
             }
-            if (cli.facility_showcase) facility_capture::stage(fo);
+            if (!cli.facility_capture_scene.empty()) facility_capture::app2_fixture(fo,cli.facility_capture_scene);
+            else if (cli.facility_showcase) facility_capture::stage(fo);
             else facility::sim_step(fo, keys);
             facility::camera_follow(fo, cli.profile.width, cli.profile.height);
             facility::render_scene(rec, fo, fo_tex, cli.profile.width, cli.profile.height);
             char hud[128];
+            for(u32 i=0;i<4;++i)if(fo.gameplay.weapons[i].level) {
+                std::snprintf(hud,sizeof(hud),"L%u",fo.gameplay.weapons[i].level);
+                neon::draw_text_pal(rec,assets,320+i*72,39,hud,Color::rgb(160,211,220));
+            }
+            if(!cli.facility_capture_scene.empty())neon::draw_text_pal(rec,assets,480,cli.profile.height-14,"STAGED APP2_002",Color::rgb(120,160,174));
             if (cli.facility_showcase)
                 neon::draw_text_pal(rec, assets, 20, cli.profile.height-14, "STAGED SHOWCASE / 20 ENEMIES", Color::rgb(115,152,164));
             neon::draw_text_pal(rec, assets, 20, 7, "FACILITY-O", Color::rgb(211, 229, 234));
@@ -583,17 +604,26 @@ int main(int argc, char** argv) {
                 const i32 cy = static_cast<i32>(cli.profile.height) / 2;
                 neon::draw_text_pal(rec, assets, cx - 40, cy - 48, "LEVEL UP",
                                     Color::rgb(245, 200, 80));
-                neon::draw_text_pal(rec, assets, cx - 132, cy - 12, "[1] DAMAGE +1",
-                                    Color::rgb(200, 230, 240));
-                neon::draw_text_pal(rec, assets, cx - 36, cy - 12, "[2] RATE +1",
-                                    Color::rgb(200, 230, 240));
-                neon::draw_text_pal(rec, assets, cx + 60, cy - 12, "[3] SHOTS +1",
-                                    Color::rgb(200, 230, 240));
+                for(u32 i=0;i<3;++i) {
+                    const auto choice=fo.gameplay.choices[i];const i32 x=cx-136+static_cast<i32>(i)*96;
+                    neon::draw_text_pal(rec,assets,x,cy+1,facility::choice_name(choice),Color::rgb(200,230,240));
+                    if(choice.kind<4)std::snprintf(hud,sizeof(hud),"[%u] %s L%u",i+1,fo.gameplay.weapons[choice.kind].level?"UP":"NEW",fo.gameplay.weapons[choice.kind].level+1);
+                    else std::snprintf(hud,sizeof(hud),"[%u] BOOST",i+1);
+                    neon::draw_text_pal(rec,assets,x+23,cy-14,hud,Color::rgb(220,197,130));
+                }
             }
-            if (tech_hud) {
+            if (tech_hud || cli.facility_capture_scene=="technical") {
                 std::snprintf(hud, sizeof(hud), "CAM %d,%d EN %u BL %u", fo.cam.x, fo.cam.y,
                               facility::live_enemy_count(fo), facility::live_bullet_count(fo));
                 neon::draw_text_pal(rec, assets, 5, cli.profile.height - 12, hud, Color::rgb(147, 190, 199));
+                u32 alpha=0,add=0,scale=0,bilinear=0,pickups=0;
+                for(const auto& g:fo.xp_gems)pickups+=g.alive;
+                for(const auto& c:rec.commands())if(c.op==gpu2d::RecOp::Sprite){alpha+=c.sp.blend==gpu2d::BlendMode::StraightAlpha;add+=c.sp.blend==gpu2d::BlendMode::AddSat;scale+=c.sp.scale_w!=0;bilinear+=c.sp.filter==gpu2d::FilterMode::Bilinear;}
+                std::snprintf(hud,sizeof(hud),"CMD %u SP %u A %u ADD %u SC %u BI %u PK %u",static_cast<u32>(rec.commands().size()),rec.sprite_count(),alpha,add,scale,bilinear,pickups);
+                neon::draw_text_pal(rec,assets,5,cli.profile.height-36,hud,Color::rgb(147,190,199));
+                const auto& telemetry=gpu.telemetry();
+                std::snprintf(hud,sizeof(hud),"PREV TILE %u WR %u OD %u",telemetry.tiles_active,telemetry.workref_count,telemetry.max_overdraw);
+                neon::draw_text_pal(rec,assets,5,cli.profile.height-24,hud,Color::rgb(147,190,199));
             }
             rec.present();
             if (!gpu.execute_frame(rec.commands())) {

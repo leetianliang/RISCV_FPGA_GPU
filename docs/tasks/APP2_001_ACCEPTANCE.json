@@ -1,9 +1,9 @@
 {
   "task": "TASK_APP2_001",
   "stage": "004.5-application2",
-  "stage_status": "HOLD",
-  "owner_visual_approval": "PENDING",
-  "status_scope": "Historical local implementation claims; V3 map gate is authoritative.",
+  "stage_status": "MAP_GATE_CLOSED",
+  "owner_visual_approval": "PASS_REVIEW_APP2_MAP_R3V2_VISUAL_FINAL",
+  "status_scope": "Historical implementation claims; map-first HOLD lifted by final R3V2 review.",
   "authoritative_ids": [
     "AST-01",
     "AST-02",

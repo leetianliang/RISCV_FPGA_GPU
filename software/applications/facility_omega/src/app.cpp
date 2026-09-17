@@ -9,30 +9,6 @@
 namespace facility {
 namespace {
 
-// Binary restoring sqrt: bounded by 16 iterations for a 32-bit argument.
-u32 distance_root(u32 value) {
-    u32 result = 0, bit = 1u << 30;
-    while (bit > value) bit >>= 2;
-    while (bit != 0) {
-        if (value >= result + bit) {
-            value -= result + bit;
-            result = (result >> 1) + bit;
-        } else {
-            result >>= 1;
-        }
-        bit >>= 2;
-    }
-    return result ? result : 1;
-}
-
-void emit_effect(AppState& s, i32 x, i32 y, bool explosion) {
-    Effect fx{x, y, explosion ? 18u : 7u, explosion};
-    for (auto& old : s.effects) {
-        if (!old.life) { old = fx; return; }
-    }
-    if (s.effects.size() < 96) s.effects.push_back(fx);
-}
-
 bool read_file(const std::string& path, std::vector<u8>& out) {
     std::ifstream f(path, std::ios::binary);
     if (!f) {
@@ -142,14 +118,15 @@ void sim_reset(AppState& s, u32 seed) {
     s.sim_seed = seed ? seed : 1u;
     s.rng.seed(s.sim_seed);
     s.enemies.clear();
-    s.enemies.reserve(256);
+    s.enemies.reserve(kEnemyCapacity);
     s.bullets.clear();
-    s.bullets.reserve(256);
-    s.effects.reserve(96);
+    s.bullets.reserve(kProjectileCapacity);
+    s.effects.reserve(kEffectCapacity);
     s.xp_gems.clear();
-    s.xp_gems.reserve(512);
+    s.xp_gems.reserve(kPickupCapacity);
     s.spawn_timer = 0;
-    s.enemy_count_target = 6;
+    s.enemy_count_target = kEnemyCapacity;
+    init_gameplay(s);
     s.frame = 0;
     s.level_up_pending = false;
     s.upgrades_taken = 0;
@@ -219,336 +196,6 @@ void player_move(AppState& s, bool up, bool down, bool left, bool right, i32 spe
     }
 }
 
-void sim_step(AppState& s, const bool* keys) {
-    // I-05: freeze world while upgrade choice is open.
-    if (s.level_up_pending) {
-        return;
-    }
-    ++s.frame;
-    for (auto& fx : s.effects) if (fx.life) --fx.life;
-    player_move(s, keys && keys[0], keys && keys[1], keys && keys[2], keys && keys[3]);
-    if (s.player.hurt_timer > 0) {
-        --s.player.hurt_timer;
-    }
-    // Spawn outside current viewport (G-02)
-    if (++s.spawn_timer >= 45) {
-        s.spawn_timer = 0;
-        const u32 live = live_enemy_count(s);
-        if (live < s.enemy_count_target) {
-            const u32 r = s.rng.range(0, 10);
-            EnemyKind k = r < 5 ? EnemyKind::Drone : (r < 8 ? EnemyKind::Crawler : EnemyKind::Tank);
-            spawn_enemy(s, k);
-            if (s.frame > 600 && s.enemy_count_target < 40) {
-                ++s.enemy_count_target;
-            }
-        }
-    }
-    // Auto Pulse Shot (H-01..H-02)
-    if (s.player.fire_cooldown > 0) {
-        --s.player.fire_cooldown;
-    } else {
-        fire_pulse(s);
-    }
-    // Enemies chase player
-    for (auto& e : s.enemies) {
-        if (!e.alive) {
-            continue;
-        }
-        const i32 dx = s.player.world_x - e.world_x;
-        const i32 dy = s.player.world_y - e.world_y;
-        i32 dist2 = dx * dx + dy * dy;
-        if (dist2 < 1) {
-            dist2 = 1;
-        }
-        i32 sp = 2;
-        i32 hit_r = 14;
-        if (e.kind == EnemyKind::Crawler) {
-            sp = 1;
-            hit_r = 16;
-        } else if (e.kind == EnemyKind::Tank) {
-            sp = 1;
-            hit_r = 22;
-        }
-        // integer step toward player (deterministic, no float wall-clock)
-        if (dist2 > 0) {
-            const i32 len = static_cast<i32>(distance_root(static_cast<u32>(dist2)));
-            e.motion_x += (dx * sp * 256) / len;
-            e.motion_y += (dy * sp * 256) / len;
-            move_enemy_in_environment(s.environment, e.world_x, e.world_y,
-                e.motion_x / 256, e.motion_y / 256,
-                e.kind == EnemyKind::Tank ? 18 : 10, s.player.world_x, s.player.world_y);
-            e.motion_x %= 256;
-            e.motion_y %= 256;
-        }
-        ++e.anim;
-        if (e.flash) {
-            --e.flash;
-        }
-        // touch damage
-        const i32 tdx = e.world_x - s.player.world_x;
-        const i32 tdy = e.world_y - s.player.world_y;
-        if (tdx * tdx + tdy * tdy < hit_r * hit_r && s.player.hurt_timer == 0) {
-            player_hurt(s, e.kind == EnemyKind::Tank ? 6 : 2);
-        }
-    }
-    // Bullets
-    for (auto& b : s.bullets) {
-        if (!b.alive) {
-            continue;
-        }
-        b.world_x += b.vx;
-        b.world_y += b.vy;
-        if (b.world_x < 0 || b.world_y < 0 || b.world_x > static_cast<i32>(kWorldW) ||
-            b.world_y > static_cast<i32>(kWorldH)) {
-            b.alive = false;
-            continue;
-        }
-        if (!b.enemy) {
-            for (auto& e : s.enemies) {
-                if (!e.alive) {
-                    continue;
-                }
-                const i32 dx = e.world_x - b.world_x;
-                const i32 dy = e.world_y - b.world_y;
-                i32 hit = 10;
-                if (e.kind == EnemyKind::Tank) {
-                    hit = 18;
-                }
-                if (dx * dx + dy * dy < hit * hit) {
-                    e.hp -= s.player.pulse_damage;
-                    e.flash = 6;
-                    emit_effect(s, e.world_x, e.world_y, e.hp <= 0);
-                    b.alive = false;
-                    if (e.hp <= 0) {
-                        e.alive = false;
-                        ++s.player.kills;
-                        const u32 xv = e.kind == EnemyKind::Tank ? 3u
-                                           : (e.kind == EnemyKind::Crawler ? 2u : 1u);
-                        spawn_xp(s, e.world_x, e.world_y, xv);
-                    }
-                    break;
-                }
-            }
-        }
-    }
-    // XP gems: drift toward player in magnet radius; collect (I-02/I-03).
-    for (auto& g : s.xp_gems) {
-        if (!g.alive) {
-            continue;
-        }
-        const i32 dx = s.player.world_x - g.world_x;
-        const i32 dy = s.player.world_y - g.world_y;
-        const i32 d2 = dx * dx + dy * dy;
-        if (d2 < 28 * 28) {
-            const i32 len = static_cast<i32>(distance_root(static_cast<u32>(d2 < 1 ? 1 : d2)));
-            g.vx = (dx * 5) / len;
-            g.vy = (dy * 5) / len;
-        } else {
-            g.vx = 0;
-            g.vy = 0;
-        }
-        g.world_x += g.vx;
-        g.world_y += g.vy;
-        if (d2 < 12 * 12) {
-            g.alive = false;
-            s.player.xp += g.value;
-            while (s.player.xp >= s.player.xp_need) {
-                s.player.xp -= s.player.xp_need;
-                ++s.player.level;
-                s.player.xp_need = xp_to_level(s.player.level);
-                s.level_up_pending = true;
-            }
-        }
-    }
-}
-
-void spawn_xp(AppState& s, i32 x, i32 y, u32 value) {
-    XpGem g;
-    g.alive = true;
-    g.world_x = x + s.rng.irange(-6, 6);
-    g.world_y = y + s.rng.irange(-6, 6);
-    g.value = value ? value : 1;
-    for (auto& slot : s.xp_gems) {
-        if (!slot.alive) {
-            slot = g;
-            return;
-        }
-    }
-    if (s.xp_gems.size() < 512) {
-        s.xp_gems.push_back(g);
-    }
-}
-
-bool apply_upgrade(AppState& s, u32 choice) {
-    if (!s.level_up_pending) {
-        return false;
-    }
-    switch (choice) {
-        case 0:
-            ++s.player.pulse_damage;
-            break;
-        case 1:
-            if (s.player.fire_period > 6) {
-                s.player.fire_period -= 2;
-            }
-            break;
-        default:
-            if (s.player.projectile_count < 5) {
-                ++s.player.projectile_count;
-            }
-            break;
-    }
-    ++s.upgrades_taken;
-    s.level_up_pending = false;
-    return true;
-}
-
-void player_hurt(AppState& s, i32 damage) {
-    if (damage <= 0) {
-        return;
-    }
-    s.player.hp -= damage;
-    if (s.player.hp < 0) {
-        s.player.hp = 0;
-    }
-    s.player.hurt_timer = 12;
-}
-
-void set_viewport(AppState& s, u32 w, u32 h) {
-    s.view_w = w;
-    s.view_h = h;
-}
-
-void spawn_enemy(AppState& s, EnemyKind kind) {
-    Enemy e;
-    e.kind = kind;
-    e.alive = true;
-    e.flash = 0;
-    e.anim = 0;
-    if (kind == EnemyKind::Drone) {
-        e.hp = 2;
-    } else if (kind == EnemyKind::Crawler) {
-        e.hp = 3;
-    } else {
-        e.hp = 10;
-    }
-    // Spawn on a ring outside the current camera viewport (G-02)
-    const i32 vw = static_cast<i32>(s.view_w ? s.view_w : 640);
-    const i32 vh = static_cast<i32>(s.view_h ? s.view_h : 360);
-    const i32 margin = 48;
-    const i32 side = static_cast<i32>(s.rng.range(0, 4));
-    i32 sx = 0, sy = 0;
-    switch (side) {
-        case 0:  // top
-            sx = s.cam.x + s.rng.irange(0, vw);
-            sy = s.cam.y - margin;
-            break;
-        case 1:  // bottom
-            sx = s.cam.x + s.rng.irange(0, vw);
-            sy = s.cam.y + vh + margin;
-            break;
-        case 2:  // left
-            sx = s.cam.x - margin;
-            sy = s.cam.y + s.rng.irange(0, vh);
-            break;
-        default:
-            sx = s.cam.x + vw + margin;
-            sy = s.cam.y + s.rng.irange(0, vh);
-            break;
-    }
-    if (sx < 16) {
-        sx = 16;
-    }
-    if (sy < 16) {
-        sy = 16;
-    }
-    if (sx > static_cast<i32>(kWorldW) - 16) {
-        sx = static_cast<i32>(kWorldW) - 16;
-    }
-    if (sy > static_cast<i32>(kWorldH) - 16) {
-        sy = static_cast<i32>(kWorldH) - 16;
-    }
-    e.world_x = sx;
-    e.world_y = sy;
-    const i32 radius = kind == EnemyKind::Tank ? 18 : 10;
-    if (!position_clear(s.environment, sx, sy, radius)) {
-        bool found = false;
-        for (i32 distance = 32; distance <= 256 && !found; distance += 32)
-            for (i32 oy : {-1, 0, 1}) for (i32 ox : {-1, 0, 1}) {
-                if (!found && position_clear(s.environment, sx+ox*distance, sy+oy*distance, radius)) {
-                    e.world_x=sx+ox*distance; e.world_y=sy+oy*distance; found=true;
-                }
-            }
-        if (!found) return;
-    }
-    for (auto& slot : s.enemies) {
-        if (!slot.alive) {
-            slot = e;
-            return;
-        }
-    }
-    if (s.enemies.size() < 256) {
-        s.enemies.push_back(e);
-    }
-}
-
-void fire_pulse(AppState& s) {
-    // nearest living enemy
-    const Enemy* best = nullptr;
-    i64 best_d = 0;
-    for (const auto& e : s.enemies) {
-        if (!e.alive) {
-            continue;
-        }
-        const i64 dx = e.world_x - s.player.world_x;
-        const i64 dy = e.world_y - s.player.world_y;
-        const i64 d = dx * dx + dy * dy;
-        if (!best || d < best_d) {
-            best = &e;
-            best_d = d;
-        }
-    }
-    i32 base_vx = 0, base_vy = -6;
-    if (best) {
-        const i32 dx = best->world_x - s.player.world_x;
-        const i32 dy = best->world_y - s.player.world_y;
-        const i32 d2 = dx * dx + dy * dy;
-        const i32 len = static_cast<i32>(distance_root(static_cast<u32>(d2)));
-        base_vx = (dx * 6) / len;
-        base_vy = (dy * 6) / len;
-    }
-    s.player.fire_cooldown = s.player.fire_period;
-    const u32 n = s.player.projectile_count ? s.player.projectile_count : 1u;
-    for (u32 i = 0; i < n; ++i) {
-        Bullet b;
-        b.alive = true;
-        b.enemy = false;
-        b.world_x = s.player.world_x;
-        b.world_y = s.player.world_y;
-        if (n == 1) {
-            b.vx = base_vx;
-            b.vy = base_vy;
-        } else {
-            // deterministic fan around aim direction
-            const i32 off = static_cast<i32>(i) - static_cast<i32>(n / 2);
-            // rotate ~off*10° using small integer approximation
-            b.vx = base_vx - base_vy * off / 6;
-            b.vy = base_vy + base_vx * off / 6;
-        }
-        bool placed = false;
-        for (auto& slot : s.bullets) {
-            if (!slot.alive) {
-                slot = b;
-                placed = true;
-                break;
-            }
-        }
-        if (!placed && s.bullets.size() < 256) {
-            s.bullets.push_back(b);
-        }
-    }
-}
-
 bool in_view(const AppState& s, i32 wx, i32 wy, i32 margin) {
     const i32 sx = wx - s.cam.x;
     const i32 sy = wy - s.cam.y;
@@ -563,6 +210,10 @@ const char* enemy_sprite_name(EnemyKind k, u32 anim) {
             return f ? "drone_1" : "drone_0";
         case EnemyKind::Crawler:
             return f ? "crawler_1" : "crawler_0";
+        case EnemyKind::Runner:
+            return f ? "runner_1" : "runner_0";
+        case EnemyKind::Elite:
+            return f ? "elite_1" : "elite_0";
         default:
             return f ? "tank_1" : "tank_0";
     }
@@ -586,41 +237,6 @@ u32 live_bullet_count(const AppState& s) {
         }
     }
     return n;
-}
-
-u32 hash_sim(const AppState& s) {
-    u32 h = 2166136261u;
-    auto mix = [&](u32 v) {
-        h ^= v;
-        h *= 16777619u;
-    };
-    mix(static_cast<u32>(s.frame));
-    mix(static_cast<u32>(s.player.world_x));
-    mix(static_cast<u32>(s.player.world_y));
-    mix(static_cast<u32>(s.player.hp));
-    mix(s.player.kills);
-    mix(s.player.xp);
-    mix(s.player.level);
-    mix(s.level_up_pending ? 1u : 0u);
-    for (const auto& e : s.enemies) {
-        if (!e.alive) {
-            continue;
-        }
-        mix(static_cast<u32>(e.world_x));
-        mix(static_cast<u32>(e.world_y));
-        mix(static_cast<u32>(e.hp));
-        mix(static_cast<u32>(e.kind));
-        mix(static_cast<u32>(e.motion_x));
-        mix(static_cast<u32>(e.motion_y));
-    }
-    for (const auto& b : s.bullets) {
-        if (!b.alive) {
-            continue;
-        }
-        mix(static_cast<u32>(b.world_x));
-        mix(static_cast<u32>(b.world_y));
-    }
-    return h;
 }
 
 void visible_map_range(const AppState& s, u32 view_w, u32 view_h, i32 guard,
@@ -688,10 +304,9 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
         api.fill_rect(sx + 2, sy, static_cast<u32>(half_w * 2 - 4), static_cast<u32>(half_h),
                       gpu2d::Color::rgba(0, 0, 0, 90));
     };
-    auto art = [&](const char* name, i32 wx, i32 wy, bool opaque = false,
+    auto art = [&](const TexRef* t, i32 wx, i32 wy, bool opaque = false,
                    i32 scale = 1, gpu2d::BlendMode blend = gpu2d::BlendMode::StraightAlpha,
                    u8 alpha = 255, bool shadow = true) {
-        const TexRef* t = tex.find(name);
         if (!t) return;
         const i32 sx = wx - s.cam.x - static_cast<i32>(t->ax) * scale;
         const i32 sy = wy - s.cam.y - static_cast<i32>(t->ay) * scale;
@@ -708,6 +323,33 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
         sp.global_alpha = alpha;
         api.draw_sprite(sp);
     };
+    const TexRef* enemy_art[5][2]{};
+    for(u32 k=0;k<5;++k)for(u32 f=0;f<2;++f)enemy_art[k][f]=tex.find(enemy_sprite_name(static_cast<EnemyKind>(k),f*16));
+    const auto* glow=tex.find("glow_small");
+    const auto* ring=tex.find("ring");
+    const auto* field=tex.find("glow_large");
+    const auto* orbit=tex.find("orbit_drone");
+    const auto* spark=tex.find("spark");const auto* explosion=tex.find("explosion");
+    auto area=[&](const TexRef* t,i32 x,i32 y,i32 radius,u8 alpha,gpu2d::BlendMode blend,bool bilinear) {
+        if(!t || radius<=0)return;
+        gpu2d::SpriteParams p;p.tex=t->id;p.src_x=t->sx;p.src_y=t->sy;p.w=t->w;p.h=t->h;
+        p.dst_x=x-s.cam.x-radius;p.dst_y=y-s.cam.y-radius;p.scale_w=radius*2;p.scale_h=radius*2;
+        p.blend=blend;p.global_alpha=alpha;p.filter=bilinear?gpu2d::FilterMode::Bilinear:gpu2d::FilterMode::Nearest;
+        api.draw_sprite(p);
+    };
+    const auto& field_state=s.gameplay.weapons[3];
+    if(field_state.level) {
+        const i32 radius=weapon_tuning(WeaponId::Field,field_state.level).radius;
+        area(field,s.player.world_x,s.player.world_y,radius,42,gpu2d::BlendMode::StraightAlpha,false);
+        area(ring,s.player.world_x,s.player.world_y,radius,64,gpu2d::BlendMode::StraightAlpha,false);
+    }
+    const auto& nova=s.gameplay.weapons[2];
+    if(nova.level && nova.age) {
+        const auto duration=weapon_tuning(WeaponId::Nova,nova.level).duration;
+        const u8 alpha=static_cast<u8>(220*(duration-std::min(duration,nova.age))/duration);
+        area(ring,nova.x,nova.y,nova.radius,alpha,gpu2d::BlendMode::AddSat,true);
+    }
+    // Texture resolution is outside entity hot loops.
     // enemies (cull off-screen — G-05)
     for (const auto& e : s.enemies) {
         if (!e.alive) {
@@ -716,17 +358,17 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
         if (!in_view(s, e.world_x, e.world_y, 48)) {
             continue;
         }
-        const TexRef* et = tex.find(enemy_sprite_name(e.kind, e.anim));
+        const TexRef* et = enemy_art[static_cast<u32>(e.kind)][(e.anim>>4)&1u];
         if (!et) {
             continue;
         }
-        const i32 esc = e.kind == EnemyKind::Tank ? 3 : 2;  // *1.5
+        const i32 esc = (e.kind == EnemyKind::Tank || e.kind==EnemyKind::Elite) ? 3 : 2;
         const i32 ew = static_cast<i32>(et->w) * esc / 2;
         const i32 eh = static_cast<i32>(et->h) * esc / 2;
         contact_shadow(e.world_x, e.world_y, ew / 2, eh / 5 > 4 ? eh / 5 : 5);
         // Lift body off dark floor: faint additive aura behind sprite.
         {
-            const TexRef* gl = tex.find("glow_small");
+            const TexRef* gl = glow;
             if (gl) {
                 gpu2d::SpriteParams g;
                 g.tex = gl->id; g.src_x = gl->sx; g.src_y = gl->sy;
@@ -735,9 +377,9 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
                 g.dst_x = e.world_x - s.cam.x - (ew + 8) / 2;
                 g.dst_y = e.world_y - s.cam.y - (eh + 8) / 2;
                 g.blend = gpu2d::BlendMode::AddSat;
-                g.global_alpha = 48;
+                g.global_alpha = e.kind==EnemyKind::Elite?140:48;
                 g.color_mod = true;
-                g.mod = gpu2d::Color::rgb(255, 60, 60);
+                g.mod = e.kind==EnemyKind::Elite?gpu2d::Color::rgb(215,70,255):gpu2d::Color::rgb(255,60,60);
                 api.draw_sprite(g);
             }
         }
@@ -778,12 +420,14 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
         }
     }
     // XP crystals (I-02)
-    const TexRef* xg = tex.find("xp_small");
-    if (xg) {
+    const TexRef* xp_art = tex.find("xp_small");
+    const TexRef* repair_art = tex.find("repair_pickup");
+    if (xp_art && repair_art) {
         for (const auto& g : s.xp_gems) {
             if (!g.alive || !in_view(s, g.world_x, g.world_y, 16)) {
                 continue;
             }
+            const auto* xg=g.repair?repair_art:xp_art;
             gpu2d::SpriteParams sp;
             sp.tex = xg->id; sp.src_x = xg->sx; sp.src_y = xg->sy;
             sp.w = xg->w; sp.h = xg->h;
@@ -793,6 +437,14 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
             sp.dst_y = g.world_y - s.cam.y - static_cast<i32>(xg->ay) * 3 / 2;
             sp.blend = gpu2d::BlendMode::AddSat;
             api.draw_sprite(sp);
+        }
+    }
+    if(s.gameplay.weapons[1].level) {
+        const auto t=weapon_tuning(WeaponId::Orbit,s.gameplay.weapons[1].level);
+        for(u32 i=0;i<t.count;++i) {
+            i32 x,y;orbit_position(s,i,x,y);
+            area(glow,x,y,16,70,gpu2d::BlendMode::AddSat,false);
+            art(orbit,x,y,false,1,gpu2d::BlendMode::StraightAlpha,255,false);
         }
     }
     // player — 48px (3/2 of 32) for showcase readability
@@ -817,7 +469,7 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
     // Short-lived world-space feedback, drawn above bodies. No permanent glow veil.
     for (const auto& fx : s.effects) {
         if (!fx.life) continue;
-        art(fx.explosion ? "explosion" : "spark", fx.world_x, fx.world_y, false, 1,
+        art(fx.explosion ? explosion : spark, fx.world_x, fx.world_y, false, 1,
             gpu2d::BlendMode::AddSat, static_cast<u8>(fx.explosion ? fx.life * 14 : fx.life * 36));
     }
     // Industrial HUD foundation. Text stays in the existing bitmap-font presenter.
@@ -826,7 +478,7 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
     api.fill_rect(10, 9, 3, 14, gpu2d::Color::rgb(245, 149, 43));
     api.fill_rect(155, 9, 116, 14, gpu2d::Color::rgb(48, 65, 77));
     api.fill_rect(157, 11, 112, 10, gpu2d::Color::rgb(17, 25, 34));
-    const u32 hpw = static_cast<u32>(s.player.hp > 0 ? s.player.hp : 0) * 112 / 100;
+    const u32 hpw = static_cast<u32>(s.player.hp > 0 ? s.player.hp : 0) * 112 / static_cast<u32>(std::max(1,s.player.max_hp));
     if (hpw) {
         api.fill_rect(157, 11, hpw, 10, gpu2d::Color::rgb(195, 52, 50));
         api.fill_rect(157, 11, hpw, 2, gpu2d::Color::rgb(247, 102, 75));
@@ -847,6 +499,13 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
             api.fill_rect(157, 27, xpw, 2, gpu2d::Color::rgb(64, 210, 160));
         }
     }
+    const TexRef* build_icons[]={icon,orbit,ring,tex.find("energy_field_core")};
+    auto icon_at=[&](u32 kind,i32 x,i32 y) {
+        const auto* t=kind<4?build_icons[kind]:repair_art;if(!t)return;
+        gpu2d::SpriteParams p;p.tex=t->id;p.src_x=t->sx;p.src_y=t->sy;p.w=t->w;p.h=t->h;
+        p.dst_x=x;p.dst_y=y;p.scale_w=16;p.scale_h=16;p.blend=gpu2d::BlendMode::StraightAlpha;api.draw_sprite(p);
+    };
+    for(u32 i=0;i<4;++i)if(s.gameplay.weapons[i].level)icon_at(i,300+i*72,34);
     // Level-up panel (I-05): dark scrim + industrial cards; text drawn by host font in main.
     if (s.level_up_pending) {
         api.fill_rect(0, 0, view_w, view_h, gpu2d::Color::rgba(4, 8, 14, 200));
@@ -860,6 +519,7 @@ void render_scene(gpu2d::GraphicsApi& api, const AppState& s, const TexBank& tex
             api.fill_rect(bx, cy - 24, 88, 48, gpu2d::Color::rgb(22, 40, 52));
             api.fill_rect(bx, cy - 24, 88, 2, gpu2d::Color::rgb(245, 149, 43));
             api.fill_rect(bx, cy + 22, 88, 2, gpu2d::Color::rgb(40, 90, 110));
+            icon_at(s.gameplay.choices[i].kind,bx+5,cy-20);
         }
     }
 }

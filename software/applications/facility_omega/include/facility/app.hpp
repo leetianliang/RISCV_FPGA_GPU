@@ -3,8 +3,10 @@
 #include "gpu2d/graphics_api.hpp"
 #include "gpu2d/types.hpp"
 #include "facility/environment.hpp"
+#include "facility/gameplay.hpp"
 
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace facility {
@@ -49,7 +51,7 @@ struct TexRef {
 class TexBank {
 public:
     void put(const std::string& n, TexRef t) { items_.push_back({n, t}); }
-    const TexRef* find(const std::string& n) const {
+    const TexRef* find(std::string_view n) const {
         for (const auto& it : items_) {
             if (it.name == n) {
                 return &it.tex;
@@ -100,7 +102,7 @@ private:
     u32 s_;
 };
 
-enum class EnemyKind : u8 { Drone = 0, Crawler = 1, Tank = 2 };
+enum class EnemyKind : u8 { Drone = 0, Crawler = 1, Tank = 2, Runner=3, Elite=4 };
 
 struct Enemy {
     i32 world_x = 0;
@@ -122,6 +124,7 @@ struct Effect {
 };
 
 struct Bullet {
+    u32 life=90;
     i32 world_x = 0;
     i32 world_y = 0;
     i32 vx = 0;
@@ -131,6 +134,7 @@ struct Bullet {
 };
 
 struct XpGem {
+    bool repair=false;
     i32 world_x = 0;
     i32 world_y = 0;
     i32 vx = 0;
@@ -179,6 +183,7 @@ struct AppState {
     Rng rng{1234};
     std::vector<u8> map;
     Environment environment;
+    GameplayState gameplay;
     std::vector<Enemy> enemies;
     std::vector<Bullet> bullets;
     std::vector<Effect> effects;

@@ -2,9 +2,11 @@
 
 ## 1. Result
 
-**HOLD — MAP VISUAL/SEMANTIC REWORK REQUIRED**
+**MAP GATE CLOSED — M13 VISUAL PASS (2026-09-16)**
 
-V3 review governs stage acceptance. The matrix below records historical local
+关闭更新：依据 REVIEW_APP2_MAP_R3V2_VISUAL_FINAL，MAP R3 technical PASS、R3V2 visual polish complete、M13 VISUAL PASS，map-first HOLD lifted。地图基线为 57c5eb3；受控展示属于人工布置证据，残余美术问题均为非阻塞 polish。原审查结论保持历史记录，后续进入 TASK_APP2_002。
+
+The matrix below records historical local
 implementation checks; it does not constitute owner visual approval.
 
 ## 2. START_COMMIT

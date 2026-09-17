@@ -34,9 +34,13 @@ def main() -> int:
 
 ## 1. Result
 
-**HOLD — MAP VISUAL/SEMANTIC REWORK REQUIRED**
+**MAP GATE CLOSED — M13 VISUAL PASS (2026-09-16)**
 
-V3 review governs stage acceptance. The matrix below records historical local
+Closure: REVIEW_APP2_MAP_R3V2_VISUAL_FINAL confirms R3 technical PASS,
+R3V2 visual closure, M13 VISUAL PASS and map-first HOLD lifted at 57c5eb3.
+Staged showcase remains authored visual evidence; remaining polish is nonblocking.
+
+The matrix below records historical local
 implementation checks; it does not constitute owner visual approval.
 
 ## 2. START_COMMIT
