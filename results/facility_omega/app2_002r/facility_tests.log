@@ -1,0 +1,272 @@
+Start testing: Sep 17 18:34 中国标准时间
+----------------------------------------------------------
+79/104 Testing: gpu2d_test_facility_input
+79/104 Test: gpu2d_test_facility_input
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_input.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_input" start time: Sep 17 18:34 中国标准时间
+Output:
+----------------------------------------------------------
+facility interactive upgrade input: PASS
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_input" end time: Sep 17 18:34 中国标准时间
+"gpu2d_test_facility_input" time elapsed: 00:00:00
+----------------------------------------------------------
+
+80/104 Testing: gpu2d_test_facility_app2_corpus
+80/104 Test: gpu2d_test_facility_app2_corpus
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_app2_visual.exe" "corpus"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU
+"gpu2d_test_facility_app2_corpus" start time: Sep 17 18:34 中国标准时间
+Output:
+----------------------------------------------------------
+APP2 corpus frames=120 min_enemies=12 min_objects=13 max_sprites=85 commands=324 workrefs=1809 OD=58 sim=6c6ba020 pixels=a875690a PASS
+<end of output>
+Test time =  22.06 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_app2_corpus" end time: Sep 17 18:34 中国标准时间
+"gpu2d_test_facility_app2_corpus" time elapsed: 00:00:22
+----------------------------------------------------------
+
+81/104 Testing: gpu2d_test_facility_app2_density
+81/104 Test: gpu2d_test_facility_app2_density
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_app2_visual.exe" "density"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU
+"gpu2d_test_facility_app2_density" start time: Sep 17 18:34 中国标准时间
+Output:
+----------------------------------------------------------
+APP2 density frames=60 min_enemies=300 min_objects=727 max_sprites=1514 commands=2666 workrefs=9659 OD=524 sim=aefbf178 pixels=998722c1 PASS
+<end of output>
+Test time =  56.58 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_app2_density" end time: Sep 17 18:35 中国标准时间
+"gpu2d_test_facility_app2_density" time elapsed: 00:00:56
+----------------------------------------------------------
+
+82/104 Testing: gpu2d_test_facility_director
+82/104 Test: gpu2d_test_facility_director
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "director"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_director" start time: Sep 17 18:35 中国标准时间
+Output:
+----------------------------------------------------------
+phase 0 count 48 hash fc5baaee
+phase 1 count 154 hash 303bc606
+phase 2 count 360 hash c06ed601
+phase 3 count 588 hash d30b9c8e
+APP2_002 director PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_director" end time: Sep 17 18:35 中国标准时间
+"gpu2d_test_facility_director" time elapsed: 00:00:00
+----------------------------------------------------------
+
+83/104 Testing: gpu2d_test_facility_enemies
+83/104 Test: gpu2d_test_facility_enemies
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "enemies"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_enemies" start time: Sep 17 18:35 中国标准时间
+Output:
+----------------------------------------------------------
+APP2_002 enemies PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_enemies" end time: Sep 17 18:35 中国标准时间
+"gpu2d_test_facility_enemies" time elapsed: 00:00:00
+----------------------------------------------------------
+
+84/104 Testing: gpu2d_test_facility_weapons
+84/104 Test: gpu2d_test_facility_weapons
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "weapons"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_weapons" start time: Sep 17 18:35 中国标准时间
+Output:
+----------------------------------------------------------
+APP2_002 weapons PASS
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_weapons" end time: Sep 17 18:35 中国标准时间
+"gpu2d_test_facility_weapons" time elapsed: 00:00:00
+----------------------------------------------------------
+
+85/104 Testing: gpu2d_test_facility_upgrades
+85/104 Test: gpu2d_test_facility_upgrades
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "upgrades"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_upgrades" start time: Sep 17 18:35 中国标准时间
+Output:
+----------------------------------------------------------
+APP2_002 upgrades PASS
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_upgrades" end time: Sep 17 18:35 中国标准时间
+"gpu2d_test_facility_upgrades" time elapsed: 00:00:00
+----------------------------------------------------------
+
+86/104 Testing: gpu2d_test_facility_determinism
+86/104 Test: gpu2d_test_facility_determinism
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "determinism"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_determinism" start time: Sep 17 18:35 中国标准时间
+Output:
+----------------------------------------------------------
+normal600 level=2 kills=8 spawned=43 collected=8 upgrades=1 hp=50 max_enemies=35 hash=b269a3be
+APP2_002 determinism PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_determinism" end time: Sep 17 18:35 中国标准时间
+"gpu2d_test_facility_determinism" time elapsed: 00:00:00
+----------------------------------------------------------
+
+87/104 Testing: gpu2d_test_facility_capacity
+87/104 Test: gpu2d_test_facility_capacity
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "capacity"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_capacity" start time: Sep 17 18:35 中国标准时间
+Output:
+----------------------------------------------------------
+capacity enemy=1024 projectile=2048 pickup=2048 hash=18d0a2f4
+APP2_002 capacity PASS
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_capacity" end time: Sep 17 18:35 中国标准时间
+"gpu2d_test_facility_capacity" time elapsed: 00:00:00
+----------------------------------------------------------
+
+88/104 Testing: gpu2d_test_facility_signed_rng
+88/104 Test: gpu2d_test_facility_signed_rng
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "signed_rng"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_signed_rng" start time: Sep 17 18:35 中国标准时间
+Output:
+----------------------------------------------------------
+signed RNG 4096 samples; full-width/negative/positive/invalid ranges; 128 XP drops PASS
+APP2_002 signed_rng PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_signed_rng" end time: Sep 17 18:35 中国标准时间
+"gpu2d_test_facility_signed_rng" time elapsed: 00:00:00
+----------------------------------------------------------
+
+89/104 Testing: gpu2d_test_facility_multi_level
+89/104 Test: gpu2d_test_facility_multi_level
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "multi_level"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_multi_level" start time: Sep 17 18:35 中国标准时间
+Output:
+----------------------------------------------------------
+one tick -> 2 levels -> 2 choices; paused between choices; resumed after second PASS
+APP2_002 multi_level PASS
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_multi_level" end time: Sep 17 18:35 中国标准时间
+"gpu2d_test_facility_multi_level" time elapsed: 00:00:00
+----------------------------------------------------------
+
+90/104 Testing: gpu2d_test_facility_spatial
+90/104 Test: gpu2d_test_facility_spatial
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_spatial.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_spatial" start time: Sep 17 18:35 中国标准时间
+Output:
+----------------------------------------------------------
+spatial oracle 128 fixtures / 4096 queries / boundaries and ties: PASS
+<end of output>
+Test time =   0.11 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_spatial" end time: Sep 17 18:35 中国标准时间
+"gpu2d_test_facility_spatial" time elapsed: 00:00:00
+----------------------------------------------------------
+
+91/104 Testing: gpu2d_test_facility
+91/104 Test: gpu2d_test_facility
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU
+"gpu2d_test_facility" start time: Sep 17 18:35 中国标准时间
+Output:
+----------------------------------------------------------
+loaded 71 facility sprites
+gpu2d_test_facility PASS
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility" end time: Sep 17 18:35 中国标准时间
+"gpu2d_test_facility" time elapsed: 00:00:00
+----------------------------------------------------------
+
+95/104 Testing: gpu2d_test_facility_map
+95/104 Test: gpu2d_test_facility_map
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_map.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU
+"gpu2d_test_facility_map" start time: Sep 17 18:35 中国标准时间
+Output:
+----------------------------------------------------------
+hero radius=8 open=3530/4096 connected=3530
+hero radius=18 open=3216/4096 connected=3216
+maximum collidable groups per 640x360 view=4
+APP2 map collision/connectivity/rendering: PASS
+<end of output>
+Test time =   6.45 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_map" end time: Sep 17 18:35 中国标准时间
+"gpu2d_test_facility_map" time elapsed: 00:00:06
+----------------------------------------------------------
+
+96/104 Testing: gpu2d_test_facility_visual
+96/104 Test: gpu2d_test_facility_visual
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_visual.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU
+"gpu2d_test_facility_visual" start time: Sep 17 18:35 中国标准时间
+Output:
+----------------------------------------------------------
+FACILITY visual pixels + transparent draws + 60 frame equality: PASS
+<end of output>
+Test time =   7.40 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_visual" end time: Sep 17 18:35 中国标准时间
+"gpu2d_test_facility_visual" time elapsed: 00:00:07
+----------------------------------------------------------
+
+97/104 Testing: gpu2d_test_facility_stability
+97/104 Test: gpu2d_test_facility_stability
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_stability.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU
+"gpu2d_test_facility_stability" start time: Sep 17 18:35 中国标准时间
+Output:
+----------------------------------------------------------
+facility 600-frame stability level=3 kills=21 hash=73A568AC
+gpu2d_test_facility_stability PASS
+<end of output>
+Test time =   0.11 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_stability" end time: Sep 17 18:35 中国标准时间
+"gpu2d_test_facility_stability" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 17 18:35 中国标准时间

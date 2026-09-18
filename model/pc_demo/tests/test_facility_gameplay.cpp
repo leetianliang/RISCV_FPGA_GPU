@@ -16,7 +16,32 @@ static void pick(AppState& s) {
 int main(int argc,char** argv){
     const std::string mode=argc>1?argv[1]:"director";
     AppState s;sim_reset(s,1234);camera_follow(s,640,360);
-    if(mode=="director") {
+    if(mode=="signed_rng") {
+        Rng a(1234),b(1234);bool negative=false,zero=false,positive=false;
+        for(int i=0;i<4096;++i){const auto x=a.irange(-6,6);CHECK(x==b.irange(-6,6));CHECK(x>=-6 && x<6);negative|=x<0;zero|=x==0;positive|=x>0;}
+        CHECK(negative&&zero&&positive);
+        const auto before=a.state();CHECK(a.irange(6,6)==6 && a.irange(6,-6)==6 && a.state()==before);
+        for(int i=0;i<1024;++i){auto x=a.irange(INT32_MIN,INT32_MAX);CHECK(x>=INT32_MIN && x<INT32_MAX);x=a.irange(-20,-10);CHECK(x>=-20&&x<-10);x=a.irange(10,20);CHECK(x>=10&&x<20);}
+        AppState other;sim_reset(other,1234);bool scattered=false;
+        for(int i=0;i<128;++i){spawn_xp(s,2048,2048,1);spawn_xp(other,2048,2048,1);const auto& g=s.xp_gems.back();CHECK(g.world_x>=2042&&g.world_x<2054&&g.world_y>=2042&&g.world_y<2054);scattered|=g.world_x!=2042||g.world_y!=2042;CHECK(hash_sim(s)==hash_sim(other));}
+        CHECK(scattered);
+        std::printf("signed RNG 4096 samples; full-width/negative/positive/invalid ranges; 128 XP drops PASS\n");
+    } else if(mode=="multi_level") {
+        s.enemy_count_target=0;s.player.xp=9;
+        // Three actual pickups collected in ONE simulation tick: 9+12+2+1=24.
+        for(u32 value:{12u,2u,1u}){XpGem g;g.alive=true;g.world_x=s.player.world_x;g.world_y=s.player.world_y;g.value=value;s.xp_gems.push_back(g);}
+        sim_step(s,nullptr);CHECK(s.player.level==3 && s.player.xp==0 && s.pending_levelups==2 && s.level_up_pending);
+        const auto tick=s.frame;
+        const auto pending_hash=hash_sim(s);s.pending_levelups=1;CHECK(hash_sim(s)!=pending_hash);s.pending_levelups=2;
+        CHECK(!apply_upgrade(s,3) && s.pending_levelups==2);
+        sim_step(s,nullptr);CHECK(s.frame==tick && hash_sim(s)==pending_hash);
+        CHECK(apply_upgrade(s,0));CHECK(s.upgrades_taken==1 && s.pending_levelups==1 && s.level_up_pending);
+        for(const auto& c:s.gameplay.choices)CHECK(c.kind>=4 || s.gameplay.weapons[c.kind].level<5);
+        const auto second_hash=hash_sim(s);sim_step(s,nullptr);CHECK(s.frame==tick && hash_sim(s)==second_hash);
+        CHECK(apply_upgrade(s,1));CHECK(s.upgrades_taken==2 && !s.pending_levelups && !s.level_up_pending);
+        CHECK(!apply_upgrade(s,0));sim_step(s,nullptr);CHECK(s.frame==tick+1);
+        std::printf("one tick -> 2 levels -> 2 choices; paused between choices; resumed after second PASS\n");
+    } else if(mode=="director") {
         CHECK(phase_at(7199)==0 && phase_at(7200)==1 && phase_at(18000)==2 && phase_at(28800)==3);
         for(u32 p=0;p<4;++p) {
             AppState a,b;sim_reset(a,77);sim_reset(b,77);camera_follow(a,640,360);camera_follow(b,640,360);

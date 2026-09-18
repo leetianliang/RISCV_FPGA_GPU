@@ -1,0 +1,1786 @@
+Start testing: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+----------------------------------------------------------
+1/104 Testing: golden_test_gpu_math
+1/104 Test: golden_test_gpu_math
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_gpu_math.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_gpu_math" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_gpu_math PASS
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_gpu_math" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_gpu_math" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/104 Testing: golden_test_memory_image
+2/104 Test: golden_test_memory_image
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_memory_image.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_memory_image" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_memory_image PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_memory_image" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_memory_image" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/104 Testing: golden_test_surface
+3/104 Test: golden_test_surface
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_surface.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_surface" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_surface PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_surface" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_surface" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/104 Testing: golden_test_cmd_io
+4/104 Test: golden_test_cmd_io
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_cmd_io.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_cmd_io" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_cmd_io PASS
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_cmd_io" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_cmd_io" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/104 Testing: golden_test_command_header
+5/104 Test: golden_test_command_header
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_command_header.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_command_header" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_command_header PASS
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_command_header" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_command_header" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/104 Testing: golden_test_fill_directed
+6/104 Test: golden_test_fill_directed
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_fill_directed.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_fill_directed" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_fill_directed PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_fill_directed" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_fill_directed" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/104 Testing: golden_test_blit_directed
+7/104 Test: golden_test_blit_directed
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_blit_directed.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_blit_directed" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_blit_directed PASS
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_blit_directed" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_blit_directed" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/104 Testing: golden_test_pixel_pipeline
+8/104 Test: golden_test_pixel_pipeline
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_pixel_pipeline.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_pixel_pipeline" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_pixel_pipeline PASS
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_pixel_pipeline" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_pixel_pipeline" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/104 Testing: golden_test_mutation
+9/104 Test: golden_test_mutation
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_mutation.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_mutation" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_mutation PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_mutation" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_mutation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/104 Testing: golden_test_sprite_ext
+10/104 Test: golden_test_sprite_ext
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_sprite_ext.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_sprite_ext" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_sprite_ext PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_sprite_ext" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_sprite_ext" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/104 Testing: golden_test_random_diff
+11/104 Test: golden_test_random_diff
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_random_diff.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_random_diff" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_random_diff PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_random_diff" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_random_diff" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/104 Testing: golden_test_premult_exact
+12/104 Test: golden_test_premult_exact
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_premult_exact.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_premult_exact" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_premult_exact PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_premult_exact" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_premult_exact" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/104 Testing: golden_test_premult_matrix
+13/104 Test: golden_test_premult_matrix
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_premult_matrix.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_premult_matrix" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_premult_matrix PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_premult_matrix" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_premult_matrix" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/104 Testing: golden_test_sampler_errors
+14/104 Test: golden_test_sampler_errors
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_sampler_errors.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_sampler_errors" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_sampler_errors PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_sampler_errors" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_sampler_errors" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/104 Testing: golden_test_ext_faults
+15/104 Test: golden_test_ext_faults
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_ext_faults.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_ext_faults" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_ext_faults PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_ext_faults" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_ext_faults" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/104 Testing: golden_test_semantics_pairs
+16/104 Test: golden_test_semantics_pairs
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_semantics_pairs.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_semantics_pairs" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_semantics_pairs PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_semantics_pairs" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_semantics_pairs" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/104 Testing: golden_test_oracle_exact
+17/104 Test: golden_test_oracle_exact
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_oracle_exact.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_oracle_exact" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_oracle_exact PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_oracle_exact" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_oracle_exact" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/104 Testing: golden_test_diff_suites
+18/104 Test: golden_test_diff_suites
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_diff_suites.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_diff_suites" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_diff_suites PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_diff_suites" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_diff_suites" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/104 Testing: golden_test_core_alpha_diff
+19/104 Test: golden_test_core_alpha_diff
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_core_alpha_diff.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_core_alpha_diff" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_core_alpha_diff PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_core_alpha_diff" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_core_alpha_diff" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/104 Testing: golden_test_scale_param_diff
+20/104 Test: golden_test_scale_param_diff
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_scale_param_diff.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_scale_param_diff" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_scale_param_diff PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_scale_param_diff" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_scale_param_diff" time elapsed: 00:00:00
+----------------------------------------------------------
+
+21/104 Testing: golden_test_clip_diff
+21/104 Test: golden_test_clip_diff
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_clip_diff.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_clip_diff" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_clip_diff PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_clip_diff" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_clip_diff" time elapsed: 00:00:00
+----------------------------------------------------------
+
+22/104 Testing: golden_test_oracle_v2
+22/104 Test: golden_test_oracle_v2
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_oracle_v2.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_oracle_v2" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_oracle_v2 PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_oracle_v2" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_oracle_v2" time elapsed: 00:00:00
+----------------------------------------------------------
+
+23/104 Testing: golden_test_dither_dst
+23/104 Test: golden_test_dither_dst
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_dither_dst.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_dither_dst" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_dither_dst PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_dither_dst" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_dither_dst" time elapsed: 00:00:00
+----------------------------------------------------------
+
+24/104 Testing: golden_test_ext_mem_matrix
+24/104 Test: golden_test_ext_mem_matrix
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_ext_mem_matrix.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_ext_mem_matrix" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_ext_mem_matrix PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_ext_mem_matrix" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_ext_mem_matrix" time elapsed: 00:00:00
+----------------------------------------------------------
+
+25/104 Testing: golden_test_tile
+25/104 Test: golden_test_tile
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_tile.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_tile" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+tile stats active=4 refs=5 blend=400 store_px=4096
+golden_test_tile PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_tile" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_tile" time elapsed: 00:00:00
+----------------------------------------------------------
+
+26/104 Testing: golden_test_tile_eq_random
+26/104 Test: golden_test_tile_eq_random
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_tile_eq_random.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_tile_eq_random" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_tile_eq_random PASS (300 frames)
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_tile_eq_random" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_tile_eq_random" time elapsed: 00:00:00
+----------------------------------------------------------
+
+27/104 Testing: golden_test_tile_ext
+27/104 Test: golden_test_tile_ext
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_tile_ext.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_tile_ext" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_tile_ext PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_tile_ext" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_tile_ext" time elapsed: 00:00:00
+----------------------------------------------------------
+
+28/104 Testing: golden_test_tile_faults
+28/104 Test: golden_test_tile_faults
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_tile_faults.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_tile_faults" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_tile_faults PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_tile_faults" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_tile_faults" time elapsed: 00:00:00
+----------------------------------------------------------
+
+29/104 Testing: golden_test_tile_extended
+29/104 Test: golden_test_tile_extended
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_test_tile_extended.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_tile_extended" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+golden_test_tile_extended PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_tile_extended" end time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_tile_extended" time elapsed: 00:00:00
+----------------------------------------------------------
+
+30/104 Testing: golden_test_integrity
+30/104 Test: golden_test_integrity
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../scripts/check_test_integrity.py"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_integrity" start time: Sep 17 18:48 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+test integrity: PASS
+<end of output>
+Test time =   0.21 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_integrity" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_integrity" time elapsed: 00:00:00
+----------------------------------------------------------
+
+31/104 Testing: golden_fill_basic_run
+31/104 Test: golden_fill_basic_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/fill_basic/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/fill_basic/initial_fb.raw" "--width" "16" "--height" "16" "--stride" "32" "--base" "0x10000" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/fill_basic_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_fill_basic_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/fill_basic_out.raw (1 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_fill_basic_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_fill_basic_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+32/104 Testing: golden_fill_basic_compare
+32/104 Test: golden_fill_basic_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/fill_basic/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/fill_basic_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_fill_basic_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (512 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\fill_basic\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\fill_basic_out.raw
+<end of output>
+Test time =   0.16 sec
+----------------------------------------------------------
+Test Passed.
+"golden_fill_basic_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_fill_basic_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+33/104 Testing: golden_blit_rgb565_basic_run
+33/104 Test: golden_blit_rgb565_basic_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_rgb565_basic/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_rgb565_basic/initial_fb.raw" "--textures" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_rgb565_basic/textures.bin" "--texture-base" "0x20000" "--texture-width" "8" "--texture-height" "8" "--texture-stride" "16" "--texture-format" "rgb565" "--width" "16" "--height" "16" "--stride" "32" "--base" "0x10000" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_rgb565_basic_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_rgb565_basic_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_rgb565_basic_out.raw (1 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_rgb565_basic_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_rgb565_basic_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+34/104 Testing: golden_blit_rgb565_basic_compare
+34/104 Test: golden_blit_rgb565_basic_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_rgb565_basic/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_rgb565_basic_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_rgb565_basic_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (512 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\blit_rgb565_basic\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\blit_rgb565_basic_out.raw
+<end of output>
+Test time =   0.15 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_rgb565_basic_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_rgb565_basic_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+35/104 Testing: golden_blit_colorkey_run
+35/104 Test: golden_blit_colorkey_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_colorkey/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_colorkey/initial_fb.raw" "--textures" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_colorkey/textures.bin" "--texture-base" "0x20000" "--texture-width" "8" "--texture-height" "8" "--texture-stride" "16" "--texture-format" "rgb565" "--width" "16" "--height" "16" "--stride" "32" "--base" "0x10000" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_colorkey_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_colorkey_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_colorkey_out.raw (1 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_colorkey_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_colorkey_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+36/104 Testing: golden_blit_colorkey_compare
+36/104 Test: golden_blit_colorkey_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_colorkey/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_colorkey_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_colorkey_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (512 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\blit_colorkey\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\blit_colorkey_out.raw
+<end of output>
+Test time =   0.15 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_colorkey_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_colorkey_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+37/104 Testing: golden_blit_alpha_argb8888_run
+37/104 Test: golden_blit_alpha_argb8888_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_alpha_argb8888/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_alpha_argb8888/initial_fb.raw" "--textures" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_alpha_argb8888/textures.bin" "--texture-base" "0x20000" "--texture-width" "8" "--texture-height" "8" "--texture-stride" "32" "--texture-format" "argb8888" "--width" "16" "--height" "16" "--stride" "32" "--base" "0x10000" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_alpha_argb8888_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_alpha_argb8888_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_alpha_argb8888_out.raw (1 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_alpha_argb8888_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_alpha_argb8888_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+38/104 Testing: golden_blit_alpha_argb8888_compare
+38/104 Test: golden_blit_alpha_argb8888_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_alpha_argb8888/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_alpha_argb8888_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_alpha_argb8888_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (512 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\blit_alpha_argb8888\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\blit_alpha_argb8888_out.raw
+<end of output>
+Test time =   0.15 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_alpha_argb8888_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_alpha_argb8888_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+39/104 Testing: golden_blit_overdraw_rgb565_run
+39/104 Test: golden_blit_overdraw_rgb565_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_overdraw_rgb565/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_overdraw_rgb565/initial_fb.raw" "--textures" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_overdraw_rgb565/textures.bin" "--texture-base" "0x20000" "--texture-width" "8" "--texture-height" "8" "--texture-stride" "16" "--texture-format" "rgb565" "--width" "16" "--height" "16" "--stride" "32" "--base" "0x10000" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_overdraw_rgb565_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_overdraw_rgb565_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_overdraw_rgb565_out.raw (3 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_overdraw_rgb565_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_overdraw_rgb565_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+40/104 Testing: golden_blit_overdraw_rgb565_compare
+40/104 Test: golden_blit_overdraw_rgb565_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_overdraw_rgb565/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_overdraw_rgb565_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_overdraw_rgb565_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (512 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\blit_overdraw_rgb565\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\blit_overdraw_rgb565_out.raw
+<end of output>
+Test time =   0.16 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_overdraw_rgb565_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_overdraw_rgb565_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+41/104 Testing: golden_blit_additive_run
+41/104 Test: golden_blit_additive_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_additive/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_additive/initial_fb.raw" "--textures" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_additive/textures.bin" "--texture-base" "0x20000" "--texture-width" "8" "--texture-height" "8" "--texture-stride" "16" "--texture-format" "rgb565" "--width" "16" "--height" "16" "--stride" "32" "--base" "0x10000" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_additive_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_additive_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_additive_out.raw (1 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_additive_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_additive_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+42/104 Testing: golden_blit_additive_compare
+42/104 Test: golden_blit_additive_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_additive/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_additive_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_additive_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (512 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\blit_additive\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\blit_additive_out.raw
+<end of output>
+Test time =   0.16 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_additive_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_additive_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+43/104 Testing: golden_blit_ext_scale_nearest_run
+43/104 Test: golden_blit_ext_scale_nearest_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_ext_scale_nearest/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_ext_scale_nearest/initial_fb.raw" "--textures" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_ext_scale_nearest/textures.bin" "--texture-base" "0x20000" "--texture-width" "8" "--texture-height" "8" "--texture-stride" "16" "--texture-format" "rgb565" "--extensions" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_ext_scale_nearest/extensions.bin" "--ext-base" "0x30000" "--width" "16" "--height" "16" "--stride" "32" "--base" "0x10000" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_ext_scale_nearest_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_ext_scale_nearest_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_ext_scale_nearest_out.raw (1 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_ext_scale_nearest_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_ext_scale_nearest_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+44/104 Testing: golden_blit_ext_scale_nearest_compare
+44/104 Test: golden_blit_ext_scale_nearest_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_ext_scale_nearest/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_ext_scale_nearest_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_ext_scale_nearest_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (512 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\blit_ext_scale_nearest\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\blit_ext_scale_nearest_out.raw
+<end of output>
+Test time =   0.15 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_ext_scale_nearest_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_ext_scale_nearest_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+45/104 Testing: golden_blit_ext_scale_bilinear_run
+45/104 Test: golden_blit_ext_scale_bilinear_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_ext_scale_bilinear/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_ext_scale_bilinear/initial_fb.raw" "--textures" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_ext_scale_bilinear/textures.bin" "--texture-base" "0x20000" "--texture-width" "8" "--texture-height" "8" "--texture-stride" "16" "--texture-format" "rgb565" "--extensions" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_ext_scale_bilinear/extensions.bin" "--ext-base" "0x30000" "--width" "16" "--height" "16" "--stride" "32" "--base" "0x10000" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_ext_scale_bilinear_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_ext_scale_bilinear_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_ext_scale_bilinear_out.raw (1 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_ext_scale_bilinear_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_ext_scale_bilinear_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+46/104 Testing: golden_blit_ext_scale_bilinear_compare
+46/104 Test: golden_blit_ext_scale_bilinear_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_ext_scale_bilinear/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_ext_scale_bilinear_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_ext_scale_bilinear_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (512 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\blit_ext_scale_bilinear\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\blit_ext_scale_bilinear_out.raw
+<end of output>
+Test time =   0.16 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_ext_scale_bilinear_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_ext_scale_bilinear_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+47/104 Testing: golden_blit_flip_xy_run
+47/104 Test: golden_blit_flip_xy_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_flip_xy/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_flip_xy/initial_fb.raw" "--textures" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_flip_xy/textures.bin" "--texture-base" "0x20000" "--texture-width" "8" "--texture-height" "8" "--texture-stride" "16" "--texture-format" "rgb565" "--width" "16" "--height" "16" "--stride" "32" "--base" "0x10000" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_flip_xy_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_flip_xy_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_flip_xy_out.raw (1 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_flip_xy_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_flip_xy_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+48/104 Testing: golden_blit_flip_xy_compare
+48/104 Test: golden_blit_flip_xy_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_flip_xy/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_flip_xy_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_flip_xy_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (512 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\blit_flip_xy\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\blit_flip_xy_out.raw
+<end of output>
+Test time =   0.16 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_flip_xy_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_flip_xy_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+49/104 Testing: golden_blit_clip_run
+49/104 Test: golden_blit_clip_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_clip/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_clip/initial_fb.raw" "--textures" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_clip/textures.bin" "--texture-base" "0x20000" "--texture-width" "8" "--texture-height" "8" "--texture-stride" "16" "--texture-format" "rgb565" "--extensions" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_clip/extensions.bin" "--ext-base" "0x30000" "--width" "16" "--height" "16" "--stride" "32" "--base" "0x10000" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_clip_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_clip_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_clip_out.raw (1 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_clip_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_clip_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+50/104 Testing: golden_blit_clip_compare
+50/104 Test: golden_blit_clip_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/blit_clip/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/blit_clip_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_blit_clip_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (512 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\blit_clip\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\blit_clip_out.raw
+<end of output>
+Test time =   0.15 sec
+----------------------------------------------------------
+Test Passed.
+"golden_blit_clip_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_blit_clip_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+51/104 Testing: golden_indexed8_palette_run
+51/104 Test: golden_indexed8_palette_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/indexed8_palette/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/indexed8_palette/initial_fb.raw" "--textures" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/indexed8_palette/textures.bin" "--texture-base" "0x20000" "--texture-width" "8" "--texture-height" "8" "--texture-stride" "8" "--texture-format" "index8" "--palette" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/indexed8_palette/palette.bin" "--palette-base" "0x40000" "--width" "16" "--height" "16" "--stride" "32" "--base" "0x10000" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/indexed8_palette_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_indexed8_palette_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/indexed8_palette_out.raw (1 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_indexed8_palette_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_indexed8_palette_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+52/104 Testing: golden_indexed8_palette_compare
+52/104 Test: golden_indexed8_palette_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/indexed8_palette/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/indexed8_palette_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_indexed8_palette_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (512 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\indexed8_palette\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\indexed8_palette_out.raw
+<end of output>
+Test time =   0.15 sec
+----------------------------------------------------------
+Test Passed.
+"golden_indexed8_palette_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_indexed8_palette_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+53/104 Testing: golden_indexed8_bilinear_run
+53/104 Test: golden_indexed8_bilinear_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/indexed8_bilinear/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/indexed8_bilinear/initial_fb.raw" "--textures" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/indexed8_bilinear/textures.bin" "--texture-base" "0x20000" "--texture-width" "8" "--texture-height" "8" "--texture-stride" "8" "--texture-format" "index8" "--palette" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/indexed8_bilinear/palette.bin" "--palette-base" "0x40000" "--extensions" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/indexed8_bilinear/extensions.bin" "--ext-base" "0x30000" "--width" "16" "--height" "16" "--stride" "32" "--base" "0x10000" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/indexed8_bilinear_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_indexed8_bilinear_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/indexed8_bilinear_out.raw (1 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_indexed8_bilinear_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_indexed8_bilinear_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+54/104 Testing: golden_indexed8_bilinear_compare
+54/104 Test: golden_indexed8_bilinear_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/indexed8_bilinear/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/indexed8_bilinear_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_indexed8_bilinear_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (512 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\indexed8_bilinear\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\indexed8_bilinear_out.raw
+<end of output>
+Test time =   0.15 sec
+----------------------------------------------------------
+Test Passed.
+"golden_indexed8_bilinear_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_indexed8_bilinear_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+55/104 Testing: golden_color_mod_run
+55/104 Test: golden_color_mod_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/color_mod/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/color_mod/initial_fb.raw" "--textures" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/color_mod/textures.bin" "--texture-base" "0x20000" "--texture-width" "8" "--texture-height" "8" "--texture-stride" "16" "--texture-format" "rgb565" "--width" "16" "--height" "16" "--stride" "32" "--base" "0x10000" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/color_mod_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_color_mod_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/color_mod_out.raw (1 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_color_mod_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_color_mod_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+56/104 Testing: golden_color_mod_compare
+56/104 Test: golden_color_mod_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/color_mod/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/color_mod_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_color_mod_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (512 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\color_mod\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\color_mod_out.raw
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Passed.
+"golden_color_mod_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_color_mod_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+57/104 Testing: golden_premult_alpha_run
+57/104 Test: golden_premult_alpha_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/premult_alpha/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/premult_alpha/initial_fb.raw" "--textures" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/premult_alpha/textures.bin" "--texture-base" "0x20000" "--texture-width" "8" "--texture-height" "8" "--texture-stride" "32" "--texture-format" "argb8888" "--width" "16" "--height" "16" "--stride" "32" "--base" "0x10000" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/premult_alpha_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_premult_alpha_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/premult_alpha_out.raw (1 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_premult_alpha_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_premult_alpha_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+58/104 Testing: golden_premult_alpha_compare
+58/104 Test: golden_premult_alpha_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/premult_alpha/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/premult_alpha_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_premult_alpha_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (512 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\premult_alpha\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\premult_alpha_out.raw
+<end of output>
+Test time =   0.16 sec
+----------------------------------------------------------
+Test Passed.
+"golden_premult_alpha_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_premult_alpha_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+59/104 Testing: golden_rgb565_dither_run
+59/104 Test: golden_rgb565_dither_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/rgb565_dither/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/rgb565_dither/initial_fb.raw" "--width" "16" "--height" "16" "--stride" "32" "--base" "0x10000" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/rgb565_dither_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_rgb565_dither_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/rgb565_dither_out.raw (1 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_rgb565_dither_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_rgb565_dither_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+60/104 Testing: golden_rgb565_dither_compare
+60/104 Test: golden_rgb565_dither_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/rgb565_dither/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/rgb565_dither_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_rgb565_dither_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (512 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\rgb565_dither\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\rgb565_dither_out.raw
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Passed.
+"golden_rgb565_dither_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_rgb565_dither_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+61/104 Testing: golden_argb8888_target_run
+61/104 Test: golden_argb8888_target_run
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-stream" "--cmd" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/argb8888_target/command.bin" "--initial-fb" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/argb8888_target/initial_fb.raw" "--width" "16" "--height" "16" "--stride" "64" "--base" "0x10000" "--dst-format" "argb8888" "--out" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/argb8888_target_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_argb8888_target_run" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+Wrote C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/argb8888_target_out.raw (1 cmds)
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"golden_argb8888_target_run" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_argb8888_target_run" time elapsed: 00:00:00
+----------------------------------------------------------
+
+62/104 Testing: golden_argb8888_target_compare
+62/104 Test: golden_argb8888_target_compare
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/argb8888_target/golden_fb.raw" "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/argb8888_target_out.raw"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_argb8888_target_compare" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] exact match (1024 bytes)
+  expected: C:\Users\123\Desktop\code\FPGA_2D_GPU\model\golden\tests\frames\argb8888_target\golden_fb.raw
+  actual:   C:\Users\123\Desktop\code\FPGA_2D_GPU\build\stage0045\model\golden\argb8888_target_out.raw
+<end of output>
+Test time =   0.16 sec
+----------------------------------------------------------
+Test Passed.
+"golden_argb8888_target_compare" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_argb8888_target_compare" time elapsed: 00:00:00
+----------------------------------------------------------
+
+63/104 Testing: golden_fill_basic_frame_compare_mismatch
+63/104 Test: golden_fill_basic_frame_compare_mismatch
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "-c" "import pathlib,subprocess,sys; g=pathlib.Path(r'C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/fill_basic/golden_fb.raw'); bad=pathlib.Path(r'C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/fill_basic_mismatch.raw'); b=bytearray(g.read_bytes()); b[0]^=0xFF; bad.write_bytes(b); r=subprocess.run([sys.executable, r'C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/frame_compare/frame_compare.py', str(g), str(bad)]); sys.exit(0 if r.returncode!=0 else 1)"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_fill_basic_frame_compare_mismatch" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[FAIL] mismatch_count=1
+  first_mismatch_offset=0
+  expected_byte=0x1F
+  actual_byte=0xE0
+<end of output>
+Test time =   0.34 sec
+----------------------------------------------------------
+Test Passed.
+"golden_fill_basic_frame_compare_mismatch" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_fill_basic_frame_compare_mismatch" time elapsed: 00:00:00
+----------------------------------------------------------
+
+64/104 Testing: golden_fixture_validate
+64/104 Test: golden_fixture_validate
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/fixture_validate/fixture_validate.py" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_fixture_validate" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] argb8888_target
+[PASS] blit_additive
+[PASS] blit_alpha_argb8888
+[PASS] blit_clip
+[PASS] blit_colorkey
+[PASS] blit_ext_scale_bilinear
+[PASS] blit_ext_scale_nearest
+[PASS] blit_flip_xy
+[PASS] blit_overdraw_rgb565
+[PASS] blit_rgb565_basic
+[PASS] color_mod
+[PASS] fill_basic
+[PASS] indexed8_bilinear
+[PASS] indexed8_palette
+[PASS] premult_alpha
+[PASS] rgb565_dither
+validated 16 fixtures, failures=0
+<end of output>
+Test time =   0.25 sec
+----------------------------------------------------------
+Test Passed.
+"golden_fixture_validate" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_fixture_validate" time elapsed: 00:00:00
+----------------------------------------------------------
+
+65/104 Testing: golden_tile_fixture_validate
+65/104 Test: golden_tile_fixture_validate
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../tools/fixture_validate/validate_tile_fixtures.py"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_tile_fixture_validate" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] tile_alpha_overlap
+[PASS] tile_bilinear_cross_boundary
+[PASS] tile_dither_cross_boundary
+[PASS] tile_fill_basic
+[PASS] tile_palette
+tile fixtures validated: 5, failures=0
+<end of output>
+Test time =   0.21 sec
+----------------------------------------------------------
+Test Passed.
+"golden_tile_fixture_validate" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_tile_fixture_validate" time elapsed: 00:00:00
+----------------------------------------------------------
+
+66/104 Testing: golden_test_tile_sweep
+66/104 Test: golden_test_tile_sweep
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/../../model/architecture/tile_model/run_tile_sweep.py"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_test_tile_sweep" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+wrote C:\Users\123\Desktop\code\FPGA_2D_GPU\results\stage004_tile\tile_sweep.csv (18 rows from functional model, W1-W6 x 16/32/64)
+<end of output>
+Test time =   1.44 sec
+----------------------------------------------------------
+Test Passed.
+"golden_test_tile_sweep" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_test_tile_sweep" time elapsed: 00:00:01
+----------------------------------------------------------
+
+67/104 Testing: golden_tile_fixture_tile_fill_basic
+67/104 Test: golden_tile_fixture_tile_fill_basic
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-tile-fixture" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/tile/tile_fill_basic"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_tile_fixture_tile_fill_basic" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+tile fixture PASS tile_fill_basic
+<end of output>
+Test time =   0.07 sec
+----------------------------------------------------------
+Test Passed.
+"golden_tile_fixture_tile_fill_basic" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_tile_fixture_tile_fill_basic" time elapsed: 00:00:00
+----------------------------------------------------------
+
+68/104 Testing: golden_tile_fixture_tile_alpha_overlap
+68/104 Test: golden_tile_fixture_tile_alpha_overlap
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-tile-fixture" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/tile/tile_alpha_overlap"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_tile_fixture_tile_alpha_overlap" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+tile fixture PASS tile_alpha_overlap
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"golden_tile_fixture_tile_alpha_overlap" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_tile_fixture_tile_alpha_overlap" time elapsed: 00:00:00
+----------------------------------------------------------
+
+69/104 Testing: golden_tile_fixture_tile_bilinear_cross_boundary
+69/104 Test: golden_tile_fixture_tile_bilinear_cross_boundary
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-tile-fixture" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/tile/tile_bilinear_cross_boundary"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_tile_fixture_tile_bilinear_cross_boundary" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+tile fixture PASS tile_bilinear_cross_boundary
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"golden_tile_fixture_tile_bilinear_cross_boundary" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_tile_fixture_tile_bilinear_cross_boundary" time elapsed: 00:00:00
+----------------------------------------------------------
+
+70/104 Testing: golden_tile_fixture_tile_palette
+70/104 Test: golden_tile_fixture_tile_palette
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-tile-fixture" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/tile/tile_palette"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_tile_fixture_tile_palette" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+tile fixture PASS tile_palette
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"golden_tile_fixture_tile_palette" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_tile_fixture_tile_palette" time elapsed: 00:00:00
+----------------------------------------------------------
+
+71/104 Testing: golden_tile_fixture_tile_dither_cross_boundary
+71/104 Test: golden_tile_fixture_tile_dither_cross_boundary
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden/golden_cli.exe" "run-tile-fixture" "C:/Users/123/Desktop/code/FPGA_2D_GPU/model/golden/tests/frames/tile/tile_dither_cross_boundary"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/golden
+"golden_tile_fixture_tile_dither_cross_boundary" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+tile fixture PASS tile_dither_cross_boundary
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"golden_tile_fixture_tile_dither_cross_boundary" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"golden_tile_fixture_tile_dither_cross_boundary" time elapsed: 00:00:00
+----------------------------------------------------------
+
+72/104 Testing: gpu2d_test_api
+72/104 Test: gpu2d_test_api
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_api.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_api" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+gpu2d_test_api PASS
+<end of output>
+Test time =   0.10 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_api" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_api" time elapsed: 00:00:00
+----------------------------------------------------------
+
+73/104 Testing: gpu2d_test_backend
+73/104 Test: gpu2d_test_backend
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_backend.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_backend" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+gpu2d_test_backend PASS
+<end of output>
+Test time =   0.09 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_backend" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_backend" time elapsed: 00:00:00
+----------------------------------------------------------
+
+74/104 Testing: gpu2d_test_sim
+74/104 Test: gpu2d_test_sim
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_sim.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_sim" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+ckpt60 seed=1234 en=2 bl=3 kills=0 score=0 hash=239D270D frame=60
+gpu2d_test_sim PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_sim" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_sim" time elapsed: 00:00:00
+----------------------------------------------------------
+
+75/104 Testing: gpu2d_test_presenter
+75/104 Test: gpu2d_test_presenter
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_presenter.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_presenter" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+gpu2d_test_presenter PASS
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_presenter" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_presenter" time elapsed: 00:00:00
+----------------------------------------------------------
+
+76/104 Testing: gpu2d_test_features
+76/104 Test: gpu2d_test_features
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_features.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_features" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+near 1:1 ok=1 center=52148C near=52148C
+bil 1:1 ok=1 center=52148C near=52148C
+near scale ok=1 center=52148C near=52148C
+bil scale ok=1 center=631C9C near=732CB5
+bil scale add ok=1 center=63459C near=7355B5
+gpu2d_test_features PASS
+<end of output>
+Test time =   0.25 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_features" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_features" time elapsed: 00:00:00
+----------------------------------------------------------
+
+77/104 Testing: gpu2d_test_system
+77/104 Test: gpu2d_test_system
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_system.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_system" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+coverage100 alpha=190 add=275 scale=257 clip=100 pal=6442 bil=152
+stress sprite metric=872 (min 500) sprites=872 bullet_draws=1 live_bl=1 alpha=4 scaled=2 bil=1 live_en=798 live_pt=5 max_od=14
+stress bullet metric=1016 (min 1000) sprites=1083 bullet_draws=1016 live_bl=1016 alpha=0 scaled=0 bil=0 live_en=0 live_pt=0 max_od=29
+stress alpha metric=432 (min 300) sprites=502 bullet_draws=3 live_bl=3 alpha=432 scaled=0 bil=0 live_en=0 live_pt=432 max_od=6
+stress scale metric=480 (min 200) sprites=548 bullet_draws=1 live_bl=1 alpha=0 scaled=480 bil=480 live_en=480 live_pt=0 max_od=17
+stress overdraw metric=284 (min 8) sprites=358 bullet_draws=3 live_bl=3 alpha=0 scaled=288 bil=288 live_en=0 live_pt=288 max_od=284
+  tile[0]=1   tile[1]=0   tile[2]=0   tile[3]=0   tile[4]=0
+  tile[5]=0   tile[6]=0   tile[7]=16   tile[8]=0   tile[9]=0
+  tile[10]=0   tile[11]=0   tile[12]=0   tile[13]=0   tile[14]=0
+xray sparse zero=13 low=1 high=1 active=2 wref=17
+R2-01 final base tiles 15/15 wref=59 (overlay isolated)
+gpu2d_test_system PASS
+<end of output>
+Test time =  39.62 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_system" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_system" time elapsed: 00:00:39
+----------------------------------------------------------
+
+78/104 Testing: gpu2d_test_boundary
+78/104 Test: gpu2d_test_boundary
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/scripts/check_app_boundary.py"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_boundary" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+app boundary: PASS
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_boundary" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_boundary" time elapsed: 00:00:00
+----------------------------------------------------------
+
+79/104 Testing: gpu2d_test_facility_input
+79/104 Test: gpu2d_test_facility_input
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_input.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_input" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+facility interactive upgrade input: PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_input" end time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility_input" time elapsed: 00:00:00
+----------------------------------------------------------
+
+80/104 Testing: gpu2d_test_facility_app2_corpus
+80/104 Test: gpu2d_test_facility_app2_corpus
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_app2_visual.exe" "corpus"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU
+"gpu2d_test_facility_app2_corpus" start time: Sep 17 18:49 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+APP2 corpus frames=120 min_enemies=12 min_objects=13 max_sprites=85 commands=324 workrefs=1809 OD=58 sim=6c6ba020 pixels=a875690a PASS
+<end of output>
+Test time =  20.85 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_app2_corpus" end time: Sep 17 18:50 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility_app2_corpus" time elapsed: 00:00:20
+----------------------------------------------------------
+
+81/104 Testing: gpu2d_test_facility_app2_density
+81/104 Test: gpu2d_test_facility_app2_density
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_app2_visual.exe" "density"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU
+"gpu2d_test_facility_app2_density" start time: Sep 17 18:50 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+APP2 density frames=60 min_enemies=300 min_objects=727 max_sprites=1514 commands=2666 workrefs=9659 OD=524 sim=aefbf178 pixels=998722c1 PASS
+<end of output>
+Test time =  56.00 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_app2_density" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility_app2_density" time elapsed: 00:00:56
+----------------------------------------------------------
+
+82/104 Testing: gpu2d_test_facility_director
+82/104 Test: gpu2d_test_facility_director
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "director"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_director" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+phase 0 count 48 hash fc5baaee
+phase 1 count 154 hash 303bc606
+phase 2 count 360 hash c06ed601
+phase 3 count 588 hash d30b9c8e
+APP2_002 director PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_director" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility_director" time elapsed: 00:00:00
+----------------------------------------------------------
+
+83/104 Testing: gpu2d_test_facility_enemies
+83/104 Test: gpu2d_test_facility_enemies
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "enemies"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_enemies" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+APP2_002 enemies PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_enemies" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility_enemies" time elapsed: 00:00:00
+----------------------------------------------------------
+
+84/104 Testing: gpu2d_test_facility_weapons
+84/104 Test: gpu2d_test_facility_weapons
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "weapons"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_weapons" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+APP2_002 weapons PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_weapons" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility_weapons" time elapsed: 00:00:00
+----------------------------------------------------------
+
+85/104 Testing: gpu2d_test_facility_upgrades
+85/104 Test: gpu2d_test_facility_upgrades
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "upgrades"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_upgrades" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+APP2_002 upgrades PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_upgrades" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility_upgrades" time elapsed: 00:00:00
+----------------------------------------------------------
+
+86/104 Testing: gpu2d_test_facility_determinism
+86/104 Test: gpu2d_test_facility_determinism
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "determinism"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_determinism" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+normal600 level=2 kills=8 spawned=43 collected=8 upgrades=1 hp=50 max_enemies=35 hash=b269a3be
+APP2_002 determinism PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_determinism" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility_determinism" time elapsed: 00:00:00
+----------------------------------------------------------
+
+87/104 Testing: gpu2d_test_facility_capacity
+87/104 Test: gpu2d_test_facility_capacity
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "capacity"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_capacity" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+capacity enemy=1024 projectile=2048 pickup=2048 hash=18d0a2f4
+APP2_002 capacity PASS
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_capacity" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility_capacity" time elapsed: 00:00:00
+----------------------------------------------------------
+
+88/104 Testing: gpu2d_test_facility_signed_rng
+88/104 Test: gpu2d_test_facility_signed_rng
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "signed_rng"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_signed_rng" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+signed RNG 4096 samples; full-width/negative/positive/invalid ranges; 128 XP drops PASS
+APP2_002 signed_rng PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_signed_rng" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility_signed_rng" time elapsed: 00:00:00
+----------------------------------------------------------
+
+89/104 Testing: gpu2d_test_facility_multi_level
+89/104 Test: gpu2d_test_facility_multi_level
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_gameplay.exe" "multi_level"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_multi_level" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+one tick -> 2 levels -> 2 choices; paused between choices; resumed after second PASS
+APP2_002 multi_level PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_multi_level" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility_multi_level" time elapsed: 00:00:00
+----------------------------------------------------------
+
+90/104 Testing: gpu2d_test_facility_spatial
+90/104 Test: gpu2d_test_facility_spatial
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_spatial.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_facility_spatial" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+spatial oracle 128 fixtures / 4096 queries / boundaries and ties: PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_spatial" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility_spatial" time elapsed: 00:00:00
+----------------------------------------------------------
+
+91/104 Testing: gpu2d_test_facility
+91/104 Test: gpu2d_test_facility
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU
+"gpu2d_test_facility" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+loaded 71 facility sprites
+gpu2d_test_facility PASS
+<end of output>
+Test time =   0.08 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility" time elapsed: 00:00:00
+----------------------------------------------------------
+
+92/104 Testing: gpu2d_test_assetc
+92/104 Test: gpu2d_test_assetc
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/tools/facility_omega_assetc.py"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU
+"gpu2d_test_assetc" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+VERIFIED: 71 sprites, 150 files; source integrity PASS
+<end of output>
+Test time =   1.42 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_assetc" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_assetc" time elapsed: 00:00:01
+----------------------------------------------------------
+
+93/104 Testing: gpu2d_test_argb_order
+93/104 Test: gpu2d_test_argb_order
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/scripts/check_app2_argb_order.py"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU
+"gpu2d_test_argb_order" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+argb BGRA order: PASS
+<end of output>
+Test time =   0.35 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_argb_order" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_argb_order" time elapsed: 00:00:00
+----------------------------------------------------------
+
+94/104 Testing: gpu2d_test_asset_pipeline
+94/104 Test: gpu2d_test_asset_pipeline
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "-B" "C:/Users/123/Desktop/code/FPGA_2D_GPU/scripts/check_app2_asset_pipeline.py"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU
+"gpu2d_test_asset_pipeline" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+APP2 source integrity / reproducibility / verify no-write / mutation / feet: PASS
+<end of output>
+Test time =   2.46 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_asset_pipeline" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_asset_pipeline" time elapsed: 00:00:02
+----------------------------------------------------------
+
+95/104 Testing: gpu2d_test_facility_map
+95/104 Test: gpu2d_test_facility_map
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_map.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU
+"gpu2d_test_facility_map" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+hero radius=8 open=3530/4096 connected=3530
+hero radius=18 open=3216/4096 connected=3216
+maximum collidable groups per 640x360 view=4
+APP2 map collision/connectivity/rendering: PASS
+<end of output>
+Test time =   6.40 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_map" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility_map" time elapsed: 00:00:06
+----------------------------------------------------------
+
+96/104 Testing: gpu2d_test_facility_visual
+96/104 Test: gpu2d_test_facility_visual
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_visual.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU
+"gpu2d_test_facility_visual" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+FACILITY visual pixels + transparent draws + 60 frame equality: PASS
+<end of output>
+Test time =   7.71 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_visual" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility_visual" time elapsed: 00:00:07
+----------------------------------------------------------
+
+97/104 Testing: gpu2d_test_facility_stability
+97/104 Test: gpu2d_test_facility_stability
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_facility_stability.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU
+"gpu2d_test_facility_stability" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+facility 600-frame stability level=3 kills=21 hash=73A568AC
+gpu2d_test_facility_stability PASS
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_facility_stability" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_facility_stability" time elapsed: 00:00:00
+----------------------------------------------------------
+
+98/104 Testing: gpu2d_test_mutation
+98/104 Test: gpu2d_test_mutation
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_test_mutation.exe"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_mutation" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+gpu2d_test_mutation PASS
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_mutation" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_mutation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+99/104 Testing: gpu2d_test_cli_scenes
+99/104 Test: gpu2d_test_cli_scenes
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/scripts/check_cli_scenes0045.py"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_cli_scenes" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] scene game
+[PASS] scene sprite
+[PASS] scene alpha
+[PASS] scene bullet
+[PASS] scene scale
+[PASS] scene overdraw
+[PASS] capture deterministic 5dedb8af3c5a1062...
+cli scenes: PASS
+<end of output>
+Test time =  15.17 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_cli_scenes" end time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_cli_scenes" time elapsed: 00:00:15
+----------------------------------------------------------
+
+100/104 Testing: gpu2d_test_capture_verify
+100/104 Test: gpu2d_test_capture_verify
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/scripts/verify_stage0045_captures.py"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_capture_verify" start time: Sep 17 18:51 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+[PASS] v1_game_showcase.raw 926c99c00baeed50...
+[PASS] v2_effects.raw d020b39467566057...
+[PASS] v3_xray.raw ecf36f5ae522a619...
+[PASS] v4_overdraw_stress.raw 6ee28b02c9244069...
+capture verify: PASS
+<end of output>
+Test time = 125.91 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_capture_verify" end time: Sep 17 18:53 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_capture_verify" time elapsed: 00:02:05
+----------------------------------------------------------
+
+101/104 Testing: gpu2d_test_stress_json
+101/104 Test: gpu2d_test_stress_json
+Command: "C:/Users/123/AppData/Local/Programs/Python/Python310/python.exe" "C:/Users/123/Desktop/code/FPGA_2D_GPU/scripts/gen_stress_stats0045.py"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_test_stress_json" start time: Sep 17 18:53 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+running sprite...
+running alpha...
+running bullet...
+running scale...
+running overdraw...
+wrote C:\Users\123\Desktop\code\FPGA_2D_GPU\results\stage0045\stress\stress_stats.json and C:\Users\123\Desktop\code\FPGA_2D_GPU\results\stage0045\stress\stress_stats.md
+<end of output>
+Test time =  35.77 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_test_stress_json" end time: Sep 17 18:54 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_test_stress_json" time elapsed: 00:00:35
+----------------------------------------------------------
+
+102/104 Testing: gpu2d_demo_headless_imm
+102/104 Test: gpu2d_demo_headless_imm
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_demo.exe" "--headless" "--frames" "30" "--seed" "1234" "--backend" "immediate" "--scene" "game"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_demo_headless_imm" start time: Sep 17 18:54 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+gpu2d_demo done backend=immediate scene=0 base_cmds=41 base_sprites=6 tiles=0/0 wrefs=0 max_od=0
+<end of output>
+Test time =   0.36 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_demo_headless_imm" end time: Sep 17 18:54 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_demo_headless_imm" time elapsed: 00:00:00
+----------------------------------------------------------
+
+103/104 Testing: gpu2d_demo_headless_tile
+103/104 Test: gpu2d_demo_headless_tile
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_demo.exe" "--headless" "--frames" "30" "--seed" "1234" "--backend" "tile" "--scene" "game"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_demo_headless_tile" start time: Sep 17 18:54 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+gpu2d_demo done backend=tile scene=0 base_cmds=41 base_sprites=6 tiles=240/240 wrefs=417 max_od=4
+<end of output>
+Test time =   1.69 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_demo_headless_tile" end time: Sep 17 18:54 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_demo_headless_tile" time elapsed: 00:00:01
+----------------------------------------------------------
+
+104/104 Testing: gpu2d_demo_invalid_cli
+104/104 Test: gpu2d_demo_invalid_cli
+Command: "C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo/gpu2d_demo.exe" "--not-a-flag"
+Directory: C:/Users/123/Desktop/code/FPGA_2D_GPU/build/stage0045/model/pc_demo
+"gpu2d_demo_invalid_cli" start time: Sep 17 18:54 ÖÐ¹ú±ê×¼Ê±¼ä
+Output:
+----------------------------------------------------------
+unknown argument: --not-a-flag
+gpu2d_demo â€” PC Golden Interactive Application
+Usage:
+  gpu2d_demo [--app neon|facility] [--headless] [--frames N] [--seed N]
+             [--backend immediate|tile|tile16|tile64]
+             [--profile interactive|showcase]
+             [--scene game|sprite|alpha|bullet|scale|overdraw]
+             [--capture <path.raw>] [--xray] [--facility-route] [--facility-showcase] [--help]
+
+  --facility-showcase: headless facility capture of an explicitly staged snapshot.
+  --facility-start-seconds N: headless verification/demo game-time offset.
+  --facility-capture-scene mid|fx|elite|level|density|technical|showcase: authored fixture.
+
+Controls:
+  WASD move | F1-F5 stress (neon) | F6 Immediate | F7 Tile32
+  F8 tech HUD | F9 normal | F10 X-Ray | P pause | R reset | ESC menu/quit
+  Launcher: 1 NEON SURVIVOR  2 FACILITY-Î©  3 help  4 stress
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"gpu2d_demo_invalid_cli" end time: Sep 17 18:54 ÖÐ¹ú±ê×¼Ê±¼ä
+"gpu2d_demo_invalid_cli" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 17 18:54 ÖÐ¹ú±ê×¼Ê±¼ä

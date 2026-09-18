@@ -116,13 +116,16 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
                     g_input->reset = down;
                     break;
                 case '1':
-                    if (down) g_input->edge_1 = true;
+                case VK_NUMPAD1:
+                    if (down && !(lp & (1LL << 30))) g_input->edge_1 = true;
                     break;
                 case '2':
-                    if (down) g_input->edge_2 = true;
+                case VK_NUMPAD2:
+                    if (down && !(lp & (1LL << 30))) g_input->edge_2 = true;
                     break;
                 case '3':
-                    if (down) g_input->edge_3 = true;
+                case VK_NUMPAD3:
+                    if (down && !(lp & (1LL << 30))) g_input->edge_3 = true;
                     break;
                 case '4':
                     if (down) g_input->edge_4 = true;

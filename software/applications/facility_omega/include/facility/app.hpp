@@ -93,7 +93,9 @@ public:
         return lo + (next() % (hi - lo));
     }
     i32 irange(i32 lo, i32 hi) {
-        return static_cast<i32>(range(static_cast<u32>(lo), static_cast<u32>(hi)));
+        if (hi <= lo) return lo;
+        const auto span = static_cast<u32>(static_cast<i64>(hi) - lo);
+        return static_cast<i32>(static_cast<i64>(lo) + next() % span);
     }
     void seed(u32 s) { s_ = s ? s : 1u; }
     u32 state() const { return s_; }
@@ -194,6 +196,8 @@ struct AppState {
     u32 view_w = 640;
     u32 view_h = 360;
     bool level_up_pending = false;
+    u32 pending_levelups = 0;
+    bool paused = false;
     u32 upgrades_taken = 0;
 };
 

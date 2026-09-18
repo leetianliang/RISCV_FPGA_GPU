@@ -162,12 +162,16 @@ bool apply_upgrade(AppState& s,u32 choice) {
         case 7:s.player.max_hp+=10;s.player.hp=std::min(s.player.hp+10,s.player.max_hp);break;
         default:s.gameplay.magnet_radius+=8;break;
     }
-    ++s.upgrades_taken;s.level_up_pending=false;return true;
+    ++s.upgrades_taken;
+    if(s.pending_levelups)--s.pending_levelups;
+    s.level_up_pending=s.pending_levelups>0;
+    if(s.level_up_pending)generate_choices(s);
+    return true;
 }
 void player_hurt(AppState& s,i32 damage) {if(damage<=0)return;s.player.hp=std::max(0,s.player.hp-damage);s.player.hurt_timer=12;}
 void set_viewport(AppState& s,u32 w,u32 h) {s.view_w=w;s.view_h=h;}
 void sim_step(AppState& s,const bool* keys) {
-    if(s.level_up_pending)return;
+    if(s.paused || s.level_up_pending)return;
     ++s.frame;for(auto& f:s.effects)if(f.life)--f.life;
     player_move(s,keys&&keys[0],keys&&keys[1],keys&&keys[2],keys&&keys[3]);
     camera_follow(s,s.view_w,s.view_h);
@@ -207,7 +211,7 @@ void sim_step(AppState& s,const bool* keys) {
         if(d<12*12) {
             g.alive=false;++s.gameplay.collected;
             if(g.repair){s.player.hp=std::min(s.player.max_hp,s.player.hp+static_cast<i32>(g.value));++s.gameplay.repairs;}
-            else {s.player.xp+=g.value;while(s.player.xp>=s.player.xp_need){s.player.xp-=s.player.xp_need;++s.player.level;s.player.xp_need=xp_to_level(s.player.level);leveled=true;}}
+            else {s.player.xp+=g.value;while(s.player.xp>=s.player.xp_need){s.player.xp-=s.player.xp_need;++s.player.level;s.player.xp_need=xp_to_level(s.player.level);++s.pending_levelups;leveled=true;}}
             effect(s,s.player.world_x+14,s.player.world_y,false);
         }
     }
@@ -219,6 +223,7 @@ u32 hash_sim(const AppState& s) {
     mix(s.player.world_x);mix(s.player.world_y);mix(s.player.hp);mix(s.player.max_hp);mix(s.player.xp);mix(s.player.xp_need);mix(s.player.level);mix(s.player.kills);
     mix(s.player.fire_cooldown);mix(s.player.fire_period);mix(s.player.pulse_damage);mix(s.player.projectile_count);mix(s.player.hurt_timer);mix(s.player.frame);mix(s.player.dir);
     mix(s.spawn_timer);mix(s.enemy_count_target);mix(s.upgrades_taken);mix(s.level_up_pending);
+    mix(s.pending_levelups);mix(s.paused);
     mix(s.gameplay.phase);mix(s.gameplay.elite_timer);mix(s.gameplay.spawned);mix(s.gameplay.collected);mix(s.gameplay.repairs);mix(s.gameplay.magnet_radius);mix(s.gameplay.repair_percent);
     mix(s.gameplay.choices_generated);for(const auto& c:s.gameplay.choices)mix(c.kind);
     for(const auto& w:s.gameplay.weapons){mix(w.level);mix(w.cooldown);mix(w.phase);mix(w.age);mix(w.x);mix(w.y);mix(w.radius);for(u32 i=0;i<kEnemyCapacity;++i)mix(w.hit[i]);}

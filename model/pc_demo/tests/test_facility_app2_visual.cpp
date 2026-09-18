@@ -31,6 +31,7 @@ int main(int argc,char** argv) {
         if(!dense && f==40){a.level_up_pending=b.level_up_pending=true;generate_choices(a);generate_choices(b);}
         if(!dense && f==42){CHECK(apply_upgrade(a,0));CHECK(apply_upgrade(b,0));}
         sim_step(a,nullptr);sim_step(b,nullptr);CHECK(hash_sim(a)==hash_sim(b));CHECK(a.player.hp>0);
+        if(dense)CHECK(a.frame==18000+static_cast<u32>(f)+1 && !a.level_up_pending);
         u32 enemies=0,objects=0;
         for(const auto& e:a.enemies)if(e.alive){++enemies;CHECK(position_clear(a.environment,e.world_x,e.world_y,kEnemyStats[u32(e.kind)].radius));}
         for(const auto& x:a.bullets)objects+=x.alive;

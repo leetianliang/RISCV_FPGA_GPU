@@ -1,10 +1,12 @@
 # APP2_002 — FACILITY-Ω 玩法核心扩展
 
+> 历史实现报告，评审实现为 `9c355d4efadcd08160262902bc7793933d863b32`。2026-09-17 的 REVIEW_APP2_002_V1 判定阶段 FAIL — NARROW CLOSURE，确认多级升级/RNG缺陷并要求视觉与报告收尾。以下101/101及58项技术记录是当时测试覆盖内的结果，不能覆盖新发现的缺陷。本轮整改以 `REPORT_APP2_002R_NARROW_CLOSURE.md` 为准，旧截图保留历史证据。
+
 日期：2026-09-17。状态：TECHNICAL PASS / PENDING OWNER VISUAL REVIEW。完整 CTest **101/101 PASS，0 FAIL**。
 
 - START_COMMIT：`57c5eb35d0c64aa7c3940f3d6f11c11f018f8376`。
 - MAP R3V2 baseline：同上。环境文件、碰撞几何、地图资产与 GPU Golden 语义未修改。
-- END_COMMIT：包含本报告的 APP2_002 实现提交，可用 `git log -1 --format=%H -- docs/reports/REPORT_APP2_002_FACILITY_OMEGA_GAMEPLAY_CORE_EXPANSION.md` 查询。2026-09-17 用户已授权提交并推送；视觉审查状态保持待审。
+- END_COMMIT：`9c355d4efadcd08160262902bc7793933d863b32`（本历史报告对应的实现与审查版本）。APP2_002R 的实现版本由新报告独立记录。
 - 授权：`TASK_APP2_002_FACILITY_OMEGA_Gameplay_Core_Expansion.md`、`REVIEW_APP2_MAP_R3V2_VISUAL_FINAL.md`。前轮 M13 VISUAL PASS，map-first HOLD 已解除；本轮视觉不能继承前轮 PASS。
 
 ## 实现与边界

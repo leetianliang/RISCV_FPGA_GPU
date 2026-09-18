@@ -3,6 +3,7 @@
 #include "facility/app.hpp"
 #include "facility_showcase.hpp"
 #include "facility_app2_fixtures.hpp"
+#include "facility_input.hpp"
 #include "golden_renderer.hpp"
 #include "neon/assets.hpp"
 #include "neon/sim.hpp"
@@ -406,6 +407,7 @@ int main(int argc, char** argv) {
     };
 
     while (true) {
+        int upgrade_choice = -1;
         if (!cli.headless) {
             if (!pres.pump(input)) {
                 break;
@@ -514,10 +516,11 @@ int main(int argc, char** argv) {
             if (input.edge_f10) {
                 xray = true;
             }
-            if (input.edge_pause) {
+            if (use_facility) facility_input::controls(fo,input,cli.seed,cli.profile.width,cli.profile.height);
+            if (!use_facility && input.edge_pause) {
                 sim.paused = !sim.paused;
             }
-            if (input.edge_reset) {
+            if (!use_facility && input.edge_reset) {
                 neon::sim_reset(sim, scfg, cli.seed);
                 rng.seed(cli.seed);
                 sim.scene = cli.scene;
@@ -547,7 +550,7 @@ int main(int argc, char** argv) {
                 rng.seed(cli.seed);
                 sim.scene = neon::SceneId::OverdrawStorm;
             }
-            input.clear_edges();
+            upgrade_choice = facility_input::finish_input_frame(input, use_facility && fo.level_up_pending);
         }
 
         bool keys[4] = {input.up, input.down, input.left, input.right};
@@ -564,12 +567,8 @@ int main(int argc, char** argv) {
             if (fo.level_up_pending) {
                 if (cli.headless) {
                     facility::apply_upgrade(fo, 0);  // deterministic auto-pick for captures
-                } else if (input.edge_1) {
-                    facility::apply_upgrade(fo, 0);
-                } else if (input.edge_2) {
-                    facility::apply_upgrade(fo, 1);
-                } else if (input.edge_3) {
-                    facility::apply_upgrade(fo, 2);
+                } else if (upgrade_choice >= 0) {
+                    facility::apply_upgrade(fo, static_cast<u32>(upgrade_choice));
                 }
                 input.clear_edges();
                 for (int i = 0; i < 4; ++i) keys[i] = false;
@@ -580,6 +579,7 @@ int main(int argc, char** argv) {
             facility::camera_follow(fo, cli.profile.width, cli.profile.height);
             facility::render_scene(rec, fo, fo_tex, cli.profile.width, cli.profile.height);
             char hud[128];
+            if(fo.paused)neon::draw_text_pal(rec,assets,280,62,"PAUSED / P",Color::rgb(245,200,80));
             for(u32 i=0;i<4;++i)if(fo.gameplay.weapons[i].level) {
                 std::snprintf(hud,sizeof(hud),"L%u",fo.gameplay.weapons[i].level);
                 neon::draw_text_pal(rec,assets,320+i*72,39,hud,Color::rgb(160,211,220));
@@ -606,7 +606,8 @@ int main(int argc, char** argv) {
                                     Color::rgb(245, 200, 80));
                 for(u32 i=0;i<3;++i) {
                     const auto choice=fo.gameplay.choices[i];const i32 x=cx-136+static_cast<i32>(i)*96;
-                    neon::draw_text_pal(rec,assets,x,cy+1,facility::choice_name(choice),Color::rgb(200,230,240));
+                    const char* label=choice.kind==3?"ENERGY FLD":facility::choice_name(choice);
+                    neon::draw_text_pal(rec,assets,x,cy+1,label,Color::rgb(200,230,240));
                     if(choice.kind<4)std::snprintf(hud,sizeof(hud),"[%u] %s L%u",i+1,fo.gameplay.weapons[choice.kind].level?"UP":"NEW",fo.gameplay.weapons[choice.kind].level+1);
                     else std::snprintf(hud,sizeof(hud),"[%u] BOOST",i+1);
                     neon::draw_text_pal(rec,assets,x+23,cy-14,hud,Color::rgb(220,197,130));
